@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import Select from 'antd'
+import { Select } from 'antd'
 
 const Option = Select.Option
 

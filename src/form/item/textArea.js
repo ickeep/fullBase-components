@@ -13,6 +13,6 @@ export default class ReInput extends Component {
   }
 
   render() {
-    return <InputNumber {...props}/>
+    return <InputNumber {...this.props}/>
   }
 }

@@ -10,6 +10,7 @@ export default class EditForm extends Component {
   static propTypes = {
     loading: PropTypes.bool,
     values: PropTypes.object,
+    fields: PropTypes.array,
     errs: PropTypes.object,
     conf: PropTypes.object,
     data: PropTypes.object,
@@ -18,6 +19,7 @@ export default class EditForm extends Component {
   }
   static defaultProps = {
     loading: false,
+    fields: [],
     value: {},
     errs: {},
     conf: {},
@@ -32,7 +34,7 @@ export default class EditForm extends Component {
     this.props.onSubmit(e)
   }
   getRowArr = () => {
-    const fields = this.props.fields
+    const { fields } = this.props
     const rowArr = [[]]
     const lengthMap = {}
     let lengthMapKey = 0

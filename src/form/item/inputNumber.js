@@ -17,6 +17,6 @@ export default class ReInput extends Component {
   }
 
   render() {
-    return <Input {...props} onChange={this.change}/>
+    return <Input {...this.props} onChange={this.change}/>
   }
 }

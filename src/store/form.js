@@ -9,8 +9,12 @@ Object.keys(whiteList).forEach(key => {
 })
 
 export default function ({ whiteList = whiteList } = {}) {
-  return function (target, { whiteList = whiteList } = {}) {
-    target.prototype.xss = XSS.FilterXSS({ whiteList })
+  const dfWhiteList = whiteList
+  return function (target, { whiteList = dfWhiteList } = {}) {
+    const xss = XSS.FilterXSS({ whiteList })
+    console.log(XSS);
+    console.log(xss);
+    target.prototype.xss = xss
     target.prototype.isSubmit = function (name) {
       let isSubmit = true
       const form = this[`${name}Form`]
