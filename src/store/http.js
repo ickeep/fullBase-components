@@ -8,17 +8,25 @@ export default function ({
                            afterFn,
                            successVal = 0,
                            format = { errno: 'errno', errmsg: 'errmsg', data: 'data' },
-                           dfPageData = { numsPerPage: '', currentPage: '', count: '', totalPages: '', data: [] }
+                           pageData = { numsPerPage: '', currentPage: '', count: '', totalPages: '', data: [] }
                          } = {}) {
-  return function (target, {
-    hosts = hosts,
-    conf = conf,
-    beforeFn = beforeFn,
-    afterFn = afterFn,
-    successVal = successVal,
-    format = format,
-    dfPageData = dfPageData
-  } = {}) {
+  const dfHosts = hosts
+  const dfConf = conf
+  const dfFormat = format
+  const dfBeforeFn = beforeFn
+  const dfAfterFn = afterFn
+  const dfSuccessVal = successVal
+  const dfPageDate = pageData
+  return function (target, opt = {}) {
+    const {
+      hosts = dfHosts,
+      conf = dfConf,
+      beforeFn = dfBeforeFn,
+      afterFn = dfAfterFn,
+      successVal = dfSuccessVal,
+      format = dfFormat,
+      pageData = dfPageDate
+    } = opt
     target.prototype.http = new Http({ trim: true, hosts, format, conf })
     const dfData = {}
     dfData[format.errno] = ''
@@ -32,7 +40,7 @@ export default function ({
     dfDataArr[format.data] = []
     target.prototype.dfDataArr = dfDataArr
     const dfDataPage = { ...dfData }
-    dfDataPage[format.data] = dfPageData
+    dfDataPage[format.data] = pageData
     target.prototype.dfDataPage = dfDataPage
 
     target.prototype.msgHandle = function (msg, data = {}) {
@@ -54,14 +62,13 @@ export default function ({
       }
     }
 
-    async function httpFn(type, url, opt, msg, conf) {
-      const fn = this.http[type]
+    target.prototype.httpFn = async function (type, url, opt, msg, conf) {
       let data = {}
-      if (httpBeforeFn && typeof beforeFn === 'function') {
+      if (beforeFn && typeof beforeFn === 'function') {
         const argObj = await httpBeforeFn({ url, opt, msg, conf })
-        data = await fn(argObj.url, argObj.opt, argObj.msg, argObj.conf)
+        data = await this.http[type](argObj.url, argObj.opt, argObj.msg, argObj.conf)
       } else {
-        data = await fn(url, opt, msg, conf)
+        data = await this.http[type](url, opt, msg, conf)
       }
       if (afterFn && typeof afterFn === 'function') {
         const afterData = await afterFn({ data })
@@ -72,19 +79,19 @@ export default function ({
     }
 
     target.prototype.httpGet = function (url = '', opt = {}) {
-      return httpFn('get', url, opt)
+      return this.httpFn('get', url, opt)
     }
     target.prototype.httpPost = async function (url, opt, msg = false, conf = {}) {
-      return httpFn('post', url, opt, msg, conf)
+      return this.httpFn('post', url, opt, msg, conf)
     }
     target.prototype.httpDel = async function (url, opt, msg = false, conf) {
-      return httpFn('del', url, opt, msg, conf)
+      return this.httpFn('del', url, opt, msg, conf)
     }
     target.prototype.httpPut = async function (url, opt, msg = false, conf) {
-      return httpFn('put', url, opt, msg, conf)
+      return this.httpFn('put', url, opt, msg, conf)
     }
     target.prototype.httpPatch = async function (url, opt, msg = false, conf) {
-      return httpFn('patch', url, opt, msg, conf)
+      return this.httpFn('patch', url, opt, msg, conf)
     }
   }
 }
