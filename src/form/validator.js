@@ -86,7 +86,7 @@ export default class Validator {
     }
   }
 
-  static checkRule({ rule, value, form, param, aliasName }) {
+  checkRule({ rule, value, form, param, aliasName }) {
     let isErr = false
     if (rule) {
       const { fn, reg, msg = '' } = rule

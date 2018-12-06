@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
+import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import ItemMap from './itemMap'
 
+@observer
 export default class ItemType extends Component {
   static propTypes = {
     loading: PropTypes.bool,

@@ -2,18 +2,17 @@ import { action } from 'mobx'
 import Validator from '../form/validator'
 import XSS from 'xss'
 
-const whiteList = XSS.whiteList
-whiteList.embed = ['src', 'allowfullscreen', 'quality', 'width', 'height', 'align', 'type', 'allowscriptaccess']
-Object.keys(whiteList).forEach(key => {
-  whiteList[key].push('style')
+const dfWhiteList = XSS.whiteList
+dfWhiteList.embed = ['src', 'allowfullscreen', 'quality', 'width', 'height', 'align', 'type', 'allowscriptaccess']
+Object.keys(dfWhiteList).forEach(key => {
+  dfWhiteList[key].push('style')
 })
 
-export default function ({ whiteList = whiteList } = {}) {
-  const dfWhiteList = whiteList
-  return function (target, { whiteList = dfWhiteList } = {}) {
-    const xss = XSS.FilterXSS({ whiteList })
-    console.log(XSS);
-    console.log(xss);
+export default function ({ whiteList = dfWhiteList } = {}) {
+  const fnDfWhiteList = whiteList
+  return function (target, { whiteList = fnDfWhiteList } = {}) {
+    const xss = new XSS.FilterXSS({ whiteList })
+    const validator = new Validator()
     target.prototype.xss = xss
     target.prototype.isSubmit = function (name) {
       let isSubmit = true
@@ -80,7 +79,7 @@ export default function ({ whiteList = whiteList } = {}) {
           form[key] = tmpValue
         }
         if (isVerify && rules && rules[key] && errs && typeof errs[key] !== 'undefined') {
-          errs[key] = Validator.check(tmpValue, rules[key], form)
+          errs[key] = validator.check({ value: tmpValue, ruleObj: rules[key], form })
         }
       })
       this.isSubmit(name)
