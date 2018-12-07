@@ -1,6 +1,6 @@
 import React from 'react'
 import Input from './item/input'
-import InputNumber from './item/inputNumber'
+import { InputNumber } from 'antd'
 import Checkbox from './item/checkbox'
 import Radio from './item/radio'
 import Select from './item/select'
