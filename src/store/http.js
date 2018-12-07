@@ -65,8 +65,8 @@ export default function ({
     target.prototype.httpFn = async function (type, url, opt, msg, conf) {
       let data = {}
       if (beforeFn && typeof beforeFn === 'function') {
-        const argObj = await httpBeforeFn({ url, opt, msg, conf })
-        data = await this.http[type](argObj.url, argObj.opt, argObj.msg, argObj.conf)
+        const argObj = await beforeFn({ url, opt, msg, conf })
+        data = await this.http[type](argObj.url, argObj.opt, argObj.conf)
       } else {
         data = await this.http[type](url, opt, msg, conf)
       }
