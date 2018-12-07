@@ -28,7 +28,7 @@ export default class extends Component {
     return (
       <Input
         placeholder="验证码"
-        autocomplete="off"
+        autoComplete="off"
         {...newProps}
         className={`c-img-captcha ${className || ''}`}
         addonAfter={

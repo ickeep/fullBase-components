@@ -17,8 +17,8 @@ export default class  extends Component {
 
   getCode = async () => {
     const { remain } = this.state
-    const { isAction, onGetCode } = this.props
-    if (remain < 1 && isAction && typeof onGetCode === 'function') {
+    const { isActive, onGetCode } = this.props
+    if (remain < 1 && isActive && typeof onGetCode === 'function') {
       const codeData = await onGetCode()
       if (codeData.errno === 0) {
         let remainNum = 60
@@ -35,9 +35,9 @@ export default class  extends Component {
   }
 
   render() {
-    const { isAction, className } = this.props
+    const { isActive, className } = this.props
     const newProps = { ...this.props }
-    delete newProps.isAction
+    delete newProps.isActive
     delete newProps.onGetCode
     const { remain } = this.state
     return (
@@ -47,7 +47,7 @@ export default class  extends Component {
         {...newProps}
         className={`c-captcha ${className || ''} `}
         addonAfter={
-          <a href="javascript:;" className={`c-captcha-btn ${remain < 1 && isAction ? 'z-active' : ''}`}
+          <a href="javascript:;" className={`c-captcha-btn ${remain < 1 && isActive ? 'z-active' : ''}`}
              onClick={this.getCode}>
             {remain > 0 ? `${remain}S` : `获取验证码`}
           </a>
