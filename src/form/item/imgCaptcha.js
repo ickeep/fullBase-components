@@ -28,10 +28,11 @@ export default class extends Component {
     return (
       <Input
         placeholder="验证码"
+        autocomplete="off"
         {...newProps}
         className={`c-img-captcha ${className || ''}`}
         addonAfter={
-          <a className="c-img-captcha-btn" href="javascript:;" onClick={() => onGetImg}>
+          <a className="c-img-captcha-btn" href="javascript:;" title="更新验证码" onClick={() => onGetImg()}>
             {img ? <img className="c-img-captcha-img" src={img} alt="验证码"/> : '获取验证码'}
           </a>
         }

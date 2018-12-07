@@ -1,0 +1,17 @@
+@import '~antd/lib/style/themes/default';
+
+.c-captcha-btn {
+  width: 100px;
+  text-align: center;
+  color: @text-color-secondary;
+  cursor: not-allowed;
+
+  &:hover {
+    color: @text-color-secondary;
+  }
+
+  &.z-active {
+    cursor: pointer;
+    color: @primary-color;
+  }
+}

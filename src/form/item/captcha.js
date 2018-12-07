@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { Input } from 'antd'
+import Input from './input'
+import '../../../assets/less/captcha.less'
 
-const Search = Input.Search;
 @observer
 export default class  extends Component {
   constructor(props) {
@@ -34,29 +34,24 @@ export default class  extends Component {
     }
   }
 
-  change = (e) => {
-    const value = e.target.value
-    this.props.onChange(value)
-  }
-
   render() {
-    const { value, isAction, placeholder = '验证码', autocomplete = 'off' } = this.props
+    const { isAction, className } = this.props
+    const newProps = { ...this.props }
+    delete newProps.isAction
+    delete newProps.onGetCode
     const { remain } = this.state
     return (
-      <div>
-        <Input
-          autocomplete={autocomplete}
-          placeholder={placeholder}
-          value={value}
-          clear={true}
-          onChange={this.chang}
-        >
-          <Svg src="captcha"/>
-        </Input>
-        <a href="javascript:;" onClick={this.getCode}>
-          <Text
-            style={remain < 1 && isAction ? Style.btnText : Style.btnTextDis}>{remain > 0 ? `${remain}S` : `获取验证码`}</Text>
-        </a>
-      </div>)
+      <Input
+        placeholder="验证码"
+        autoComplete="off"
+        {...newProps}
+        className={`c-captcha ${className || ''} `}
+        addonAfter={
+          <a href="javascript:;" className={`c-captcha-btn ${remain < 1 && isAction ? 'z-active' : ''}`}
+             onClick={this.getCode}>
+            {remain > 0 ? `${remain}S` : `获取验证码`}
+          </a>
+        }
+      />)
   }
 }

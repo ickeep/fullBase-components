@@ -6,6 +6,7 @@ import Radio from './item/radio'
 import Select from './item/select'
 import TextArea from './item/textArea'
 import ImgCaptcha from './item/imgCaptcha'
+import Captcha from './item/captcha'
 
 export default {
   input: Input,
@@ -14,5 +15,6 @@ export default {
   radio: Radio,
   select: Select,
   textArea: TextArea,
-  imgCaptcha: ImgCaptcha
+  imgCaptcha: ImgCaptcha,
+  captcha: Captcha
 }
