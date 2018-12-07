@@ -2,18 +2,19 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import PropTypes from 'prop-types'
 import { Input } from 'antd'
+import '../../../style/imgCaptcha.less'
 
 @observer
 export default class extends Component {
   static propTypes = {
     value: PropTypes.string,
-    src: PropTypes.string,
+    data: PropTypes.object,
     onChange: PropTypes.func,
     onGetImg: PropTypes.func
   }
   static defaultProps = {
     value: '',
-    src: '',
+    data: {},
     onChange: () => '',
     onGetImg: () => ''
   }
@@ -23,16 +24,22 @@ export default class extends Component {
   }
 
   render() {
-    const { src, onGetImg } = this.props
+    const { onGetImg, data } = this.props
+    const { img } = data
     const newProps = { ...this.props }
-    delete newProps.src
+    delete newProps.data
     delete newProps.onGetImg
     return (
       <Input
+        className="c-img-captcha"
         placeholder="验证码"
         {...newProps}
         onChange={this.change}
-        addonAfter={<a href="javascript:;" onClick={() => onGetImg}>{src ? <img src={src} alt="验证码"/> : '获取验证码'}</a>}
+        addonAfter={
+          <a className="c-img-captcha-btn" href="javascript:;" onClick={() => onGetImg}>
+            {img ? <img className="c-img-captcha-img" src={img} alt="验证码"/> : '获取验证码'}
+          </a>
+        }
       >
       </Input>
     )
