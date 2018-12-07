@@ -3,7 +3,7 @@ export default class Validator {
     const getDfMsg = (name) => `${name} 格式不正确`
     this.rules = {
       required: {
-        fn: () => !(value === null || value === undefined || value === ''),
+        fn: (value) => !(value === null || value === undefined || value === ''),
         msg: '{name} 不能为空'
       },
       name: {
@@ -44,7 +44,7 @@ export default class Validator {
         reg: /[\d]{6}/,
         msg: '验证码 必须为六位数字'
       },
-      imgCaptcha: { reg: /[\d\w]{4}/, msg: '请输入四位数字/字母' },
+      imgCaptcha: { reg: /^[\d\w]{4}$/, msg: '请输入四位数字/字母' },
       url: {
         reg: /^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-.,@?^=%&:/~+#]*[\w\-@?^=%&/~+#])?$/,
         msg: getDfMsg('链接')
@@ -88,8 +88,9 @@ export default class Validator {
 
   checkRule({ rule, value, form, param, aliasName }) {
     let isErr = false
-    if (rule) {
-      const { fn, reg, msg = '' } = rule
+    const ruleObj = this.rules[rule]
+    if (ruleObj) {
+      const { fn, reg, msg = '' } = ruleObj
       if (typeof fn === 'function') {
         if (!fn({ value, form, param })) {
           isErr = true
@@ -103,7 +104,7 @@ export default class Validator {
     return ''
   }
 
-  check({ value, ruleObj, form }) {
+  check({ value, ruleObj, form } = {}) {
     let err = ''
     let ruleArr = []
     const { rules, aliasName } = ruleObj

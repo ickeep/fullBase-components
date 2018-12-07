@@ -40,7 +40,7 @@ export default class ItemType extends Component {
     if (itemData) {
       newProps.data = itemData
     }
-    if (typeof Render === 'function') {
+    if (!Render.prototype.isReactComponent) {
       newProps = { ...newProps, conf, loading, values, dict: data }
     }
     return <Render {...newProps} {...props}/>
