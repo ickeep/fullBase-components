@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { observer } from 'mobx-react'
 import { Button, Tooltip, Tag, Progress, Divider, Table } from 'antd'
-import Datetime from '../../display/datatime'
+import Datetime from '../../display/datetime'
 import DetailGrid from './detailGrid'
 import PhoneEncrypt from '../../display/phoneEncrypt'
 import IdCardEncrypt from "../../display/idCardEncrypt";

@@ -23,18 +23,8 @@ export default class extends Component {
     }
   }
 
-  getSortOrder(field) {
-    let order = ''
-    const sorter = this.props.sorter || {}
-    if (sorter.field === field) {
-      order = this.OrderMap[sorter.val] || ''
-    }
-    return order
-  }
-
   componentDidMount() {
     const table = this.refs.table
-    console.log(table);
     if (table) {
       const tableEl = ReactDOM.findDOMNode(table)
       const tableBodyArr = tableEl.getElementsByClassName('ant-table-body')
@@ -54,19 +44,10 @@ export default class extends Component {
   };
 
   render() {
-    console.log(this.props);
     // return <div>内容</div>
     const props = this.props
     const { tableEl, tableScroll } = this.state
-    const { data = {}, operate = {}, rowKey = 'id', scroll, listTableActions, columns, rowSelection = null, searchMsg, _pagination, showPaginationTotal = true } = props
-    const pagination = {
-      ..._pagination,
-      current: data.pageNum || data.currentPage || data.pageNumber,
-      total: data.totalPages || data.totalPagess || data.totalPagesCount,
-      pageSize: parseInt(data.pageSize, 10),
-      showSizeChanger: true,
-      size: 'small'
-    }
+    const { data = {}, operate = {}, rowKey = 'id', scroll, listTableActions, columns, rowSelection = null, searchMsg, pagination, showPaginationTotal = true } = props
     if (this.props.showSizeChanger === false) {
       pagination.showSizeChanger = this.props.showSizeChanger
     }

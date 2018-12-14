@@ -123,7 +123,7 @@ export default function ({ successVal = 0, format = { errno: 'errno', errmsg: 'e
         return this[`${formName}Data`] = this.getErrData(4003004, `${formName} 的 Loading, Data, Form 未定义`)
       } else {
         let opt = Object.assign({}, this[`${formName}Form`])
-        delete opt.pageNum
+        delete opt.page
         delete opt.pageSize
         let reqUrl = url
         const requestBeforeFn = this[`${formName}RequestBeforeFn`]

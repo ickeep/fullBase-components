@@ -8,9 +8,19 @@ Object.keys(dfWhiteList).forEach(key => {
   dfWhiteList[key].push('style')
 })
 
-export default function ({ whiteList = dfWhiteList } = {}) {
+export default function ({
+                           whiteList = dfWhiteList,
+                           format = {
+                             page: 'page',
+                             pageSize: 'pageSize',
+                             currentPage: 'currentPage',
+                             count: 'count',
+                             totalPages: 'totalPages'
+                           }
+                         } = {}) {
   const fnDfWhiteList = whiteList
-  return function (target, { whiteList = fnDfWhiteList } = {}) {
+  const dfFormat = format
+  return function (target, { whiteList = fnDfWhiteList, format = dfFormat } = {}) {
     const xss = new XSS.FilterXSS({ whiteList })
     const validator = new Validator()
     target.prototype.xss = xss
@@ -100,7 +110,7 @@ export default function ({ whiteList = dfWhiteList } = {}) {
       let fieldArr = []
       if (typeof listFormConf === 'object') {
         if (page) {
-          fieldArr.push('pageNum', 'currentPage', 'pageSize')
+          fieldArr.push(format.page, format.currentPage, format.pageSize)
         }
         const { fields = [] } = listFormConf
         for (let i = 0; i < fields.length; i += 1) {
@@ -135,7 +145,7 @@ export default function ({ whiteList = dfWhiteList } = {}) {
       const listFormConf = this[`${formName}FormConf`]
       const { emptyValSetUrl = [] } = listFormConf || {};
       if (page) {
-        fieldArr.push('pageNum', 'currentPage', 'pageSize')
+        fieldArr.push(format.page, format.currentPage, format.pageSize)
       }
       if (sorter) {
         fieldArr.push('_sorterField', '_sorterVal')

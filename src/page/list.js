@@ -30,30 +30,6 @@ export default class StoreList extends Component {
     Store.getList({ formName: name })
   }
 
-  // componentDidCatch(error, errorInfo) {
-  //   console.log('componentDidCatch');
-  // }
-  //
-  // componentWillMount() {
-  //   console.log('componentWillMount');
-  // }
-  //
-  // componentWillUnmount() {
-  //   console.log('componentWillUnmount');
-  // }
-  //
-  // componentWillUpdate(nextProps, nextState, nextContext) {
-  //   console.log('componentWillUpdate');
-  // }
-  //
-  // componentDidMount() {
-  //   console.log('componentDidMount');
-  // }
-
-  // shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   console.log('shouldComponentUpdate');
-  // }
-
   UNSAFE_componentWillReceiveProps(nextProps) {
     const { location } = this.props
     const newLocation = nextProps.location
@@ -88,14 +64,14 @@ export default class StoreList extends Component {
   pageSizeChange = (cur, size) => {
     const { Store, name = 'list', location } = this.props
     Store.urlSetForm({ name, url: location.search })
-    Store.setForm({ name, valObj: { pageNum: cur, currentPage: cur, pageSize: size } })
+    Store.setForm({ name, valObj: { page: cur, currentPage: cur, pageSize: size } })
     const queryStr = `?${Store.getUrlParamsStr({ formName: name, page: true, sorter: true })}`
     this.routePush(queryStr)
   }
   pageChange = (page) => {
     const { Store, name = 'list', location } = this.props
     Store.urlSetForm({ name, url: location.search })
-    Store.setForm({ name, valObj: { pageNum: page, currentPage: page } })
+    Store.setForm({ name, valObj: { page: page, currentPage: page } })
     const queryStr = `?${Store.getUrlParamsStr({ formName: name, page: true, sorter: true })}`
     this.routePush(queryStr)
   }
@@ -164,12 +140,18 @@ export default class StoreList extends Component {
     const listTips = Store[`${name}Tips`]
     const breadcrumb = Store[`${name}Breadcrumb`]
     const tableProps = typeof tableFn === 'function' ? tableFn.call(Store, { user: Auth.user }) : Store[`${name}Table`] || {}
-    const sorter = { field: listForm._sorterField, val: listForm._sorterVal }
     const { ifExport = false, ifSearch = true, tabs, fields = [], tabField } = listFormConf
     const listPageFormBeforeNode = Store[`${name}PageFormBeforeNode`] || null
     const listPageFormAfterNode = Store[`${name}PageFormAfterNode`] || null
     const listPageTableBeforeNode = Store[`${name}PageTableBeforeNode`] || null
     const listPageTableAfterNode = Store[`${name}PageTableAfterNode`] || null
+    const pagination = {
+      current: listData.data.currentPage || 0,
+      total: listData.data.count || 0,
+      pageSize: listData.data.pageSize || 0,
+      showSizeChanger: true,
+      size: 'small'
+    }
     return (
       <div className="m-list">
         <div className="m-list-title">
@@ -208,14 +190,14 @@ export default class StoreList extends Component {
         {listPageTableBeforeNode}
         <Content errObj={listData} loading={loading}>
           <Table
-            sorter={sorter}
             loading={loading}
             operate={listOperate}
-            data={{ ...listData.data, pageSize: listForm.pageSize }}
+            data={listData.data}
             onPageSizeChange={this.pageSizeChange}
             onPageChange={this.pageChange}
             onSorter={this.sorter}
             listTableActions={listTableActions}
+            pagination={pagination}
             {...tableProps}
           />
         </Content>

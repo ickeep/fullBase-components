@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { TreeSelect } from 'antd'
 import PropTypes from "prop-types";
 
+// TODO treeData 不应该放在 render 中  待优化
 export default class SelectTree extends Component {
   static propTypes = {
     value: PropTypes.oneOfType([PropTypes.string, PropTypes.array]),
@@ -18,18 +19,21 @@ export default class SelectTree extends Component {
   }
   static defaultProps = {
     value: '',
-    sign: '¥ '
+    field: { key: 'id', value: 'id', label: 'name', children: 'child' },
+    treeData: [],
+    multiple: true,
+    onChange: () => ''
   }
 
   valToValText = {}
 
   handle(arr = []) {
-    const field = Object.assign({ key: 'id', value: 'id', label: 'name', children: 'child' }, this.props.field)
+    const field = Object.assign({ key: 'id', value: 'id', title: 'name', children: 'child' }, this.props.field)
     const newArr = []
 
     arr.forEach(item => {
       const newItem = {
-        label: item[field.label],
+        title: item[field.title],
         value: this.props.multiple ? (item[field.value] + '') : `${item[field.value]}-${item[field.label]}`,
         key: `${item[field.key]}-${item[field.label]}`
       }
@@ -45,7 +49,7 @@ export default class SelectTree extends Component {
   componentDidMount() {
     const treeData = this.handle(this.props.treeData)
     if (!this.props.multiple) {
-      this.treeData = [{ label: '请选择', value: '', key: '' }].concat(treeData)
+      this.treeData = [{ title: '请选择', value: '', key: '' }].concat(treeData)
     } else {
       this.treeData = treeData
     }
@@ -68,6 +72,7 @@ export default class SelectTree extends Component {
   }
 
   render() {
+    let treeData = this.handle(this.props.treeData)
     const multiple = this.props.multiple
     const oldValue = this.props.value || ''
     if (multiple) {
@@ -82,14 +87,15 @@ export default class SelectTree extends Component {
           allowClear={true}
           {...this.props}
           value={valueArr}
-          treeData={this.treeData}
+          treeData={treeData}
           onChange={this.change}
         />
       )
     } else {
+      treeData = [{ title: '请选择', value: '', key: '' }].concat(treeData)
       const value = this.valToValText[oldValue] ? this.valToValText[oldValue] : ''
       return (
-        <TreeSelect allowClear={true} {...this.props} value={value} treeData={this.treeData} onChange={this.change}/>)
+        <TreeSelect allowClear={true} {...this.props} value={value} treeData={treeData} onChange={this.change}/>)
     }
   }
 }
