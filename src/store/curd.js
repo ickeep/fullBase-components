@@ -1,10 +1,22 @@
 import { action } from 'mobx'
 
+const OrderMap = { ascend: 'ASC', descend: 'DESC', ASC: 'ascend', DESC: 'descend' }
 export default function ({ successVal = 0, format = { errno: 'errno', errmsg: 'errmsg', data: 'data' } } = {}) {
-  return function (target, { successVal = successVal, format = format } = {}) {
+  const dfFormat = format
+  const dfSuccessVal = successVal
+  return function (target, { successVal = dfSuccessVal, format = dfFormat } = {}) {
+    target.prototype.getSortOrder = function (field, formName = 'list') {
+      let order = ''
+      const listForm = this[`${formName}Form`]
+      const sorter = { field: listForm._sorterField, val: listForm._sorterVal }
+      if (sorter.field === field) {
+        order = OrderMap[sorter.val] || ''
+      }
+      return order
+    }
     target.prototype.httpReq = async function ({ formName = '', url, form = {}, dfType = 'GET' } = {}) {
-      const handleConf = this[`${formName}HandleConf`] || {}
-      const { httpType = dfType } = handleConf
+      const formConf = this[`${formName}FormConf`] || {}
+      const httpType = formConf.httpType ? formConf.httpType.toUpperCase() : dfType
       const httpFnMap = {
         GET: this.httpGet,
         POST: this.httpPost,

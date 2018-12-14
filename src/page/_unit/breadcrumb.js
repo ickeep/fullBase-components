@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Breadcrumb } from 'antd'
-import Link from '../../../components/_unit/link'
-import Svg from "../../_unit/svg";
+import Link from '../../display/link'
+import Svg from '../../display/svg'
 
 export default class ReBreadcrumb extends Component {
   render() {

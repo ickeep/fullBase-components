@@ -1,0 +1,48 @@
+@import '../../node_modules/antd/lib/style/themes/default';
+.m-list-paging {
+  .ant-pagination-options {
+    .ant-pagination-options-quick-jumper {
+      margin-left: @padding-md/2;
+    }
+  }
+}
+
+.m-list-operate {
+  > a, > button {
+    margin-left: @padding-md/2;
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}
+
+.m-list-table {
+  position: relative;
+}
+
+.u-page-tips {
+  margin-bottom: @padding-md;
+}
+
+.u-table-row-selection-btn {
+  position: absolute;
+  right: 0;
+  top: -8px;
+  button {
+    margin-right: 8px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
+
+.m-list-title {
+  display: block;
+  position: relative;
+
+  .link {
+    position: absolute;
+    top: 0;
+    right: 16px
+  }
+}
