@@ -13,14 +13,14 @@ export default class SelectTree extends Component {
       name: PropTypes.string,
       child: PropTypes.string
     }),
-    treeData: PropTypes.array,
+    data: PropTypes.array,
     multiple: PropTypes.bool,
     onChange: PropTypes.func,
   }
   static defaultProps = {
     value: '',
     field: { key: 'id', value: 'id', label: 'name', children: 'child' },
-    treeData: [],
+    data: [],
     multiple: true,
     onChange: () => ''
   }
@@ -47,12 +47,12 @@ export default class SelectTree extends Component {
   }
 
   componentDidMount() {
-    const treeData = this.handle(this.props.treeData)
-    if (!this.props.multiple) {
-      this.treeData = [{ title: '请选择', value: '', key: '' }].concat(treeData)
-    } else {
-      this.treeData = treeData
-    }
+    // const treeData = this.handle(this.props.data)
+    // if (!this.props.multiple) {
+    //   this.treeData = [{ title: '请选择', value: '', key: '' }].concat(treeData)
+    // } else {
+    //   this.treeData = treeData
+    // }
   }
 
   change = (val) => {
@@ -72,7 +72,8 @@ export default class SelectTree extends Component {
   }
 
   render() {
-    let treeData = this.handle(this.props.treeData)
+    console.log(this.props);
+    let treeData = this.handle(this.props.data)
     const multiple = this.props.multiple
     const oldValue = this.props.value || ''
     if (multiple) {

@@ -24,10 +24,12 @@ export default function ({
                              totalPages: 'totalPages'
                            },
                            authVal = 401100,
+                           itemMap
                          } = {}) {
   const dfSuccessVal = successVal
   const dfAuthVal = authVal
   const dfFormat = format
+  const dfIemMap = itemMap
   const Content = ContentFn({ successVal, format, authVal })
 
   @withRouter @inject('UI', 'Auth') @observer
@@ -148,7 +150,7 @@ export default function ({
     }
 
     render() {
-      const { Store, name = 'list', Auth, title = '列表页' } = this.props
+      const { Store, name = 'list', Auth, title = '列表页', itemMap = dfIemMap } = this.props
       const listAddConf = Store[`${name}AddConf`] || []
       const { Table = ListTable } = Store
       const listFormConf = Store[`${name}FormConf`] || {}
@@ -176,6 +178,13 @@ export default function ({
         showSizeChanger: true,
         size: 'small'
       }
+      const errObj = {}
+      errObj[dfFormat.errno] = listData[dfFormat.errno]
+      errObj[dfFormat.errmsg] = listData[dfFormat.errmsg]
+      const editFormProps = { data: dict, conf: { layout: 'inline' }, fields, values: listForm, loading }
+      if (itemMap) {
+        editFormProps.itemMap = itemMap
+      }
       return (
         <div className="m-list">
           <div className="m-list-title">
@@ -190,19 +199,12 @@ export default function ({
             {tabs.map((item) => <Tabs.TabPane tab={item.name} key={item.value + ''}/>)}
           </Tabs>
           }
-          <EditForm
-            data={dict}
-            conf={{ layout: 'inline' }}
-            fields={fields}
-            values={listForm}
-            onChange={this.formChange}
-            onSubmit={this.submit}
-            loading={loading}
-          >
+          <EditForm {...editFormProps} onChange={this.formChange} onSubmit={this.submit}>
             {ifSearch &&
             <Button htmlType="submit" type="primary" icon={loading ? '' : 'search'} loading={loading}>查询</Button>}
             {ifExport &&
-            <Button loading={exportLoading} type="primary" ghost icon={exportLoading ? '' : 'download'}
+            <Button htmlType="button" loading={exportLoading} type="primary" ghost
+                    icon={exportLoading ? '' : 'download'}
                     style={{ marginLeft: '10px' }}
                     onClick={this.exportList}>
               导出
@@ -212,7 +214,9 @@ export default function ({
           {listPageFormAfterNode}
           {(ifSearch || ifExport) && <Divider/>}
           {listPageTableBeforeNode}
-          <Content errObj={listData} loading={loading}>
+          {errObj[dfFormat.errno] === '' || errObj[dfFormat.errno] !== dfSuccessVal ?
+            <Content errObj={errObj} loading={loading}/>
+            :
             <Table
               loading={loading}
               operate={listOperate}
@@ -224,7 +228,7 @@ export default function ({
               pagination={pagination}
               {...tableProps}
             />
-          </Content>
+          }
           {listPageTableAfterNode}
           {this.getListBatchOperationsRender(listBatchOperations)}
         </div>

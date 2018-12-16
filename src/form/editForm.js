@@ -15,7 +15,8 @@ export default class EditForm extends Component {
     conf: PropTypes.object,
     data: PropTypes.object,
     onChange: PropTypes.func,
-    onSubmit: PropTypes.func
+    onSubmit: PropTypes.func,
+    itemMap: PropTypes.object
   }
   static defaultProps = {
     loading: false,
@@ -66,10 +67,14 @@ export default class EditForm extends Component {
   }
 
   render() {
-    const { values, errs, conf, data, loading, inlineChild = false, children } = this.props
+    const { values, errs, conf, data, loading, inlineChild = false, children, itemMap, onChange } = this.props
     this.getRowArr();
     conf.layout = conf.layout || 'horizontal'
     const { rowArr, lengthMap } = this.getRowArr()
+    const itemProps = { values, data, loading }
+    if (itemMap) {
+      itemProps.itemMap = itemMap
+    }
     return (
       <Form className="m-edit-form" {...conf} onSubmit={this.submit}>
         {rowArr.map((row, index) => (
@@ -83,7 +88,7 @@ export default class EditForm extends Component {
                   required={item.rules && item.rules.indexOf('required') >= 0}
                   colon={item.hasOwnProperty('colon') ? item.colon : true}
                 >
-                  <ItemType conf={item} values={values} data={data} onChange={this.props.onChange} loading={loading}/>
+                  <ItemType conf={item} {...itemProps} onChange={onChange}/>
                 </FormItem>
               </Col>
             ))}
