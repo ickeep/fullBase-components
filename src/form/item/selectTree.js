@@ -72,7 +72,6 @@ export default class SelectTree extends Component {
   }
 
   render() {
-    console.log(this.props);
     let treeData = this.handle(this.props.data)
     const multiple = this.props.multiple
     const oldValue = this.props.value || ''

@@ -27,7 +27,7 @@ export default class ItemType extends Component {
   }
 
   render() {
-    const { values, conf = {}, data, loading, itemMap } = this.props
+    const { values, conf = {}, data, loading, itemMap, onChange } = this.props
     const { field, props = {} } = conf
     const value = values[field]
     const itemData = data[conf.data]
@@ -36,13 +36,13 @@ export default class ItemType extends Component {
     if (!Render) {
       return null
     }
-    let newProps = { value, onChange: (val) => this.change(val, field) }
+    let newProps = { value }
     if (itemData) {
       newProps.data = itemData
     }
     if (!Render.prototype.isReactComponent) {
-      newProps = { ...newProps, conf, loading, values, dict: data }
+      newProps = { ...newProps, conf, field, onChange, loading, values, dict: data }
     }
-    return <Render {...newProps} {...props}/>
+    return <Render {...newProps} {...props} onChange={(val) => this.change(val, field)}/>
   }
 }
