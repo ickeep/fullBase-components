@@ -1,0 +1,27 @@
+@import "../../../theme";
+
+.m-list-table-fixed {
+  overflow: hidden;
+  &.z-fixed {
+    position: fixed;
+    top: @layout-header-height;
+    border-top: 1px solid @border-color-base;
+    border-left: 1px solid @border-color-base;
+    border-right: 1px solid @border-color-base;
+    .m-list-table-fixed-content {
+      margin: -1px -1px 0  -1px;
+    }
+    .ant-table {
+      border-bottom: none;
+    }
+    .ant-table-content {
+      border-right: none;
+    }
+  }
+  & .ant-table-title {
+    display: none;
+  }
+  & .ant-table-title + .ant-table-content {
+    display: none;
+  }
+}

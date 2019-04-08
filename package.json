@@ -21,11 +21,23 @@
     "predeploy": "cd example && yarn install && yarn run build",
     "deploy": "gh-pages -d example/build"
   },
-  "dependencies": {},
   "peerDependencies": {
+    "@types/lodash": "^4.14.123",
+    "@types/node": "^10.12.18",
+    "@types/react": "16.8.8",
+    "@types/react-dom": "^16.0.11",
+    "@types/react-loadable": "^5.5.0",
+    "@types/react-router-dom": "^4.3.1",
+    "antd": "^3.16.2",
+    "axios": "^0.18.0",
+    "lodash": "^4.17.11",
+    "mobx": "^5.9.4",
+    "mobx-react": "^5.4.3",
     "prop-types": "^15.5.4",
     "react": "^15.0.0 || ^16.0.0",
-    "react-dom": "^15.0.0 || ^16.0.0"
+    "react-dom": "^15.0.0 || ^16.0.0",
+    "react-loadable": "^5.5.0",
+    "xss": "^1.0.6"
   },
   "devDependencies": {
     "@svgr/rollup": "^2.4.1",
@@ -47,7 +59,7 @@
     "rollup-plugin-postcss": "^1.6.2",
     "rollup-plugin-typescript2": "^0.17.0",
     "rollup-plugin-url": "^1.4.0",
-    "typescript": "^2.8.3"
+    "typescript": "^3.4.2"
   },
   "files": [
     "dist"
