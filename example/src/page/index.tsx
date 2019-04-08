@@ -8,7 +8,8 @@ class App extends Component {
     render() {
         return (
             <div>
-                <Link href="/login">login</Link>
+                {/*<Link href="/login">login</Link>*/}
+                <Svg src="404"/>
             </div>
         )
     }
