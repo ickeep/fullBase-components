@@ -1,0 +1,68 @@
+const { addBabelPlugins, override, addLessLoader } = require('customize-cra')
+const path = require('path');
+const webpack = require('webpack');
+const fs = require('fs')
+const lessToJs = require('less-vars-to-js');
+const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './src/theme.less'), 'utf8'));
+
+function changeConfig(config) {
+  // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+  // config.plugins.push(new BundleAnalyzerPlugin())
+
+  config.resolve.alias['@ant-design/icons/lib/dist$'] = path.resolve(__dirname, 'src/assets/antdIcon.ts')
+  config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),)
+  config.optimization.splitChunks =
+    {
+      chunks: "all",
+      minSize: 20000,
+      minChunks: 1,
+      maxAsyncRequests: 8,
+      maxInitialRequests: 8,
+      name: true,
+      cacheGroups: {
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
+          name: 'react',
+          chunks: 'all', // all, async, and initial
+        },
+        antd: {
+          test: /[\\/]node_modules[\\/](antd|@ant-design)[\\/]/,
+          name: 'antd',
+          chunks: 'initial', // all, async, and initial
+        },
+        plugin: {
+          test: /[\\/]node_modules[\\/](axios|mobx|mobx-react|store|xss)[\\/]/,
+          name: 'plugin',
+          chunks: 'initial', // all, async, and initial
+        },
+        vendor: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          priority: -10,
+          chunks: 'initial', // all, async, and initial
+        }
+      }
+    }
+  // config.module.rules[2].oneOf[9].exclude.push(/ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+  //   /ckeditor5-[^/\\]+[/\\]theme[/\\].+\.css/,)
+  // config.module.rules[2].oneOf.push(
+  //   {
+  //     test: /ckeditor5-[^/\\]+[/\\]theme[/\\]icons[/\\][^/\\]+\.svg$/,
+  //     use: ["raw-loader"],
+  //   }
+  // )
+  return config
+}
+
+module.exports = override(
+  ...addBabelPlugins(
+    ['import', { libraryName: 'antd', libraryDirectory: 'es', style: true }]
+  ),
+  addLessLoader({
+    // strictMath: true,
+    // noIeCompat: true,
+    javascriptEnabled: true,
+    modifyVars: themeVariables,
+  }),
+  changeConfig
+)

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom'
 import { observer, inject } from 'mobx-react'
 import { Spin } from 'antd'
-import { IAuth } from '../../store/auth'
+import { IAuth } from '../store/auth'
 
 interface IProps {
   code?: number | string,
