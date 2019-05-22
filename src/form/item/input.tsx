@@ -1,28 +1,11 @@
-import React, { Component, ReactNode, FocusEventHandler } from 'react'
+import React, { Component } from 'react'
 import { Input } from 'antd'
 import Svg from '../../display/svg'
-import InputProps from 'antd/lib/input/index'
+import { InputProps } from 'antd/lib/input/Input'
 
 export interface IProps extends InputProps {
   icon?: string,
-  placeholder?: string,
-  autoComplete?: string,
-  onChange?: Function,
-  type?: string,
-  id?: string,
-  size?: "small" | "default" | "large",
-  maxLength?: number,
-  disabled?: boolean,
-  value?: any,
-  defaultValue?: any,
-  className?: string,
-  children?: ReactNode,
-  onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>,
-  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>,
-  onFocus?: FocusEventHandler<HTMLInputElement>,
-  onBlur?: FocusEventHandler<HTMLInputElement>,
-  addonAfter?: ReactNode,
-  prefixCls?: string;
+  onChange?: any,
 }
 
 export default class ReInput extends Component<IProps> {

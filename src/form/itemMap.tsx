@@ -1,4 +1,3 @@
-import React from 'react'
 import Input from './item/input'
 import { InputNumber } from 'antd'
 import Checkbox from './item/checkbox'

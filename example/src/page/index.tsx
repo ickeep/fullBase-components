@@ -7,15 +7,18 @@ import { Link } from 'react-router-dom'
 
 class App extends Component {
   render() {
+    // @ts-ignore
     return (
       <div>
         {/*<Link href="/login">login</Link>*/}
         <Link to='login'>登录</Link>
         <Svg src="404"/>
-        <Captcha value='123' />
+
+        <Captcha/>
       </div>
     )
   }
+
 }
 
 export default App
