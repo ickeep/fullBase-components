@@ -4,6 +4,7 @@ import { Provider } from 'mobx-react'
 import { LocaleProvider } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import routes from './route'
+import './less/index.less'
 
 /*<Provider Auth={Auth} UI={UI}>*/
 

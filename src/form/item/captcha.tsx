@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import Input, { IProps as IInputProps } from './input'
 
-import './captcha.less'
-
 interface IProps extends IInputProps {
   isActive?: boolean,
   onGetCode?: Function,

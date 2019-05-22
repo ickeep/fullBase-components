@@ -13,7 +13,7 @@
     "@types/react-loadable": "^5.5.0",
     "@types/react-router-dom": "^4.3.1",
     "@types/store": "^2.0.1",
-    "antd": "3.13.3",
+    "antd": "^3.18.2",
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
     "mobx": "^5.8.0",

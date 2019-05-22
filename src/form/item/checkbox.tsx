@@ -2,7 +2,6 @@ import React, { Component, ReactText } from 'react'
 import { Checkbox } from 'antd'
 
 const CheckboxGroup = Checkbox.Group
-import CheckboxGroupProps from 'antd/lib/checkbox/Group'
 // data 支持
 // data = ['a', 'b'] => [{label:'a',value:0}]
 // data = { 1: 'name1', 2: 'name2' }
@@ -10,7 +9,7 @@ import CheckboxGroupProps from 'antd/lib/checkbox/Group'
 // data = { 1: { id: 1, name: 'name1' }, 2: { id: 2, name: 'name2' } } // valKey = 'id' labelKey = 'name'
 // data = [{ id: 1, name: 'name1' }, { id: 2, name: 'name2' }] // valKey = 'id' labelKey = 'name'
 interface IProps {
-  value: string | string[],
+  value?: string | string[],
   data?: Object | Array<any>,
   labelKey?: string,
   valKey?: string,
@@ -18,7 +17,10 @@ interface IProps {
   onChange?: Function,
 }
 
-export default class ReCheckbox extends Component<IProps & CheckboxGroupProps> {
+export default class ReCheckbox extends Component<IProps> {
+  static defaultProps = {
+    value: ''
+  }
 
   change = (val: Array<any>) => {
     const { onChange, split, value } = this.props
@@ -26,7 +28,7 @@ export default class ReCheckbox extends Component<IProps & CheckboxGroupProps> {
   }
 
   render() {
-    const { labelKey = 'label', valKey = 'value', data, split = '/', value } = this.props
+    const { labelKey = 'label', valKey = 'value', data, split = '/', value, ...args } = this.props
 
     let checkData: Array<{ label: ReactText, value: ReactText }> = []
     if (data instanceof Array) {
@@ -46,8 +48,8 @@ export default class ReCheckbox extends Component<IProps & CheckboxGroupProps> {
       })
     }
     const optArr = checkData.length > 0 ? checkData : undefined
-    let val: Array<string> = typeof value === 'string' ? value.split(split) : value
+    let val: Array<string> = (typeof value === 'string' ? value.split(split) : value) || []
 
-    return <CheckboxGroup {...this.props} options={optArr} value={val} onChange={this.change}/>
+    return <CheckboxGroup {...args} options={optArr} value={val} onChange={this.change}/>
   }
 }

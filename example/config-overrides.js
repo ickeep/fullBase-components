@@ -11,6 +11,7 @@ function changeConfig(config) {
 
   config.resolve.alias['@ant-design/icons/lib/dist$'] = path.resolve(__dirname, 'src/assets/antdIcon.ts')
   config.resolve.alias['react-router-dom'] = path.resolve(__dirname, 'node_modules/react-router-dom')
+  config.resolve.alias['antd'] = path.resolve(__dirname, 'node_modules/antd')
   config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),)
   config.optimization.splitChunks =
     {

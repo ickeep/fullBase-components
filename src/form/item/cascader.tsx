@@ -3,9 +3,9 @@ import { toJS } from 'mobx'
 import { Cascader } from 'antd'
 
 interface IProps {
-  value: string | string[],
+  value?: string | string[],
   valIsArr?: boolean,
-  data: Array<any>,
+  data?: Array<any>,
   split?: string,
   changeOnSelect?: boolean,
   onChange?: Function
