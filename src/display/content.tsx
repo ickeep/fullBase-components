@@ -3,6 +3,9 @@ import { withRouter, Redirect, RouteComponentProps } from 'react-router-dom'
 import { observer, inject } from 'mobx-react'
 import { Spin } from 'antd'
 import { IAuth } from '../store/auth'
+import Conf from '../config'
+
+const { codeSuccess } = Conf
 
 interface IProps {
   code?: number | string,
@@ -15,7 +18,7 @@ interface IProps {
 class Content extends Component<IProps & RouteComponentProps> {
   render() {
     const errArr = []
-    const { code = 0, msg = '', loading = false, children = null, Auth, location: { pathname, search } } = this.props
+    const { code = codeSuccess, msg = '', loading = false, children = null, Auth, location: { pathname, search } } = this.props
     if (typeof msg === 'object') {
       Object.keys(msg).forEach((key) => {
         errArr.push(msg[key])
@@ -23,7 +26,7 @@ class Content extends Component<IProps & RouteComponentProps> {
     } else {
       errArr.push(msg)
     }
-    if (!loading && code === 401) {
+    if (!loading && code === codeSuccess) {
       if (process.browser && Auth && Auth.setUser) {
         Auth.setReferrer(pathname + search)
         setTimeout(() => {

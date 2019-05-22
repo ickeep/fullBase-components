@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { Provider } from 'mobx-react'
+
 import {
   Svg,
   Captcha,
@@ -12,14 +14,12 @@ import {
   Select,
   SelectTree,
   TextArea,
-  Tree
+  Tree,
+  Content
 } from 'fullbase-components'
-
-/*<Provider Auth={Auth} UI={UI}>*/
 
 class App extends Component {
   render() {
-    // @ts-ignore
     return (
       <div>
         <Link href='/login'>登录</Link>
@@ -35,6 +35,7 @@ class App extends Component {
         <SelectTree/>
         <TextArea/>
         <Tree data={[{ id: 1, title: '1111' }]}/>
+        <Content loading={true}/>
       </div>
     )
   }
