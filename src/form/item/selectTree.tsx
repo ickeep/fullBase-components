@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { TreeSelect } from 'antd'
 import { TreeSelectProps } from 'antd/lib/tree-select'
-import './selectTree.less'
 
 const TreeNode = TreeSelect.TreeNode;
 
@@ -62,7 +61,7 @@ export default class SelectTree extends Component<IProps> {
   }
 }
 const childTree = function ({ data = [], valKey = 'id', labelKey = 'title', childKey = 'child', isValToStr }: any = {}) {
-  return data.map ? data.map((item: any, index: number) => {
+  return data.map ? data.map((item: any) => {
     const title = item[labelKey]
     const value = isValToStr ? item[valKey] + '' : item[valKey]
     const child = item[childKey]

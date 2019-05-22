@@ -20,7 +20,7 @@ interface IProps extends TreeProps {
 }
 
 
-export default class  extends Component<IProps> {
+export default class extends Component<IProps> {
   haveChild: Function
   check: any
 
@@ -85,7 +85,7 @@ export default class  extends Component<IProps> {
 }
 
 const childTree = function ({ data = [], valKey = 'id', labelKey = 'title', childKey = 'child' }: IProps = {}) {
-  return data.map ? data.map((item, index) =>
+  return data.map ? data.map((item) =>
     <TreeNode title={item[labelKey]} key={item[valKey]}>
       {item[childKey] && item[childKey].length > 0 && childTree({ data: item[childKey], valKey, labelKey, childKey })}
     </TreeNode>) : null

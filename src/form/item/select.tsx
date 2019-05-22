@@ -6,7 +6,7 @@ import { SelectProps } from 'antd/lib/select'
 const Option = Select.Option
 
 interface IProps extends SelectProps<any> {
-  value: string | string[] | number | number[]
+  value?: string | string[] | number | number[]
   data?: Object | Array<any>,
   isNull?: boolean,
   vToString?: boolean,
@@ -27,6 +27,9 @@ interface IProps extends SelectProps<any> {
 // data = [{ id: 1, name: 'name1' }, { id: 2, name: 'name2' }] // valKey = 'id' labelKey = 'name'
 @observer
 export default class extends Component<IProps> {
+  static defaultProps = {
+    value: ''
+  }
   change = (val: any) => {
     const { onChange, value, splitKey = ',', mode } = this.props
     if (onChange) {
