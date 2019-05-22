@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Provider } from 'mobx-react'
 import { LocaleProvider } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
-import { Link, Svg } from 'fullbase-components'
 import routes from './route'
 
 /*<Provider Auth={Auth} UI={UI}>*/
