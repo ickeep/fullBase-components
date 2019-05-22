@@ -11,7 +11,8 @@ import {
   RangeDate,
   Select,
   SelectTree,
-  TextArea
+  TextArea,
+  Tree
 } from 'fullbase-components'
 
 /*<Provider Auth={Auth} UI={UI}>*/
@@ -33,6 +34,7 @@ class App extends Component {
         <Select data={{ 1: 'name1', 2: 'name2' }}/>
         <SelectTree/>
         <TextArea/>
+        <Tree data={[{ id: 1, title: '1111' }]}/>
       </div>
     )
   }
