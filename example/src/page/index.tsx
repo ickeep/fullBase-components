@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Svg, Captcha, Link, Cascader, Checkbox, ImgCaptcha, Input } from 'fullbase-components'
+import { Svg, Captcha, Link, Cascader, Checkbox, ImgCaptcha, Input, Radio } from 'fullbase-components'
 
 /*<Provider Auth={Auth} UI={UI}>*/
 
@@ -15,6 +15,7 @@ class App extends Component {
         <Cascader/>
         <ImgCaptcha/>
         <Input/>
+        <Radio data={{ 1: '111111', 2: '2222222' }}/>
       </div>
     )
   }

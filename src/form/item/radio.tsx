@@ -7,7 +7,7 @@ const OptionComponents = {
 }
 
 interface IProps {
-  value: string | number,
+  value?: string | number,
   isAll?: boolean,
   data?: Object | Array<any>,
   type?: string,
@@ -22,6 +22,9 @@ interface IProps {
 // data = { 1: { id: 1, name: 'name1' }, 2: { id: 2, name: 'name2' } } // valKey = 'id' labelKey = 'name'
 // data = [{ id: 1, name: 'name1' }, { id: 2, name: 'name2' }] // valKey = 'id' labelKey = 'name'
 export default class ReRadio extends Component<IProps> {
+  static defaultProps = {
+    value: ''
+  }
 
   render() {
     const { value, data = [], isAll = false, onChange = () => '', type = 'radio', valKey = 'id', labelKey = 'name' } = this.props
