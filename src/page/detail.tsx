@@ -7,11 +7,11 @@ import DetailGrid from './_unit/detailGrid'
 import ActionBtn from './_unit/actionsBtn'
 import PageTips from './_unit/pageTips'
 import Breadcrumb from './_unit/breadcrumb'
-import { IAuth } from "../../store/auth";
-import UI, { IUI } from "../../store/ui";
-import '../../example/src/less/page/detail.less'
+import { IAuth } from "../store/auth";
+import UI, { IUI } from "../store/ui";
+import Conf from "../config";
 
-interface IProps extends RouteComponentProps {
+export interface IProps extends RouteComponentProps {
   Store: any,
   PageUI?: any,
   name?: string,
@@ -19,176 +19,178 @@ interface IProps extends RouteComponentProps {
   UI?: IUI
 }
 
-export default function ({
-                           successErrno = 0,
-                           validatedErrno = 403001,
-                           mobileWidth = 768,
-                           format = {
-                             errno: 'errno',
-                             errmsg: 'errmsg',
-                             data: 'data',
-                             page: 'page',
-                             pageSize: 'pageSize',
-                             currentPage: 'currentPage',
-                             count: 'count',
-                             totalPages: 'totalPages'
-                           },
-                           authErrno = 401100,
-                           itemMap
-                         }: { [key: string]: any } = {}) {
-  const dfSuccessErrno = successErrno
-  const dfValidatedErrno = validatedErrno
-  const dfAuthErrno = authErrno
-  const dfMobileWidth = mobileWidth
-  const dfFormat = format
-  const dfIemMap = itemMap
+// export default function ({
+//                            successErrno = 0,
+//                            validatedErrno = 403001,
+//                            mobileWidth = 768,
+//                            format = {
+//                              errno: 'errno',
+//                              errmsg: 'errmsg',
+//                              data: 'data',
+//                              page: 'page',
+//                              pageSize: 'pageSize',
+//                              currentPage: 'currentPage',
+//                              count: 'count',
+//                              totalPages: 'totalPages'
+//                            },
+//                            authErrno = 401100,
+//                            itemMap
+//                          }: { [key: string]: any } = {}) {
+//   const dfSuccessErrno = successErrno
+//   const dfValidatedErrno = validatedErrno
+//   const dfAuthErrno = authErrno
+//   const dfMobileWidth = mobileWidth
+//   const dfFormat = format
+//   const dfIemMap = itemMap
+const { codeSuccess, apiFormat } = Conf
 
-  @inject('UI', 'Auth') @observer
-  class Detail extends Component<IProps> {
-    setTitle() {
-      const { UI, Store, name = 'detail' } = this.props
-      const ShowConf = Store[`${name}ShowConf`] || {}
-      UI && UI.setPageTitle(ShowConf.pageTitle || '详情页')
-    }
+@inject('UI', 'Auth') @observer
+class Detail extends Component<IProps> {
+  setTitle() {
+    const { UI, Store, name = 'detail' } = this.props
+    const ShowConf = Store[`${name}ShowConf`] || {}
+    UI && UI.setPageTitle(ShowConf.pageTitle || '详情页')
+  }
 
-    constructor(props: IProps) {
-      super(props)
-      this.fetchData()
+  constructor(props: IProps) {
+    super(props)
+    this.fetchData()
+    this.setTitle()
+  }
+
+  async fetchData() {
+    const { Store, name = 'detail', location, Auth } = this.props
+    location.search && Store.urlSetForm({ name, url: location.search })
+    const initDataFn = Store[`${name}InitData`]
+    typeof initDataFn === 'function' && initDataFn.call(Store, { location, Auth })
+    Store.getDetail({ formName: name })
+  }
+
+  UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+    const { location } = this.props
+    const newLocation = nextProps.location
+    if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+      setTimeout(() => this.fetchData())
       this.setTitle()
     }
+  }
 
-    async fetchData() {
-      const { Store, name = 'detail', location, Auth } = this.props
-      location.search && Store.urlSetForm({ name, url: location.search })
-      const initDataFn = Store[`${name}InitData`]
-      typeof initDataFn === 'function' && initDataFn.call(Store, { location, Auth })
-      Store.getDetail({ formName: name })
+  componentWillUnmount() {
+    const { Store, name = 'detail', location } = this.props;
+    const LeaveDataFn = Store[`${name}LeaveData`];
+    typeof LeaveDataFn === 'function' && LeaveDataFn.call(Store, { location });
+  }
+
+  render() {
+    const { Store, name = 'detail', history, location, PageUI, UI: { layout: { clientWidth }, mobileWidth } = UI, Auth } = this.props
+    const detailData = Store[`${name}Data`]
+    if (!detailData) {
+      return (<Content code={403003} msg={`Store 的 ${name}Data 未定义`}/>)
     }
-
-    UNSAFE_componentWillReceiveProps(nextProps: IProps) {
-      const { location } = this.props
-      const newLocation = nextProps.location
-      if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
-        setTimeout(() => this.fetchData())
-        this.setTitle()
-      }
+    const loading = Store[`${name}Loading`]
+    if (typeof loading === 'undefined') {
+      return (<Content code={403003} msg={`Store 的 ${name}Loading 未定义`}/>)
     }
+    const breadcrumb = Store[`${name}Breadcrumb`]
+    const detailShowConfFn = Store[`${name}ShowConfFn`]
+    const detailTips = Store[`${name}Tips`]
+    const detailOperate = Store[`${name}Operate`] || {}
+    const DetailOperateUI = detailOperate.UI
 
-    componentWillUnmount() {
-      const { Store, name = 'detail', location } = this.props;
-      const LeaveDataFn = Store[`${name}LeaveData`];
-      typeof LeaveDataFn === 'function' && LeaveDataFn.call(Store, { location });
+    const detailShowConf = typeof detailShowConfFn === 'function' ? detailShowConfFn.call(Store, {
+      UI,
+      Auth,
+      history,
+      location,
+    }) : Store[`${name}ShowConf`] || {}
+
+    const title = detailShowConf.pageTitle || '详情页'
+    const data = detailData[apiFormat.data] || {}
+    const errno = detailData[apiFormat.code]
+    const errMsg = detailData[apiFormat.msg]
+    const btnConf = Store[`${name}BtnConf`] || {}
+    const { isEdit = true, isBack = true, actions = [], editBtnName = '修改' } = btnConf
+    const editBtn = []
+    if (isEdit) {
+      const { pathname, search } = location
+      editBtn.push({
+        onClick: () => history.push(pathname.replace(/\/detail$/, '/edit') + search),
+        htmlType: "button",
+        type: "primary",
+        children: editBtnName
+      })
     }
-
-    render() {
-      const { Store, name = 'detail', history, location, PageUI, UI: { layout: { clientWidth } } = UI, Auth } = this.props
-      const detailData = Store[`${name}Data`]
-      if (!detailData) {
-        return (<Content code={403003} msg={`Store 的 ${name}Data 未定义`}/>)
-      }
-      const loading = Store[`${name}Loading`]
-      if (typeof loading === 'undefined') {
-        return (<Content code={403003} msg={`Store 的 ${name}Loading 未定义`}/>)
-      }
-      const breadcrumb = Store[`${name}Breadcrumb`]
-      const detailShowConfFn = Store[`${name}ShowConfFn`]
-      const detailTips = Store[`${name}Tips`]
-      const detailOperate = Store[`${name}Operate`] || {}
-      const DetailOperateUI = detailOperate.UI
-
-      const detailShowConf = typeof detailShowConfFn === 'function' ? detailShowConfFn.call(Store, {
-        UI,
-        Auth,
-        history,
-        location,
-      }) : Store[`${name}ShowConf`] || {}
-
-      const title = detailShowConf.pageTitle || '详情页'
-      const data = detailData[dfFormat.data] || {}
-      const errno = detailData[dfFormat.errno]
-      const errMsg = detailData[dfFormat.errmsg]
-      const btnConf = Store[`${name}BtnConf`] || {}
-      const { isEdit = true, isBack = true, actions = [], editBtnName = '修改' } = btnConf
-      const editBtn = []
-      if (isEdit) {
-        const { pathname, search } = location
-        editBtn.push({
-          onClick: () => history.push(pathname.replace(/\/detail$/, '/edit') + search),
-          htmlType: "button",
-          type: "primary",
-          children: editBtnName
-        })
-      }
-      const BtnActions = actions.concat(editBtn)
-      const isMobile = clientWidth < dfMobileWidth
-      return (
-        <Content code={errno} msg={errMsg} loading={loading}>
-          <div className="content m-detail">
-            <div className="m-add-title">
-              <Breadcrumb data={breadcrumb} dfTitle={title && title.split('-') && title.split('-')[0]}/>
-            </div>
-            <Divider/>
-            {detailTips && <PageTips {...detailTips}/>}
-            {errno === dfSuccessErrno &&
-            <DetailContent isMobile={isMobile} Store={Store} data={data} PageUI={PageUI}
-                           detailShowConf={detailShowConf}/>}
-            <ActionBtn isBack={isBack} actions={BtnActions}/>
+    const BtnActions = actions.concat(editBtn)
+    const isMobile = clientWidth < mobileWidth
+    return (
+      <Content code={errno} msg={errMsg} loading={loading}>
+        <div className="content m-detail">
+          <div className="m-add-title">
+            <Breadcrumb data={breadcrumb} dfTitle={title && title.split('-') && title.split('-')[0]}/>
           </div>
-          {DetailOperateUI && <DetailOperateUI {...detailOperate.props} Store={Store}/>}
-        </Content>
-      )
-    }
+          <Divider/>
+          {detailTips && <PageTips {...detailTips}/>}
+          {errno === codeSuccess &&
+          <DetailContent isMobile={isMobile} Store={Store} data={data} PageUI={PageUI}
+                         detailShowConf={detailShowConf}/>}
+          <ActionBtn isBack={isBack} actions={BtnActions}/>
+        </div>
+        {DetailOperateUI && <DetailOperateUI {...detailOperate.props} Store={Store}/>}
+      </Content>
+    )
   }
+}
 
 
-  @observer
-  class DetailContent extends Component<{ isMobile: boolean, Store: any, PageUI?: any, detailShowConf: { [key: string]: any }, data: any }> {
-    render() {
-      const { Store, PageUI, detailShowConf, data, isMobile } = this.props
-      const { type = 'grid', blocks = [], fields } = detailShowConf
-      if (PageUI) {
-        return <PageUI Store={Store} data={data}/>
-      } else {
-        if (type === 'grid') {
-          return (
-            <DetailGrid isMobile={isMobile} data={data} fields={fields} Store={Store}/>
-          )
-        }
-        if (type === 'blocks') {
-          return (<Blocks isMobile={isMobile} blocks={blocks} data={data} Store={Store}/>)
-        }
+@observer
+class DetailContent extends Component<{ isMobile: boolean, Store: any, PageUI?: any, detailShowConf: { [key: string]: any }, data: any }> {
+  render() {
+    const { Store, PageUI, detailShowConf, data, isMobile } = this.props
+    const { type = 'grid', blocks = [], fields } = detailShowConf
+    if (PageUI) {
+      return <PageUI Store={Store} data={data}/>
+    } else {
+      if (type === 'grid') {
+        return (
+          <DetailGrid isMobile={isMobile} data={data} fields={fields} Store={Store}/>
+        )
+      }
+      if (type === 'blocks') {
+        return (<Blocks isMobile={isMobile} blocks={blocks} data={data} Store={Store}/>)
       }
     }
+    return null
   }
-
-  @inject('Auth', 'UI') @observer
-  class Blocks extends Component<{ isMobile: boolean, data: any, Store: any, Auth?: IAuth, UI?: IUI, blocks: any[] }> {
-    render() {
-      const { isMobile, data = {}, blocks = [], Auth, UI, Store } = this.props
-      return (
-        blocks.map((item, index) => {
-          const { fields = [], dataKey = '', title = '', describe = '', style = {}, contentStyle = {}, show = true } = item
-          const blockData = dataKey && data ? data[dataKey] : data || {}
-          const isShow = typeof show === 'function' ? show({ data: blockData, Auth, UI }) : show
-          if (!isShow) {
-            return null
-          }
-          return (
-            <div key={index} className="m-block" style={style}>
-              {title &&
-              <h3>{title}{describe && <span style={{
-                paddingLeft: '30px',
-                fontSize: '0.8em'
-              }}>{typeof describe === 'function' ? describe() : describe}</span>}</h3>}
-              <div className="m-block-content" style={contentStyle}>
-                <DetailGrid isMobile={isMobile} data={blockData} fields={fields} Store={Store}/>
-              </div>
-            </div>
-          )
-        })
-      )
-    }
-  }
-
-  return withRouter(Detail)
 }
+
+@inject('Auth', 'UI') @observer
+class Blocks extends Component<{ isMobile: boolean, data: any, Store: any, Auth?: IAuth, UI?: IUI, blocks: any[] }> {
+  render() {
+    const { isMobile, data = {}, blocks = [], Auth, UI, Store } = this.props
+    return (
+      blocks.map((item, index) => {
+        const { fields = [], dataKey = '', title = '', describe = '', style = {}, contentStyle = {}, show = true } = item
+        const blockData = dataKey && data ? data[dataKey] : data || {}
+        const isShow = typeof show === 'function' ? show({ data: blockData, Auth, UI }) : show
+        if (!isShow) {
+          return null
+        }
+        return (
+          <div key={index} className="m-block" style={style}>
+            {title &&
+            <h3>{title}{describe && <span style={{
+              paddingLeft: '30px',
+              fontSize: '0.8em'
+            }}>{typeof describe === 'function' ? describe() : describe}</span>}</h3>}
+            <div className="m-block-content" style={contentStyle}>
+              <DetailGrid isMobile={isMobile} data={blockData} fields={fields} Store={Store}/>
+            </div>
+          </div>
+        )
+      })
+    )
+  }
+}
+
+export default withRouter(Detail)
+// }
