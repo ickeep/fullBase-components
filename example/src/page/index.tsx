@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import { Provider } from 'mobx-react'
-
 import {
   Svg,
   Captcha,
