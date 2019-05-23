@@ -2,11 +2,10 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { Button, Affix } from 'antd'
-import '../../../example/src/less/page/_unit/actionsBtn.less'
 
-interface IProps {
+export interface IProps {
   target?: any
-  actions: Array<{ [key: string]: any }>
+  actions?: Array<{ [key: string]: any }>
   isBack?: boolean
 }
 
