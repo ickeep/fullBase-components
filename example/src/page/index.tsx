@@ -15,7 +15,8 @@ import {
   SelectTree,
   TextArea,
   Tree,
-  Content
+  Content,
+  Currency
 } from 'fullbase-components'
 
 class App extends Component {
@@ -36,6 +37,7 @@ class App extends Component {
         <TextArea/>
         <Tree data={[{ id: 1, title: '1111' }]}/>
         <Content loading={true}/>
+        <Currency value={123.4567}/>
       </div>
     )
   }
