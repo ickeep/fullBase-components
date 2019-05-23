@@ -5,7 +5,7 @@ import { Spin } from 'antd'
 import { IAuth } from '../store/auth'
 import Conf from '../config'
 
-const { codeSuccess } = Conf
+const { codeSuccess, codeUnauthorized } = Conf
 
 interface IProps {
   code?: number | string,
@@ -26,7 +26,7 @@ class Content extends Component<IProps & RouteComponentProps> {
     } else {
       errArr.push(msg)
     }
-    if (!loading && code === codeSuccess) {
+    if (!loading && code === codeUnauthorized) {
       if (process.browser && Auth && Auth.setUser) {
         Auth.setReferrer(pathname + search)
         setTimeout(() => {
