@@ -1,17 +1,17 @@
-import React, { Component } from 'react'
+import { Component } from 'react'
 
-interface ISite {
+export interface ISite {
   name?: string,
   keywords?: string,
   description?: string
 }
 
-interface IProps {
+export interface IProps {
   pageTitle?: string,
   site?: ISite
 }
 
-export default class extends Component<IProps> {
+export default class  extends Component<IProps> {
   setInfo(nextProps: IProps, oldProps: IProps) {
     if (process.browser) {
       const newSite: ISite = nextProps.site || {}
@@ -41,8 +41,8 @@ export default class extends Component<IProps> {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: IProps) {
-    this.setInfo(nextProps, this.props)
+  componentDidUpdate(prevProps: IProps) {
+    this.setInfo(this.props, prevProps)
   }
 
   render() {
