@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import Input, { IProps as IInputProps } from './input'
 
-import '../../../example/src/less/form/item/imgCaptcha.less'
-
 interface IProps extends IInputProps {
   value?: string,
   data?: { img: '' },

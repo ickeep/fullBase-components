@@ -1,4 +1,21 @@
-export default {
+export interface IConfig {
+  codeSuccess: number,
+  codeUnauthorized: number,
+  codeValidated: number,
+  codeNotConf: number,
+  apiFormat: {
+    code: string,
+    msg: string,
+    data: string,
+    page: string,
+    pageSize: string,
+    currentPage: string,
+    count: string,
+    totalPages: string
+  }
+}
+
+const Config: IConfig = {
   codeSuccess: 0,
   codeUnauthorized: 401001,
   codeValidated: 403001,
@@ -14,3 +31,5 @@ export default {
     totalPages: 'totalPages'
   }
 }
+
+export default Config

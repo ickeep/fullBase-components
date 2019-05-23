@@ -1,37 +1,14 @@
+import { Config } from 'fullbase-components'
+
 interface IConfig {
-  hosts: { [key: string]: string }
-  successErrno: number,
-  authErrno: number,
-  validatedErrno: number,
-  mobileWidth: number,
-  format: {
-    errno: string,
-    errmsg: string,
-    data: string,
-    page: string,
-    pageSize: string,
-    currentPage: string,
-    count: string,
-    totalPages: string
-  },
+  hosts: { [key: string]: string },
+
+  [key: string]: any
 }
 
 const config: IConfig = {
+  ...Config,
   hosts: { api: '' },
-  successErrno: 0,
-  authErrno: 401,
-  validatedErrno: 403001,
-  mobileWidth: 768,
-  format: {
-    errno: 'code',
-    errmsg: 'msg',
-    data: 'data',
-    page: 'page',
-    pageSize: 'size',
-    currentPage: 'current',
-    count: 'total',
-    totalPages: 'totalPage'
-  },
 }
 
 if (process.env.REACT_APP_API_ENV === 'local') {
