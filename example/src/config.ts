@@ -13,7 +13,7 @@ const config: IConfig = {
 
 if (process.env.REACT_APP_API_ENV === 'local') {
   config.hosts = {
-    api: '//20.10.28.252:30010',
+    api: 'http://127.0.0.1:6602',
   }
 } else if (process.env.REACT_APP_API_ENV === 'dev') {
   config.hosts = {
@@ -41,7 +41,7 @@ if (process.env.REACT_APP_API_ENV === 'local') {
   }
 } else {
   config.hosts = {
-    api: '//20.10.28.252:8899',
+    api: 'http://127.0.0.1:6602',
   }
 }
 

@@ -15,8 +15,14 @@ export interface IMethod {
   (url: string, data?: Object | string, tips?: boolean | string, conf?: Object): Promise<IResult>
 }
 
-export type IBeforeFn = (opt: { url: string, data?: object, conf?: object }) => Promise<{ url: string, data?: object, conf?: object }>
-export type IAfterFn = (data: any) => Promise<IResult>
+export interface IBeforeFnOpt {
+  url: string,
+  data?: object,
+  conf?: AxiosRequestConfig
+}
+
+export type IBeforeFn = (opt: IBeforeFnOpt) => Promise<IBeforeFnOpt> | IBeforeFnOpt
+export type IAfterFn = (data: any) => Promise<IResult> | IResult
 
 export interface IHttp {
   beforeFn?: IBeforeFn,

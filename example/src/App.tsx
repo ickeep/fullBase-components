@@ -8,8 +8,6 @@ import './app.less'
 import Auth from './store/auth'
 import UI from './store/ui'
 
-/*<Provider Auth={Auth} UI={UI}>*/
-
 class App extends Component {
   render() {
     return (
