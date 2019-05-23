@@ -9,7 +9,7 @@ import ListTable from './_unit/listTable'
 import Link from '../display/link'
 import PageTips from './_unit/pageTips'
 import Breadcrumb from './_unit/breadcrumb'
-import './list.less'
+import '../../example/src/less/page/list.less'
 import UI, { IUI } from "../../store/ui";
 import { IAuth } from "../../store/auth";
 import ListOperateC from './_unit/listOperate'

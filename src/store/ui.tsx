@@ -1,6 +1,7 @@
 import { observable, action, computed } from 'mobx'
 
 export interface IUI {
+  mobileWidth: number
   pageTitle: string,
 
   setPageTitle(title: string): void
@@ -16,6 +17,8 @@ export interface IUI {
   myMenu: { [key: string]: any },
   leftMenuMap: { [key: string]: any },
   initDataLoading: boolean,
+
+  [key: string]: any
 }
 
 class UI implements IUI {
@@ -30,6 +33,7 @@ class UI implements IUI {
     }
   }
 
+  mobileWidth = 768
   @observable pageTitle = ''
   setPageTitle = (title: string) => {
     this.pageTitle = title

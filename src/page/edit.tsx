@@ -7,7 +7,7 @@ import Content from '../display/content'
 import ActionBtn from "./_unit/actionsBtn";
 import Breadcrumb from './_unit/breadcrumb'
 import UI, { IUI } from "../../store/ui";
-import './edit.less'
+import '../../example/src/less/page/edit.less'
 
 interface IProps extends RouteComponentProps {
   Store: any,

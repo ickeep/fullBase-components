@@ -9,7 +9,7 @@ import PageTips from './_unit/pageTips'
 import Breadcrumb from './_unit/breadcrumb'
 import { IAuth } from "../../store/auth";
 import UI, { IUI } from "../../store/ui";
-import './detail.less'
+import '../../example/src/less/page/detail.less'
 
 interface IProps extends RouteComponentProps {
   Store: any,
