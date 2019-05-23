@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { observer } from 'mobx-react'
 import { Row, Col } from 'antd'
 import DetailRender from './detailRender'
-import './detailGrid.less'
 
 type IFields = Array<{ title?: string, type?: string, field?: string, span?: number, style?: any, render?: Function }>
 
