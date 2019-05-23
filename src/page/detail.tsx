@@ -42,7 +42,7 @@ export interface IProps extends RouteComponentProps {
 //   const dfMobileWidth = mobileWidth
 //   const dfFormat = format
 //   const dfIemMap = itemMap
-const { codeSuccess, apiFormat } = Conf
+const { codeSuccess, apiFormat, codeNotConf } = Conf
 
 @inject('UI', 'Auth') @observer
 class Detail extends Component<IProps> {
@@ -85,11 +85,11 @@ class Detail extends Component<IProps> {
     const { Store, name = 'detail', history, location, PageUI, UI: { layout: { clientWidth }, mobileWidth } = UI, Auth } = this.props
     const detailData = Store[`${name}Data`]
     if (!detailData) {
-      return (<Content code={403003} msg={`Store 的 ${name}Data 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}Data 未定义`}/>)
     }
     const loading = Store[`${name}Loading`]
     if (typeof loading === 'undefined') {
-      return (<Content code={403003} msg={`Store 的 ${name}Loading 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}Loading 未定义`}/>)
     }
     const breadcrumb = Store[`${name}Breadcrumb`]
     const detailShowConfFn = Store[`${name}ShowConfFn`]

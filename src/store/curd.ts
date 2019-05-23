@@ -15,7 +15,7 @@ export interface ICURD<T> {
   downBolb: (bolb: any, name: string) => void
 }
 
-const { apiFormat } = Conf
+const { apiFormat, codeNotConf } = Conf
 
 const OrderMap = { ascend: 'ASC', descend: 'DESC', ASC: 'ascend', DESC: 'descend' }
 // export default function ({ successErrno = 0, format = { errno: 'errno', errmsg: 'errmsg', data: 'data' } } = {}) {
@@ -34,33 +34,33 @@ export default function <T extends { new(...args: any[]): { dataFn: { [key: stri
       }
       return order
     }
-    getErrData = (errno: number, errmsg: string | { [key: string]: any }) => {
+    getErrData = (code: number, msg: string | { [key: string]: any }) => {
       const tmpObj = { form: {}, data: {} }
-      tmpObj[format.code] = errno
-      tmpObj[format.msg] = errmsg
-      errno !== codeSuccess && console.error(tmpObj)
+      tmpObj[format.code] = code
+      tmpObj[format.msg] = msg
+      code !== codeSuccess && console.error(tmpObj)
       return tmpObj
     }
 
     checkStoreNorm = ({ formName = 'detail', dataFn }: ICURDOpt = {}) => {
       if (typeof dataFn !== 'function') {
-        return this.getErrData(403004, `this.dataFn.${formName} 必须是一个方法`)
+        return this.getErrData(codeNotConf, `this.dataFn.${formName} 必须是一个方法`)
       }
       const form = this[`${formName}Form`]
       if (!form) {
-        return this.getErrData(403004, `Store 里的 ${formName}Form 未定义`)
+        return this.getErrData(codeNotConf, `Store 里的 ${formName}Form 未定义`)
       }
       const data = this[`${formName}Data`]
       if (!data) {
-        return this.getErrData(403004, `Store 里的 ${formName}Data 未定义`)
+        return this.getErrData(codeNotConf, `Store 里的 ${formName}Data 未定义`)
       }
       const status = this[`${formName}Status`]
       const loading = this[`${formName}Loading`]
       if (/([dD]etail|[lL]ist)$/.test(formName) && typeof loading === 'undefined') {
-        return this.getErrData(403004, `Store 里的 ${formName}Loading 未定义`)
+        return this.getErrData(codeNotConf, `Store 里的 ${formName}Loading 未定义`)
       }
       if (/([aA]dd|[eE]dit)$/.test(formName) && typeof status === 'undefined') {
-        return this.getErrData(403004, `Store 里的 ${formName}status 未定义`)
+        return this.getErrData(codeNotConf, `Store 里的 ${formName}status 未定义`)
       }
       return { ...this.getErrData(codeSuccess, ''), form, status, loading, data }
     }

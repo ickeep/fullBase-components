@@ -37,7 +37,7 @@ export interface IProps extends RouteComponentProps {
 //   const dfValidatedErrno = validatedErrno
 //   const dfFormat = format
 //   const dfIemMap = itemMap
-const { codeSuccess, codeValidated, apiFormat } = Conf
+const { codeSuccess, codeValidated, apiFormat, codeNotConf } = Conf
 
 @inject('UI') @observer
 class Add extends Component<IProps> {
@@ -132,16 +132,16 @@ class Add extends Component<IProps> {
     // const { dict = {} } = Store
     const addFormConf = Store[`${name}FormConf`]
     if (!addFormConf) {
-      return (<Content code={403003} msg={`Store 的 ${name}FormConf 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}FormConf 未定义`}/>)
     }
     const addForm = Store[`${name}Form`]
     if (!addForm) {
-      return (<Content code={403003} msg={`Store 的 ${name}Form 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}Form 未定义`}/>)
     }
     // const addErrs = Store[`${name}Errs`]
     const addStatus = Store[`${name}Status`]
     if (!addStatus) {
-      return (<Content code={403003} msg={`Store 的 ${name}Status 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}Status 未定义`}/>)
     }
     const title = addFormConf.pageTitle || '添加页'
     const breadcrumb = Store[`${name}Breadcrumb`]

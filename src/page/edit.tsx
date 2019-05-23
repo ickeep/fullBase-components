@@ -39,7 +39,7 @@ interface IProps extends RouteComponentProps {
 //   const dfMobileWidth = mobileWidth
 //   const dfFormat = format
 //   const dfIemMap = itemMap
-const { codeSuccess, codeValidated, apiFormat } = Conf
+const { codeSuccess, codeValidated, codeNotConf, apiFormat } = Conf
 
 @inject('UI') @observer
 class Edit extends Component<IProps> {
@@ -157,16 +157,16 @@ class Edit extends Component<IProps> {
     // const { dict } = Store
     const editFormConf = Store[`${name}FormConf`]
     if (!editFormConf) {
-      return (<Content code={403003} msg={`Store 的 ${name}FormConf 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}FormConf 未定义`}/>)
     }
     const editForm = Store[`${name}Form`]
     if (!editForm) {
-      return (<Content code={403003} msg={`Store 的 ${name}Form 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}Form 未定义`}/>)
     }
     // const editErrs = Store[`${name}Errs`]
     const editStatus = Store[`${name}Status`]
     if (!editStatus) {
-      return (<Content code={403003} msg={`Store 的 ${name}Status 未定义`}/>)
+      return (<Content code={codeNotConf} msg={`Store 的 ${name}Status 未定义`}/>)
     }
     const breadcrumb = Store[`${name}Breadcrumb`]
     const editPageFormAfterNode = Store[`${name}PageFormAfterNode`] || ''
