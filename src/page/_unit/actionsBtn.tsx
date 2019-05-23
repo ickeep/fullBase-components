@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { withRouter, RouteComponentProps } from 'react-router-dom'
 import { Button, Affix } from 'antd'
-import './actionsBtn.less'
+import '../../../example/src/less/page/_unit/actionsBtn.less'
 
 interface IProps {
   target?: any

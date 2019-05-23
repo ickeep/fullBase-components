@@ -3,7 +3,6 @@ import { Form, Row, Col } from 'antd'
 import { observer } from 'mobx-react'
 import ItemType from './itemType'
 import { FormProps } from 'antd/lib/form/Form'
-import './editForm.less'
 
 const FormItem = Form.Item
 

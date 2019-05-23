@@ -1,10 +1,10 @@
-interface IRule {
+export interface IRule {
   fn?: Function,
-  msg: Function | string,
+  msg?: Function | string,
   reg?: RegExp
 }
 
-interface IVal {
+export interface IVal {
   rules: { [key: string]: IRule },
 
   checkRule({}): string
@@ -14,7 +14,7 @@ const getDfMsg = (name: string) => `${name} 格式不正确`
 export default class Validator implements IVal {
   rules: { [key: string]: IRule, name: { reg: RegExp, msg: string }, phone: { reg: RegExp, msg: string }, mail: { reg: RegExp, msg: string } } = {
     required: {
-      fn: ({ value = '' }) => !(value === null || value === undefined || value === ''),
+      fn: ({ value = '' }: any = {}) => !(value === null || value === undefined || value === ''),
       msg: '{name} 不能为空'
     },
     name: {
@@ -42,7 +42,7 @@ export default class Validator implements IVal {
       msg: getDfMsg('用户名/手机/邮箱')
     },
     phoneOrMail: {
-      fn: ({ value = '' } = {}) => {
+      fn: ({ value = '' }: any = {}) => {
         const { phone, mail } = this.rules
         return phone.reg.test(value) || mail.reg.test(value)
       },
@@ -94,7 +94,7 @@ export default class Validator implements IVal {
       fn: ({ value = '', form = {}, param = { field: '' } }: { value?: string, form?: { [key: string]: any }, param?: { field: string } } = {}) => {
         return param.field && value === form[param.field]
       },
-      msg: ({ param = { enter: '输入', equal: '确认字段', original: '' } } = {}) => `${param.original}与${param.equal}不一致`
+      msg: ({ param = { enter: '输入', equal: '确认字段', original: '' } }: any = {}) => `${param.original}与${param.equal}不一致`
     }
   }
 
