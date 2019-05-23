@@ -16,7 +16,9 @@ import {
   TextArea,
   Tree,
   Content,
-  Currency
+  Currency,
+  Datetime,
+  IdCardEncrypt
 } from 'fullbase-components'
 
 class App extends Component {
@@ -38,6 +40,8 @@ class App extends Component {
         <Tree data={[{ id: 1, title: '1111' }]}/>
         <Content loading={true}/>
         <Currency value={123.4567}/>
+        <Datetime/>
+        <IdCardEncrypt value={445221198710065913}/>
       </div>
     )
   }
