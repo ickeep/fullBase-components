@@ -18,7 +18,8 @@ import {
   Datetime,
   IdCardEncrypt,
   KeyToValue,
-  PhoneEncrypt
+  PhoneEncrypt,
+  Loading
 } from 'fullbase-components'
 
 class App extends Component {
@@ -45,6 +46,7 @@ class App extends Component {
         <IdCardEncrypt value={445221198710065913}/>
         <KeyToValue value={'name'} data={{ name: '名字' }} isTag={true}/>
         <PhoneEncrypt value={13923887814}/>
+        <Loading/>
       </div>
     )
   }
