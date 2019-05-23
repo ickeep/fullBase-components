@@ -8,9 +8,9 @@ export default {
     msg: 'msg',
     data: 'data',
     page: 'page',
-    pageSize: 'size',
-    currentPage: 'current',
-    count: 'total',
-    totalPages: 'totalPage'
+    pageSize: 'pageSize',
+    currentPage: 'currentPage',
+    count: 'count',
+    totalPages: 'totalPages'
   }
 }
