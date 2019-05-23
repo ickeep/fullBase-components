@@ -1,7 +1,6 @@
 import React, { Component } from "react"
 import { Alert } from 'antd'
 
-
 export default class PageTips extends Component<{ show?: boolean | Function, message: any }> {
   render() {
     const { show = true, ...args } = this.props

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
+// import ReactDOM from 'react-dom'
 import { Table, Button } from 'antd'
 import { TableProps } from 'antd/lib/table/interface'
 import { observer } from 'mobx-react'
@@ -30,7 +30,7 @@ export default class extends Component<IProps, IState> {
   // state = { tableEl: '', tableScroll: { top: 0, left: 0 } }
   // tableNode: any = ''
   OrderMap = { ascend: 'ASC', descend: 'DESC', ASC: 'ascend', DESC: 'descend' }
-  change = (pagination: any, filters: any, sorter: any) => {
+  change = (_pagination: any, _filters: any, sorter: any) => {
     const { field, order } = sorter
     if (field) {
       const { onSorter, sorter: { field: oldField = '', val: OldVal = '' } = {} } = this.props

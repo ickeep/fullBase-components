@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import { withRouter, RouteComponentProps, Redirect } from 'react-router-dom'
-import { IUI } from '../../../store/ui'
+import { IUI } from '../../store/ui'
 import { inject, observer } from 'mobx-react'
-import UI from '../../../store/ui'
+import UI from '../../store/ui'
 
 interface IProps {
   UI?: IUI
