@@ -1,13 +1,24 @@
 import { Curd, Form } from 'fullbase-components'
-import IStore from 'fullbase-components/dist/store/_i'
+import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
 import { observable, action, computed } from 'mobx'
 import { list } from '../../api/system/table'
+import { rows as dbRows } from '../../api/system/db'
 import Http from '../../api/http'
 
 const { dfDataPage } = Http
 @Curd @Form
 export default class Table implements IStore {
   dataFn = { list }
+  @observable dict = { db: [] }
+  @action
+  getDbRows = async () => {
+    if (!this.dict.db || this.dict.db.length < 1) {
+      const data = await dbRows()
+      if (data.code === 0) {
+        this.dict.db = data.data
+      }
+    }
+  }
   @observable listData = { ...dfDataPage, data: { data: [] } }
   @observable listLoading = false
   dfListForm = {
@@ -62,50 +73,17 @@ export default class Table implements IStore {
       // { title: '最后登录', dataIndex: 'lastLoginTime', render: (v: number) => <Datetime value={v}/> },
     ]
   }
-  // isEnable = (r: { status: string }): boolean => {
-  //   return r && parseInt(r.status, 10) === 1
-  // }
-
-  // @observable listOperateStatus: IListOperateStatus = {}
-  // @action
-  // enableItem = async ({ record }: IListOperateActionOpt) => {
-  //   const enableData = await this.dataFn.enable({ id: record.id })
-  //   enableData[errno] === successErrno ? record.status = 1 : ''
-  // }
-  // @action
-  // disableItem = async ({ record }: IListOperateActionOpt) => {
-  //   const disableData = await this.dataFn.disable({ id: record.id })
-  //   disableData[errno] === successErrno ? record.status = 0 : ''
-  // }
-  // @action
-  // delItem = async ({ record, index }: IListOperateActionOpt) => {
-  //   const delData = await this.dataFn.del({ id: record.id })
-  //   delData[errno] === successErrno && this.listData.data.data.splice(index, 1)
-  // }
-  // listOperateConf: IListOperateConf = {
-  //   props: { width: 280 },
-  //   items: [
-  //     {
-  //       actionName: '启用', whom: 'name',
-  //       action: this.enableItem,
-  //       show: (r: any) => !this.isEnable(r),
-  //       props: { type: 'primary' },
-  //     },
-  //     {
-  //       actionName: '停用', whom: 'name', isConfirm: true,
-  //       action: this.disableItem,
-  //       show: (r: any) => this.isEnable(r),
-  //       props: { type: 'danger' },
-  //     },
-  //     {
-  //       actionName: '修改', whom: 'name',
-  //       urlFn: (r: any) => `/rbac/user/edit?id=${r.id}`,
-  //     },
-  //     {
-  //       actionName: '删除', whom: 'name', isConfirm: true,
-  //       action: this.delItem,
-  //       props: { type: 'danger' },
-  //     },
-  //   ]
-  // }
+  dfAddForm = { name: '', db: '', dict: {}, fields: {}, join: {}, cloudFields: '', service: '' }
+  @observable addForm = { ...this.dfAddForm }
+  @observable addErrs = { name: '', db: '', service: '' }
+  @observable addStatus: IFormStatus = { submit: false, loading: false }
+  addInitData = () => {
+    this.getDbRows()
+  }
+  addFormConf: IAddFormConf = {
+    pageTitle: '添加表配置',
+    fields: [
+      { title: '表名', field: 'name', type: 'select', data: 'db', span: 12, rules: 'required', },
+    ]
+  }
 }

@@ -21,6 +21,7 @@ interface IProps extends SelectProps<any> {
 }
 
 // data 支持
+// data = ['s1','s2']
 // data = { 1: 'name1', 2: 'name2' }
 // data = { 1: { name: 'name1' }, 2: { name: 'name2' } } // valKey 不填 取 key
 // data = { 1: { id: 1, name: 'name1' }, 2: { id: 2, name: 'name2' } } // valKey = 'id' labelKey = 'name'
@@ -65,6 +66,9 @@ export default class extends Component<IProps> {
         {isNull && <Option key={''} value="">{placeholder}</Option>}
         {data && typeof data === 'object' && (data instanceof Array ?
             data.map((item) => { // 数组
+              if (typeof item !== 'object') {
+                return (<Option key={item} value={isToString ? item + '' : item}>{item}</Option>)
+              }
               const value = item[valKey || 'id']
               const label = item[labelKey]
               return (<Option key={value} value={isToString ? value + '' : value}>{label}</Option>)
