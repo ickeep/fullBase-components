@@ -1,5 +1,8 @@
+import React, { Component } from 'react'
+import { Checkbox } from 'antd'
+import { observer } from 'mobx-react'
 import { Curd, Form } from 'fullbase-components'
-import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
+import IStore, { IFormStatus, IAddFormConf, IFields } from 'fullbase-components/dist/store/_i'
 import { observable, action, reaction } from 'mobx'
 import { list, getFields } from '../../api/system/table'
 import { rows as dbRows, tableRows } from '../../api/system/db'
@@ -9,7 +12,7 @@ const { dfDataPage } = Http
 @Curd @Form
 export default class Table implements IStore {
   dataFn = { list }
-  @observable dict = { db: [], name: [] }
+  @observable dict = { db: [], name: [], fields: [] }
   @action
   getDbRows = async () => {
     if (!this.dict.db || this.dict.db.length < 1) {
@@ -80,30 +83,70 @@ export default class Table implements IStore {
   addInitData = () => {
     this.getDbRows()
   }
+  @observable
   addFormConf: IAddFormConf = {
     pageTitle: '添加表配置',
     fields: [
       { title: '数据库', field: 'db', type: 'select', data: 'db', span: 12, rules: 'required', },
       { title: '表名', field: 'name', type: 'select', data: 'name', span: 12, rules: 'required', },
+      { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> }
     ]
   }
 
   dbReaction = reaction(() => this.addForm.db, async (db: string) => {
     this.addForm.name = ''
+    this.dict.name = []
     if (db) {
       const data = await tableRows(db)
       if (data.code === 0) {
         this.dict.name = data.data
-        return true
       }
     }
-    this.dict.name = []
-    return false
   })
   nameReaction = reaction(() => this.addForm.name, async (name: string) => {
+    this.dict.fields = []
+    this.addForm.fields = {}
     if (name) {
       const data = await getFields({ db: this.addForm.db, name })
-      console.log(data);
+      if (data.code === 0) {
+        this.dict.fields = data.data
+        const conf = {}
+        data.data.forEach((item: any) => {
+          conf[item.name] = { like: true, notLike: true, in: true, num: true, not: true }
+        })
+        this.addForm.fields = conf
+      }
     }
   })
+}
+
+@observer
+class RFields extends Component<any> {
+  change = (e: any, field: string, type: string) => {
+    const { checked } = e.target
+    const { value, onChange, values, field: pField } = this.props
+    value[field][type] = checked
+    values[pField] = value
+    onChange(values)
+  }
+
+  render() {
+    const { value } = this.props
+    if (typeof value !== 'object') {
+      return '请选择表，或者确定表有字段'
+    }
+    return <div>{Object.keys(value).map((field: any) => {
+      const { like, notLike, in: fIn, num, not } = value[field];
+      return (
+        <div key={field}>
+          {field}:
+          <Checkbox checked={like} onChange={(e) => this.change(e, field, 'like')}>like</Checkbox>
+          <Checkbox checked={notLike} onChange={(e) => this.change(e, field, 'notLike')}>notLike</Checkbox>
+          <Checkbox checked={fIn} onChange={(e) => this.change(e, field, 'in')}>fIn</Checkbox>
+          <Checkbox checked={num} onChange={(e) => this.change(e, field, 'num')}>num</Checkbox>
+          <Checkbox checked={not} onChange={(e) => this.change(e, field, 'not')}>not</Checkbox>
+        </div>
+      )
+    })}</div>
+  }
 }

@@ -18,25 +18,6 @@ export interface IProps extends RouteComponentProps {
   itemMap?: any
 }
 
-// export default function ({
-//                            successErrno = 0,
-//                            validatedErrno = 403001,
-//                            format = {
-//                              errno: 'errno',
-//                              errmsg: 'errmsg',
-//                              data: 'data',
-//                              page: 'page',
-//                              pageSize: 'pageSize',
-//                              currentPage: 'currentPage',
-//                              count: 'count',
-//                              totalPages: 'totalPages'
-//                            },
-//                            // authErrno = 401100,
-//                            itemMap
-//                          }: { [key: string]: any } = {}) {
-//   const dfValidatedErrno = validatedErrno
-//   const dfFormat = format
-//   const dfIemMap = itemMap
 const { codeSuccess, codeValidated, apiFormat, codeNotConf } = Conf
 
 @inject('UI') @observer
@@ -207,4 +188,3 @@ class Add extends Component<IProps> {
 }
 
 export default withRouter(Add)
-// }

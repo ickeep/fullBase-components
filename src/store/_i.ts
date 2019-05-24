@@ -32,12 +32,13 @@ export interface IListOperateActionOpt {
 }
 
 export type IFields = Array<{
-  type: string,
+  type?: string,
   field: string,
   title?: string,
   span?: number,
   data?: string,
   rules?: string | { [key: string]: any },
+  render?: any,
   props?: { [key: string]: any }
 }>
 
