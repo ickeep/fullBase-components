@@ -82,14 +82,15 @@ export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
         ajaxResult = await fn(newUrl, newData, newConf)
       }
     } catch (e) {
+      console.log(e.response);
       if (!e.response) {
         result.msg = e.message
         result.code = 600 // 网络错误
         result.status = 600 // 网络错误
       } else {
         const { status, statusText, headers, data = {} } = e.response
-        result.code = data.code || status
-        result.msg = data.msg || statusText
+        result.code = data && data.code || status
+        result.msg = data && data.msg || statusText
         result.headers = headers
         result.status = status
       }
