@@ -82,7 +82,6 @@ export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
         ajaxResult = await fn(newUrl, newData, newConf)
       }
     } catch (e) {
-      console.log(e.response);
       if (!e.response) {
         result.msg = e.message
         result.code = 600 // 网络错误
