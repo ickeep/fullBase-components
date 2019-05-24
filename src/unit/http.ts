@@ -90,6 +90,7 @@ export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
         result.code = status
         result.msg = statusText
         result.headers = headers
+        result.status = status
       }
       handleTips(tips, result)
       if (typeof afterFn === "function") {
