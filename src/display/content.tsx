@@ -18,7 +18,7 @@ interface IProps {
 class Content extends Component<IProps & RouteComponentProps> {
   render() {
     const errArr = []
-    const { code = codeSuccess, msg = '', loading = false, children = null, Auth, location: { pathname, search } } = this.props
+    const { code = '', msg = '', loading = false, children = null, Auth, location: { pathname, search } } = this.props
     if (typeof msg === 'object') {
       Object.keys(msg).forEach((key) => {
         errArr.push(msg[key])
@@ -37,7 +37,7 @@ class Content extends Component<IProps & RouteComponentProps> {
     }
     return (
       <Spin spinning={loading} delay={400} tip="loading……">
-        {code !== 0 && code !== '' ?
+        {code !== codeSuccess && code !== '' ?
           <div className="m-error">
             <h2>页面出错了：{code}</h2>
             <h4>错误信息：</h4>

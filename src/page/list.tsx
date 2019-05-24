@@ -22,29 +22,6 @@ interface IProps extends RouteComponentProps {
   itemMap?: any
 }
 
-// export default function ({
-//                            successErrno = 0,
-//                            validatedErrno = 403001,
-//                            mobileWidth = 768,
-//                            format = {
-//                              errno: 'errno',
-//                              errmsg: 'errmsg',
-//                              data: 'data',
-//                              page: 'page',
-//                              pageSize: 'pageSize',
-//                              currentPage: 'currentPage',
-//                              count: 'count',
-//                              totalPages: 'totalPages'
-//                            },
-//                            authErrno = 401100,
-//                            itemMap
-//                          }: { [key: string]: any } = {}) {
-//   const dfSuccessErrno = successErrno
-//   const dfValidatedErrno = validatedErrno
-//   const dfAuthErrno = authErrno
-//   const dfMobileWidth = mobileWidth
-//   const dfFormat = format
-//   const dfIemMap = itemMap
 const { codeSuccess, apiFormat } = Conf
 
 @inject('UI', 'Auth') @observer
@@ -274,4 +251,3 @@ class List extends Component<IProps> {
 }
 
 export default withRouter(List)
-// }

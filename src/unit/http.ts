@@ -22,7 +22,7 @@ export interface IBeforeFnOpt {
 }
 
 export type IBeforeFn = (opt: IBeforeFnOpt) => Promise<IBeforeFnOpt> | IBeforeFnOpt
-export type IAfterFn = (data: any, e?: any) => Promise<IResult> | IResult
+export type IAfterFn = (data: any) => Promise<IResult> | IResult
 
 export interface IHttp {
   beforeFn?: IBeforeFn,
@@ -86,21 +86,28 @@ export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
         result.msg = e.message
         result.code = 600 // 网络错误
         result.status = 600 // 网络错误
+        handleTips(tips, result)
+        return result
       } else {
-        const { status, statusText, headers, data = {} } = e.response
-        result.code = data && data.code || status
-        result.msg = data && data.msg || statusText
-        result.headers = headers
-        result.status = status
-      }
-      if (typeof afterFn === "function") {
-        result = await afterFn(result, e)
+        if (typeof afterFn === "function") {
+          result = await afterFn(e.response)
+        } else {
+          const { status, statusText, headers, data = {} } = e.response
+          result.code = data && data.code || status
+          result.msg = data && data.msg || statusText
+          result.headers = headers
+          result.status = status
+        }
       }
       handleTips(tips, result)
       return result
     }
     if (typeof afterFn === "function") {
       result = await afterFn(ajaxResult)
+    } else {
+      result = ajaxResult.data
+      result.headers = ajaxResult.headers
+      result.status = ajaxResult.status
     }
     handleTips(tips, result)
     return result
