@@ -85,25 +85,18 @@ export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
       if (!e.response) {
         result.msg = e.message
         result.code = 600 // 网络错误
-        handleTips(tips, result)
-        return result
+      } else {
+        const { status, statusText, headers } = e.response
+        result.code = status
+        result.msg = statusText
+        result.headers = headers
       }
-      ajaxResult = e.response
+      handleTips(tips, result)
+      if (typeof afterFn === "function") {
+        result = await afterFn(result)
+      }
+      return result
     }
-    // const { status, headers, statusText } = ajaxResult
-    // result.headers = headers
-    // result.status = status
-    //
-    // const { errno = '', errmsg = '', data: rData = '' } = ajaxResult.data || {}
-    // result.code = errno || status
-    // result.msg = errmsg || statusText
-    // result.data = rData
-    // if (status === 200) {
-    //   result.code === 200 ? result.code = 0 : ''
-    //   if (conf && conf.responseType === 'blob') {
-    //     result.data = ajaxResult.data
-    //   }
-    // }
     if (typeof afterFn === "function") {
       result = await afterFn(ajaxResult)
     }

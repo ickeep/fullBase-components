@@ -13,7 +13,7 @@ const config: IConfig = {
 
 if (process.env.REACT_APP_API_ENV === 'local') {
   config.hosts = {
-    api: 'http://127.0.0.1:6602',
+    api: 'http://local-admin-api.ickeep.com',
   }
 } else if (process.env.REACT_APP_API_ENV === 'dev') {
   config.hosts = {
@@ -41,7 +41,7 @@ if (process.env.REACT_APP_API_ENV === 'local') {
   }
 } else {
   config.hosts = {
-    api: 'http://127.0.0.1:6602',
+    api: 'http://local-admin-api.ickeep.com',
   }
 }
 
