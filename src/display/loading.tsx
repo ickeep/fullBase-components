@@ -8,7 +8,7 @@ export interface IProps extends SpinProps {
 
 export default class Loading extends Component<IProps> {
   static defaultProps = {
-    isCenter: true
+    isCenter: false
   }
 
   render() {
