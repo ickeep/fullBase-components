@@ -60,7 +60,6 @@ export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
   }
 
   const AjaxFn = async function (method: TMethod, url: string, data: object = {}, tips: boolean | string = false, conf: { [key: string]: any } = {}): Promise<IResult> {
-    // @ts-ignore
     const fn = axiox[method]
     let newUrl = url
     let newData = data
@@ -105,7 +104,7 @@ export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
     if (typeof afterFn === "function") {
       result = await afterFn(ajaxResult)
     } else {
-      result = ajaxResult.data
+      result = { ...result, ...ajaxResult.data }
       result.headers = ajaxResult.headers
       result.status = ajaxResult.status
     }

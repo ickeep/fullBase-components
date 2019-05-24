@@ -1,15 +1,15 @@
 import { Curd, Form } from 'fullbase-components'
 import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
-import { observable, action, computed } from 'mobx'
-import { list } from '../../api/system/table'
-import { rows as dbRows } from '../../api/system/db'
+import { observable, action, reaction } from 'mobx'
+import { list, getFields } from '../../api/system/table'
+import { rows as dbRows, tableRows } from '../../api/system/db'
 import Http from '../../api/http'
 
 const { dfDataPage } = Http
 @Curd @Form
 export default class Table implements IStore {
   dataFn = { list }
-  @observable dict = { db: [] }
+  @observable dict = { db: [], name: [] }
   @action
   getDbRows = async () => {
     if (!this.dict.db || this.dict.db.length < 1) {
@@ -83,7 +83,27 @@ export default class Table implements IStore {
   addFormConf: IAddFormConf = {
     pageTitle: '添加表配置',
     fields: [
-      { title: '表名', field: 'name', type: 'select', data: 'db', span: 12, rules: 'required', },
+      { title: '数据库', field: 'db', type: 'select', data: 'db', span: 12, rules: 'required', },
+      { title: '表名', field: 'name', type: 'select', data: 'name', span: 12, rules: 'required', },
     ]
   }
+
+  dbReaction = reaction(() => this.addForm.db, async (db: string) => {
+    this.addForm.name = ''
+    if (db) {
+      const data = await tableRows(db)
+      if (data.code === 0) {
+        this.dict.name = data.data
+        return true
+      }
+    }
+    this.dict.name = []
+    return false
+  })
+  nameReaction = reaction(() => this.addForm.name, async (name: string) => {
+    if (name) {
+      const data = await getFields({ db: this.addForm.db, name })
+      console.log(data);
+    }
+  })
 }
