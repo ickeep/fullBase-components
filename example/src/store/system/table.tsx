@@ -139,10 +139,10 @@ class RFields extends Component<any> {
       const { like, notLike, in: fIn, num, not } = value[field];
       return (
         <div key={field}>
-          {field}:
+          <h3 style={{ display: 'inline-block', minWidth: '80px' }}>{field}:</h3>
           <Checkbox checked={like} onChange={(e) => this.change(e, field, 'like')}>like</Checkbox>
           <Checkbox checked={notLike} onChange={(e) => this.change(e, field, 'notLike')}>notLike</Checkbox>
-          <Checkbox checked={fIn} onChange={(e) => this.change(e, field, 'in')}>fIn</Checkbox>
+          <Checkbox checked={fIn} onChange={(e) => this.change(e, field, 'in')}>in</Checkbox>
           <Checkbox checked={num} onChange={(e) => this.change(e, field, 'num')}>num</Checkbox>
           <Checkbox checked={not} onChange={(e) => this.change(e, field, 'not')}>not</Checkbox>
         </div>
