@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import { Checkbox } from 'antd'
+import { Checkbox, Button, Form as FormC, Row, Col } from 'antd'
 import { observer } from 'mobx-react'
-import { Curd, Form } from 'fullbase-components'
+import { Curd, Form, Input, Select } from 'fullbase-components'
 import IStore, { IFormStatus, IAddFormConf, IFields } from 'fullbase-components/dist/store/_i'
 import { observable, action, reaction } from 'mobx'
 import { list, getFields } from '../../api/system/table'
@@ -12,7 +12,7 @@ const { dfDataPage } = Http
 @Curd @Form
 export default class Table implements IStore {
   dataFn = { list }
-  @observable dict = { db: [], name: [], fields: [] }
+  @observable dict = { db: [], name: [], fields: [], on: ['HAS_ONE', 'HAS_MANY'] }
   @action
   getDbRows = async () => {
     if (!this.dict.db || this.dict.db.length < 1) {
@@ -76,7 +76,7 @@ export default class Table implements IStore {
       // { title: '最后登录', dataIndex: 'lastLoginTime', render: (v: number) => <Datetime value={v}/> },
     ]
   }
-  dfAddForm = { name: '', db: '', dict: {}, fields: {}, join: {}, cloudFields: '', service: '' }
+  dfAddForm = { name: '', db: '', dict: {}, fields: {}, join: [], cloudFields: '', service: '' }
   @observable addForm = { ...this.dfAddForm }
   @observable addErrs = { name: '', db: '', service: '' }
   @observable addStatus: IFormStatus = { submit: false, loading: false }
@@ -89,7 +89,8 @@ export default class Table implements IStore {
     fields: [
       { title: '数据库', field: 'db', type: 'select', data: 'db', span: 12, rules: 'required', },
       { title: '表名', field: 'name', type: 'select', data: 'name', span: 12, rules: 'required', },
-      { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> }
+      { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> },
+      { title: '关联表', field: 'join', span: 24, data: 'db', render: (item: any) => <RJoin {...item}/> }
     ]
   }
 
@@ -148,5 +149,160 @@ class RFields extends Component<any> {
         </div>
       )
     })}</div>
+  }
+}
+
+@observer
+class RJoin extends Component<any> {
+  state = { tableRows: [], fields: [] }
+  add = () => {
+    const { value = [], onChange, values, field } = this.props
+    value.push({
+      db: '',
+      table: '',
+      onField: '',
+      bindField: '',
+      type: 'HAS_ONE',
+      fields: [],
+      whereField: '',
+      whereVal: ''
+    })
+    values[field] = value
+    onChange(values)
+  }
+  cut = (index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value.splice(index, 1)
+    values[field] = value
+    onChange(values)
+  }
+
+  dbChange = async (v: string, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].db = v
+    value[index].table = ''
+    value[index].onField = ''
+    value[index].bindField = ''
+    value[index].fields = []
+    values[field] = value
+    onChange(values)
+    if (v) {
+      const data = await tableRows(v)
+      if (data.code === 0) {
+        this.setState({ tableRows: data.data })
+      }
+    }
+  }
+  tableChange = async (v: string, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].table = v
+    value[index].on = []
+    value[index].fields = []
+    values[field] = value
+    onChange(values)
+    if (v) {
+      const data = await getFields({ db: value[index].db, name: v })
+      if (data.code === 0) {
+        this.setState({ fields: data.data })
+      }
+    }
+  }
+  typeChange = async (v: string, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].type = v
+    values[field] = value
+    onChange(values)
+  }
+  fieldsChange = async (v: string, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].fields = v
+    values[field] = value
+    onChange(values)
+  }
+  onFieldChange = async (v: string, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].onField = v
+    values[field] = value
+    onChange(values)
+  }
+  bindFieldChange = async (v: string, index: number) => {
+    console.log(v);
+    const { value = [], onChange, values, field } = this.props
+    value[index].bindField = v
+    values[field] = value
+    onChange(values)
+  }
+  whereFieldChange = async (v: string, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].whereField = v
+    values[field] = value
+    onChange(values)
+  }
+  whereValChange = async (v: string, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].whereVal = v
+    values[field] = value
+    onChange(values)
+  }
+
+  render() {
+    const { value = [], data, dict } = this.props
+    const { tableRows, fields } = this.state
+    return <div>{value.map((item: any, index: number) =>
+      <div key={index} style={{ background: '#eee', padding: '10px', marginBottom: '10px' }}>
+        <Row>
+          <Col span={8}>
+            <FormC.Item label="db">
+              <Select value={item.db} data={data} onChange={(v) => this.dbChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="table">
+              <Select value={item.table} data={tableRows} onChange={(v) => this.tableChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="type">
+              <Select value={item.type} data={dict.on} onChange={(v) => this.typeChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="on">
+              <Select value={item.onField} data={fields} valKey="name"
+                      onChange={(v) => this.onFieldChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="bind">
+              <Select value={item.bindField} data={dict.fields} valKey="name"
+                      onChange={(v) => this.bindFieldChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="fields">
+              <Select value={item.fields} mode="multiple" data={fields} valKey="name"
+                      onChange={(v) => this.fieldsChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+
+          <Col span={8}>
+            <FormC.Item label="where">
+              <Select value={item.whereField} data={fields} valKey="name"
+                      onChange={(v) => this.whereFieldChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="val">
+              <Input value={item.whereVal} onChange={(v: any) => this.whereValChange(v, index)}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <Button onClick={() => this.cut(index)}>-</Button>
+          </Col>
+        </Row>
+      </div>
+    )}
+      <Button onClick={this.add}>+</Button>
+    </div>
   }
 }
