@@ -6,19 +6,28 @@ import IStore, { IFormStatus, IAddFormConf, IFields } from 'fullbase-components/
 import { observable, action, reaction } from 'mobx'
 import { list, getFields } from '../../api/system/table'
 import { rows as dbRows, tableRows } from '../../api/system/db'
+import { rows as serviceRows } from '../../api/system/service'
 import Http from '../../api/http'
 
 const { dfDataPage } = Http
 @Curd @Form
 export default class Table implements IStore {
   dataFn = { list }
-  @observable dict = { db: [], name: [], fields: [], on: ['HAS_ONE', 'HAS_MANY'] }
+  @observable dict = { db: [], name: [], fields: [], service: [], on: ['HAS_ONE', 'HAS_MANY'] }
   @action
   getDbRows = async () => {
     if (!this.dict.db || this.dict.db.length < 1) {
       const data = await dbRows()
       if (data.code === 0) {
         this.dict.db = data.data
+      }
+    }
+  }
+  getServiceRows = async () => {
+    if (!this.dict.db || this.dict.service.length < 1) {
+      const data = await serviceRows()
+      if (data.code === 0) {
+        this.dict.service = data.data
       }
     }
   }
@@ -76,12 +85,13 @@ export default class Table implements IStore {
       // { title: '最后登录', dataIndex: 'lastLoginTime', render: (v: number) => <Datetime value={v}/> },
     ]
   }
-  dfAddForm = { name: '', db: '', dict: {}, fields: {}, join: [], cloudFields: '', service: '' }
+  dfAddForm = { name: '', db: '', dict: {}, fields: {}, join: [], cloudFields: '', service: '', unique: [] }
   @observable addForm = { ...this.dfAddForm }
   @observable addErrs = { name: '', db: '', service: '' }
   @observable addStatus: IFormStatus = { submit: false, loading: false }
   addInitData = () => {
     this.getDbRows()
+    this.getServiceRows()
   }
   @observable
   addFormConf: IAddFormConf = {
@@ -89,6 +99,15 @@ export default class Table implements IStore {
     fields: [
       { title: '数据库', field: 'db', type: 'select', data: 'db', span: 12, rules: 'required', },
       { title: '表名', field: 'name', type: 'select', data: 'name', span: 12, rules: 'required', },
+      {
+        title: '服务', field: 'service', type: 'select', data: 'service', span: 12, rules: 'required',
+        props: { mode: 'multiple', valKey: 'name' }
+      },
+      {
+        title: '云文件', field: 'cloudFields', span: 12, type: 'select', data: 'fields',
+        props: { mode: 'multiple', valKey: 'name' }
+      },
+      { title: '唯一键', field: 'unique', data: 'fields', span: 24, render: (item: any) => <RUnique {...item}/> },
       { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> },
       { title: '关联表', field: 'join', span: 24, data: 'db', render: (item: any) => <RJoin {...item}/> }
     ]
@@ -226,7 +245,6 @@ class RJoin extends Component<any> {
     onChange(values)
   }
   bindFieldChange = async (v: string, index: number) => {
-    console.log(v);
     const { value = [], onChange, values, field } = this.props
     value[index].bindField = v
     values[field] = value
@@ -302,6 +320,44 @@ class RJoin extends Component<any> {
         </Row>
       </div>
     )}
+      <Button onClick={this.add}>+</Button>
+    </div>
+  }
+}
+
+@observer
+class RUnique extends Component<any> {
+  add = () => {
+    const { value = [], onChange, values, field } = this.props
+    value.push([])
+    values[field] = value
+    onChange(values)
+  }
+  cut = (index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value.splice(index, 1)
+    values[field] = value
+    onChange(values)
+  }
+  change = (v: any, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index] = v
+    values[field] = value
+    onChange(values)
+  }
+
+
+  render() {
+    const { value = [], data } = this.props
+    return <div>
+      {value.map((item: any, index: number) =>
+        <div key={index}>
+          <div style={{ display: 'inline-block', marginRight: '10px' }}>
+            <Select data={data} value={item} valKey="name" mode="multiple" onChange={(v) => this.change(v, index)}/>
+          </div>
+          <Button onClick={() => this.cut(index)} style={{ display: 'inline-block' }}>-</Button>
+        </div>
+      )}
       <Button onClick={this.add}>+</Button>
     </div>
   }
