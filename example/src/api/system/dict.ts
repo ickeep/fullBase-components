@@ -14,6 +14,10 @@ export function list(data: any) {
   return httpGet('/api/system/dict/list', data)
 }
 
+export function rows() {
+  return httpGet('/api/system/dict/rows')
+}
+
 export function edit(data: any) {
   return httpPost('/api/system/dict/edit', data)
 }

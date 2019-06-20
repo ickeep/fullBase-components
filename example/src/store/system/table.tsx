@@ -2,18 +2,19 @@ import React, { Component } from 'react'
 import { Checkbox, Button, Form as FormC, Row, Col } from 'antd'
 import { observer } from 'mobx-react'
 import { Curd, Form, Input, Select } from 'fullbase-components'
-import IStore, { IFormStatus, IAddFormConf, IFields } from 'fullbase-components/dist/store/_i'
+import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
 import { observable, action, reaction } from 'mobx'
-import { list, getFields } from '../../api/system/table'
+import { list, getFields, add, detail, edit } from '../../api/system/table'
 import { rows as dbRows, tableRows } from '../../api/system/db'
 import { rows as serviceRows } from '../../api/system/service'
+import { rows as dictRows } from '../../api/system/dict'
 import Http from '../../api/http'
 
-const { dfDataPage } = Http
+const { dfDataPage, dfDataObj } = Http
 @Curd @Form
 export default class Table implements IStore {
-  dataFn = { list }
-  @observable dict = { db: [], name: [], fields: [], service: [], on: ['HAS_ONE', 'HAS_MANY'] }
+  dataFn = { list, add, detail, edit }
+  @observable dict = { db: [], dict: [], name: [], fields: [], service: [], on: ['HAS_ONE', 'HAS_MANY'] }
   @action
   getDbRows = async () => {
     if (!this.dict.db || this.dict.db.length < 1) {
@@ -23,11 +24,21 @@ export default class Table implements IStore {
       }
     }
   }
+  @action
   getServiceRows = async () => {
-    if (!this.dict.db || this.dict.service.length < 1) {
+    if (!this.dict.service || this.dict.service.length < 1) {
       const data = await serviceRows()
       if (data.code === 0) {
         this.dict.service = data.data
+      }
+    }
+  }
+  @action
+  getDictRows = async () => {
+    if (!this.dict.dict || this.dict.dict.length < 1) {
+      const data = await dictRows()
+      if (data.code === 0) {
+        this.dict.dict = data.data
       }
     }
   }
@@ -85,28 +96,35 @@ export default class Table implements IStore {
       // { title: '最后登录', dataIndex: 'lastLoginTime', render: (v: number) => <Datetime value={v}/> },
     ]
   }
-  dfAddForm = { name: '', db: '', dict: {}, fields: {}, join: [], cloudFields: '', service: '', unique: [] }
+  dfAddForm = { name: '', db: '', desc: '', dict: '', fields: {}, join: [], cloudFields: '', service: '', unique: [] }
   @observable addForm = { ...this.dfAddForm }
   @observable addErrs = { name: '', db: '', service: '' }
   @observable addStatus: IFormStatus = { submit: false, loading: false }
+  @observable addData = { ...dfDataObj }
   addInitData = () => {
     this.getDbRows()
     this.getServiceRows()
+    this.getDictRows()
   }
   @observable
   addFormConf: IAddFormConf = {
     pageTitle: '添加表配置',
     fields: [
-      { title: '数据库', field: 'db', type: 'select', data: 'db', span: 12, rules: 'required', },
-      { title: '表名', field: 'name', type: 'select', data: 'name', span: 12, rules: 'required', },
+      { title: '数据库', field: 'db', type: 'select', data: 'db', span: 8, rules: 'required', },
+      { title: '表名', field: 'name', type: 'select', data: 'name', span: 8, rules: 'required', },
       {
-        title: '服务', field: 'service', type: 'select', data: 'service', span: 12, rules: 'required',
+        title: '服务', field: 'service', type: 'select', data: 'service', span: 8, rules: 'required',
         props: { mode: 'multiple', valKey: 'name' }
       },
       {
-        title: '云文件', field: 'cloudFields', span: 12, type: 'select', data: 'fields',
+        title: '字典', field: 'dict', type: 'select', data: 'dict', span: 8,
         props: { mode: 'multiple', valKey: 'name' }
       },
+      {
+        title: '云文件', field: 'cloudFields', span: 8, type: 'select', data: 'fields',
+        props: { mode: 'multiple', valKey: 'name' }
+      },
+      { title: '备注', field: 'desc', type: 'input', span: 8, },
       { title: '唯一键', field: 'unique', data: 'fields', span: 24, render: (item: any) => <RUnique {...item}/> },
       { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> },
       { title: '关联表', field: 'join', span: 24, data: 'db', render: (item: any) => <RJoin {...item}/> }
@@ -138,6 +156,56 @@ export default class Table implements IStore {
       }
     }
   })
+  editInitData = () => {
+    this.getServiceRows()
+    this.getDictRows()
+  }
+  @observable detailData = { ...dfDataObj }
+  @observable detailLoading = false
+  @observable detailForm = { id: '' }
+  @observable editForm = { ...this.dfAddForm }
+  @observable editErrs = { ...this.addErrs }
+  @observable editStatus = { ...this.addStatus }
+  @observable editData = { ...this.addData }
+  @observable editFormConf = {
+    pageTitle: '编辑表配置',
+    fields: [
+      { title: '数据库', field: 'db', type: 'input', span: 8, props: { disabled: true } },
+      { title: '表名', field: 'name', type: 'input', span: 8, props: { disabled: true } },
+      {
+        title: '服务', field: 'service', type: 'select', data: 'service', span: 8, rules: 'required',
+        props: { mode: 'multiple', valKey: 'name' }
+      },
+      {
+        title: '字典', field: 'dict', type: 'select', data: 'dict', span: 8,
+        props: { mode: 'multiple', valKey: 'name' }
+      },
+      {
+        title: '云文件', field: 'cloudFields', span: 8, type: 'select', data: 'fields',
+        props: { mode: 'multiple', valKey: 'name' }
+      },
+      { title: '备注', field: 'desc', type: 'input', span: 8, },
+      { title: '唯一键', field: 'unique', data: 'fields', span: 24, render: (item: any) => <RUnique {...item}/> },
+      { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> },
+      { title: '关联表', field: 'join', span: 24, data: 'db', render: (item: any) => <RJoin {...item}/> }
+    ]
+  }
+
+  editSetFormAfterFn = async () => {
+    const name = this.editForm.name
+    this.dict.fields = []
+    if (name) {
+      const data = await getFields({ db: this.editForm.db, name })
+      if (data.code === 0) {
+        this.dict.fields = data.data
+        data.data.forEach((item: any) => {
+          if (!this.editForm.fields[item.name]) {
+            this.editForm.fields[item.name] = { like: true, notLike: true, in: true, num: true, not: true }
+          }
+        })
+      }
+    }
+  }
 }
 
 @observer
