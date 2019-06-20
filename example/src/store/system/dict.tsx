@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
-import { Checkbox, Button, Form as FormC, Row, Col } from 'antd'
+import { Button } from 'antd'
 import { observer } from 'mobx-react'
-import { Curd, Form, Input, Select } from 'fullbase-components'
-import IStore, { IFormStatus, IAddFormConf, IFields } from 'fullbase-components/dist/store/_i'
-import { observable, action, reaction } from 'mobx'
+import { Curd, Form, Input } from 'fullbase-components'
+import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
+import { observable } from 'mobx'
 import Http from '../../api/http'
 import { add, detail, edit, list } from '../../api/system/dict'
 
@@ -58,9 +58,7 @@ export default class Table implements IStore {
   @observable editStatus = { ...this.addStatus }
   @observable editData = { ...this.addData }
   @observable editFormConf = { ...this.addFormConf }
-
 }
-
 
 @observer
 class RUnique extends Component<any> {
@@ -104,5 +102,4 @@ class RUnique extends Component<any> {
       <Button onClick={this.add}>+</Button>
     </div>
   }
-
 }
