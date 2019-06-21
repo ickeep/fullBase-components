@@ -397,7 +397,7 @@ class RJoin extends Component<any> {
 class RUnique extends Component<any> {
   add = () => {
     const { value = [], onChange, values, field } = this.props
-    value.push([])
+    value.push('')
     values[field] = value
     onChange(values)
   }
@@ -416,9 +416,9 @@ class RUnique extends Component<any> {
 
 
   render() {
-    const { value = [], data } = this.props
+    const { value = '', data } = this.props
     return <div>
-      {value.map((item: any, index: number) =>
+      {value && value.map && value.map((item: any, index: number) =>
         <div key={index}>
           <div style={{ display: 'inline-block', marginRight: '10px' }}>
             <Select data={data} value={item} valKey="name" mode="multiple" onChange={(v) => this.change(v, index)}/>
