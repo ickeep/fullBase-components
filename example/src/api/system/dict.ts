@@ -22,4 +22,8 @@ export function edit(data: any) {
   return httpPost('/api/system/dict/edit', data)
 }
 
+export function getMap(name: string) {
+  return httpGet('/api/system/dict/getMap', { name })
+}
+
 
