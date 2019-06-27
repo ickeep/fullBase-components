@@ -92,7 +92,7 @@ export default class Table implements IStore {
       { title: '表名', field: 'name', type: 'select', data: 'name', span: 8, rules: 'required', },
       {
         title: '服务', field: 'service', type: 'select', data: 'service', span: 8, rules: 'required',
-        props: { mode: 'multiple', valKey: 'name' }
+        props: { valKey: 'name' }
       },
       {
         title: '字典', field: 'dict', type: 'select', data: 'dict', span: 8,

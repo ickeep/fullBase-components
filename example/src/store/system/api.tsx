@@ -77,7 +77,7 @@ export default class Table implements IStore {
       },
       { title: '数据库', dataIndex: 'db' },
       { title: '服务', dataIndex: 'service' },
-      { title: '查询字段', dataIndex: 'whereFields' },
+      { title: '查询字段', dataIndex: 'optFields' },
       { title: '排序字段', dataIndex: 'orderFields' },
       { title: '返回字段', dataIndex: 'fields' },
       { title: '表', dataIndex: 'table' },
@@ -93,8 +93,10 @@ export default class Table implements IStore {
     service: '',
     status: 1,
     fields: '',
-    whereFields: '',
+    optFields: '',
     orderFields: '',
+    isConf: 1,
+    type: 'list',
     side: 'admin',
     method: 'get'
   }
@@ -111,18 +113,18 @@ export default class Table implements IStore {
   addFormConf: IAddFormConf = {
     pageTitle: '添加API',
     fields: [
-      { title: 'url', field: 'url', type: 'input', span: 8, },
+      { title: 'url', field: 'url', type: 'input', span: 8, rules: 'required', },
       { title: '数据库', field: 'db', type: 'select', data: 'db', span: 8, rules: 'required', },
       { title: '表名', field: 'table', type: 'select', data: 'table', span: 8, rules: 'required', },
       {
         title: '服务', field: 'service', type: 'select', data: 'service', span: 8, rules: 'required',
         props: { valKey: 'name' }
       },
-      { title: '页面类型', field: 'type', type: 'select', data: 'pageType', span: 8, },
-      { title: '端', field: 'side', type: 'select', data: 'apiSide', span: 8, },
-      { title: '请求方式', field: 'method', type: 'select', data: 'httpMethod', span: 8, },
+      { title: '页面类型', field: 'type', type: 'select', data: 'pageType', span: 8, rules: 'required', },
+      { title: '端', field: 'side', type: 'select', data: 'apiSide', span: 8, rules: 'required', },
+      { title: '请求方式', field: 'method', type: 'select', data: 'httpMethod', span: 8, rules: 'required', },
       {
-        title: '查询字段', field: 'whereFields', span: 8, type: 'select', data: 'fields',
+        title: '参数字段', field: 'optFields', span: 8, type: 'select', data: 'fields',
         props: { mode: 'multiple', valKey: 'name' }
       },
       {
@@ -134,6 +136,7 @@ export default class Table implements IStore {
         props: { mode: 'multiple', valKey: 'name' }
       },
       { title: '状态', field: 'status', type: 'select', data: 'status', span: 8, },
+      { title: '状态', field: 'isConf', type: 'select', data: 'yesOrNo', span: 8, },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
     ]
   }
@@ -151,7 +154,7 @@ export default class Table implements IStore {
   tableReaction = reaction(() => this.addForm.table, async (table: string) => {
     this.dict.fields = []
     this.addForm.fields = ''
-    this.addForm.whereFields = ''
+    this.addForm.optFields = ''
     this.addForm.orderFields = ''
     if (table) {
       const data = await getFields({ db: this.addForm.db, name: table })
@@ -160,32 +163,14 @@ export default class Table implements IStore {
       }
     }
   })
-  editInitData = () => {
-    this.getServiceRows()
-  }
+  editInitData = this.addInitData
   @observable detailData = { ...dfDataObj }
   @observable detailLoading = false
   @observable detailForm = { id: '' }
-  @observable editForm = { ...this.dfAddForm }
+  @observable editForm = { ...this.dfAddForm, id: '' }
   @observable editErrs = { ...this.addErrs }
   @observable editStatus = { ...this.addStatus }
   @observable editData = { ...this.addData }
-  @observable editFormConf = {
-    pageTitle: '编辑表配置',
-    fields: [
-      { title: '数据库', field: 'db', type: 'input', span: 8, props: { disabled: true } },
-      { title: '表名', field: 'table', type: 'input', span: 8, props: { disabled: true } },
-      {
-        title: '服务', field: 'service', type: 'select', data: 'service', span: 8, rules: 'required',
-        props: { valKey: 'name' }
-      },
-
-      {
-        title: '云文件', field: 'cloudFields', span: 8, type: 'select', data: 'fields',
-        props: { mode: 'multiple', valKey: 'name' }
-      },
-      { title: '备注', field: 'desc', type: 'input', span: 8, },
-    ]
-  }
+  @observable editFormConf = { ...this.addFormConf }
 
 }
