@@ -103,6 +103,7 @@ export default class Table implements IStore {
         props: { mode: 'multiple', valKey: 'name' }
       },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
+      { title: '主键', field: 'pk', data: 'fields', span: 24, type: 'select', props: { valKey: 'name' } },
       { title: '唯一键', field: 'unique', data: 'fields', span: 24, render: (item: any) => <RUnique {...item}/> },
       { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> },
       { title: '关联表', field: 'join', span: 24, data: 'db', render: (item: any) => <RJoin {...item}/> }

@@ -19,6 +19,6 @@ export default class ReInput extends Component<IProps> {
   render() {
     const { icon, ...args } = this.props
     const prefix = icon ? (typeof icon === 'function' ? icon : <Svg src={icon}/>) : null
-    return <Input  {...args} onChange={this.change} prefix={prefix}/>
+    return <Input allowClear={true} {...args} onChange={this.change} prefix={prefix}/>
   }
 }

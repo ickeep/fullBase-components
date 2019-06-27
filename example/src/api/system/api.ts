@@ -6,9 +6,9 @@ export function list(data: any) {
   return httpGet('/api/system/api/list', data)
 }
 
-// export function getFields({ db, name }: { db: string, name: string }) {
-//   return httpGet('/api/system/api/getFields', { db, name })
-// }
+export function rows(data: any) {
+  return httpGet('/api/system/api/rows', data)
+}
 
 export function detail(data: any) {
   return httpGet('/api/system/api/detail', data)

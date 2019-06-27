@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button } from 'antd'
 import { observer } from 'mobx-react'
-import { Curd, Form, Input } from 'fullbase-components'
+import { Curd, Form, Input, Link } from 'fullbase-components'
 import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
 import { observable } from 'mobx'
 import Http from '../../api/http'
@@ -30,7 +30,10 @@ export default class Table implements IStore {
     dataKey: 'data',
     scroll: { x: 1100 },
     columns: [
-      { title: '名称', dataIndex: 'name', width: 220, },
+      {
+        title: '名称', dataIndex: 'name', width: 220,
+        render: (v: string, r: any) => <Link href={`/system/dict/detail?id=${r.id}`}>{v}</Link>
+      },
       { title: '描述', dataIndex: 'desc' },
       { title: 'values', dataIndex: 'values' },
     ]
