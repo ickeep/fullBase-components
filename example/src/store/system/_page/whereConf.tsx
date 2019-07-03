@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { Button, Col, Form as FormC, Row } from 'antd'
+import { Button, Col, Form as FormC, Row, Radio, InputNumber } from 'antd'
 import { Curd, Form, Input, Select, Link } from 'fullbase-components'
 
 const typeData: string[] = ['cascader', 'checkbox', 'input', 'inputNumber', 'radio', 'rangeDate', 'select', 'selectRemote', 'selectTree', 'timestamp']
@@ -31,7 +31,124 @@ const typeProps = {
     type: 'string',
     value: 'string',
     allowClear: 'boolean',
-  }
+  },
+  checkbox: {
+    value: 'string | string[]',
+    labelKey: 'string',
+    valKey: 'string',
+    split: 'string',
+  },
+  radio: {
+    value: 'string | number',
+    isAll: 'boolean',
+    type: 'string',
+    valKey: 'string',
+    labelKey: 'string',
+  },
+  rangeDate: {
+    allowClear: 'boolean',
+    autoFocus: 'boolean',
+    className: 'string',
+    disabled: 'boolean',
+    dropdownClassName: 'string',
+    mode: 'time|date|month|year|decade',
+    open: 'boolean',
+    placeholder: 'string',
+    size: 'string',
+  },
+  cascader: {
+    allowClear: 'boolean',
+    autoFocus: 'boolean',
+    className: 'string',
+    disabled: 'boolean',
+    expandTrigger: 'click|hover',
+    notFoundContent: 'string',
+    placeholder: 'string',
+    popupClassName: 'string',
+    popupPlacement: 'bottomLeft|bottomRight|topLeft|topRight',
+    popupVisible: 'boolean',
+    showSearch: 'boolean',
+    size: 'large|default|small',
+    value: 'string | string[]',
+    valIsArr: 'boolean',
+    split: 'string',
+    changeOnSelect: 'boolean',
+  },
+  inputNumber: {
+    autoFocus: 'boolean',
+    defaultValue: 'number',
+    disabled: 'boolean',
+    max: 'number',
+    min: 'number',
+    precision: 'number',
+    decimalSeparator: 'string',
+    size: 'string',
+    step: 'number',
+    value: 'number',
+  },
+  select: {
+    allowClear: 'boolean',
+    autoClearSearchValue: 'boolean',
+    autoFocus: 'boolean',
+    defaultActiveFirstOption: 'boolean',
+    disabled: 'boolean',
+    dropdownMatchSelectWidth: 'boolean',
+    firstActiveValue: 'string',
+    labelInValue: 'boolean',
+    maxTagCount: 'number',
+    maxTagTextLength: 'number',
+    mode: 'multiple|tags',
+    notFoundContent: 'string',
+    optionFilterProp: 'string',
+    optionLabelProp: 'string',
+    showArrow: 'boolean',
+    size: 'large|small',
+    tokenSeparators: 'string',
+    defaultOpen: 'boolean',
+    open: 'boolean',
+    loading: 'boolean',
+    value: 'string | string[] | number | number[]',
+    isNull: 'boolean',
+    vToString: 'boolean',
+    splitKey: 'string',
+    labelKey: 'string',
+    valKey: 'string',
+    showSearch: 'boolean',
+    placeholder: 'string',
+  },
+  selectTree: {
+    allowClear: 'boolean',
+    autoClearSearchValue: 'boolean',
+    disabled: 'boolean',
+    dropdownMatchSelectWidth: 'boolean',
+    labelInValue: 'boolean',
+    maxTagCount: 'number',
+    multiple: 'boolean',
+    placeholder: 'string',
+    searchPlaceholder: 'string',
+    searchValue: 'string',
+    treeIcon: 'boolean',
+    showCheckedStrategy: 'TreeSelect.SHOW_ALL|TreeSelect.SHOW_PARENT|TreeSelect.SHOW_CHILD',
+    showSearch: 'boolean',
+    size: 'large|small',
+    treeCheckable: 'boolean',
+    treeCheckStrictly: 'boolean',
+    treeDefaultExpandAll: 'boolean',
+    treeNodeFilterProp: 'string',
+    treeNodeLabelProp: 'string',
+    value: 'number | string | string[]',
+    multipleToStr: 'boolean',
+    valKey: 'string',
+    split: 'string',
+    labelKey: 'string',
+    childKey: 'string',
+  },
+  timestamp: {
+    value: 'string|number',
+    format: 'string',
+  },
+  selectRemote: {}
+
 }
 @observer
 export default class WhereConf extends Component<any> {
@@ -47,6 +164,12 @@ export default class WhereConf extends Component<any> {
     values[field] = value
     onChange(values)
   }
+  dfValChange = (e: any, index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index].dfVal = e.target.value
+    values[field] = value
+    onChange(values)
+  }
 
   render() {
     const { value = [], dict } = this.props
@@ -59,17 +182,59 @@ export default class WhereConf extends Component<any> {
     } else {
       fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
     }
+
+    console.log(value);
     return <div>{value.map((item: any, index: number) =>
-      <div key={index} style={{ background: '#eee', padding: '10px', marginBottom: '10px' }}>
+      <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
         <Row>
           <Col span={8}>
+            <FormC.Item label="标题">
+              <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
             <FormC.Item label="字段">
-              <Select value={item.field} data={fieldsData} onChange={(v) => this.change(v, index, 'field')}/>
+              <Select value={item.field} mode={item.type === 'rangeDate' ? 'multiple' : 'tags'} data={fieldsData}
+                      onChange={(v) => this.change(v, index, 'field')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="type">
               <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="span">
+              <Select value={item.span} data={[1, 2, 3, 4, 6, 8, 12, 24]}
+                      onChange={(v) => this.change(v, index, 'span')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={16}>
+            <FormC.Item label="默认值">
+              <div style={{ display: 'inline-block' }}>
+                <Radio.Group onChange={(e: any) => this.dfValChange(e, index)} value={item.dfVal}>
+                  <Radio value={true}>true</Radio>
+                  <Radio value={false}>false</Radio>
+                  <Radio value={'_[]'}>[]</Radio>
+                  <Radio value={'_{}'}>{'{}'}</Radio>
+                  <Radio value={''}>string</Radio>
+                </Radio.Group>
+              </div>
+              {typeof item.dfVal === 'string' && item.dfVal !== '_{}' && item.dfVal !== '_[]' &&
+              <div style={{ display: 'inline-block' }}>
+                <Input value={item.dfVal} onChange={(v: string) => this.change(v, index, 'dfVal')}/>
+              </div>
+              }
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="校验规则">
+              <Input value={item.rules} onChange={(v: string) => this.change(v, index, 'rules')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="数据">
+              <Input value={item.data} onChange={(v: string) => this.change(v, index, 'data')}/>
             </FormC.Item>
           </Col>
           {item.type &&
@@ -101,16 +266,20 @@ class PropsEdit extends Component<any> {
   }
 
   render() {
-    const { data, value = [] } = this.props
+    const { data = {}, value = [] } = this.props
     return <div>{value.map((item: any, index: number) =>
       <div key={index} style={{ background: '#ddd', padding: '10px', marginBottom: '10px' }}>
         <Row>
-          <Col span={8}>
-            <Select value={item.type} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'type')}/>
+          <Col span={12}>
+            <FormC.Item label="key">
+              <Select value={item.type} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'type')}/>
+            </FormC.Item>
           </Col>
           {item.type &&
-          <Col span={8}>
-            <PropVal value={item.val} type={item.type} onChange={(v: any) => this.change(v, index, 'val')}/>
+          <Col span={12}>
+            <FormC.Item label="val">
+              <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')}/>
+            </FormC.Item>
           </Col>
           }
         </Row>
@@ -122,8 +291,21 @@ class PropsEdit extends Component<any> {
 
 @observer
 class PropVal extends Component<any> {
+  change = (e: any) => {
+    const { onChange } = this.props
+    onChange(e.target.value)
+  }
+
   render() {
-    const { type, value } = this.props
-    return <Input/>
+    const { type, value, onChange } = this.props
+    if (type === 'string') {
+      return <Input value={value} onChange={onChange}/>
+    }
+    if (type === 'boolean') {
+      return <Radio.Group onChange={this.change} value={value}>
+        <Radio value={true}>true</Radio>
+        <Radio value={false}>false</Radio>
+      </Radio.Group>
+    }
   }
 }
