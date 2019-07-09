@@ -33,13 +33,13 @@ const typeProps = {
     allowClear: 'boolean',
   },
   checkbox: {
-    value: 'string | string[]',
+    value: 'string|array',
     labelKey: 'string',
     valKey: 'string',
     split: 'string',
   },
   radio: {
-    value: 'string | number',
+    value: 'string|number',
     isAll: 'boolean',
     type: 'string',
     valKey: 'string',
@@ -69,7 +69,7 @@ const typeProps = {
     popupVisible: 'boolean',
     showSearch: 'boolean',
     size: 'large|default|small',
-    value: 'string | string[]',
+    value: 'string|array',
     valIsArr: 'boolean',
     split: 'string',
     changeOnSelect: 'boolean',
@@ -107,7 +107,7 @@ const typeProps = {
     defaultOpen: 'boolean',
     open: 'boolean',
     loading: 'boolean',
-    value: 'string | string[] | number | number[]',
+    value: 'string|array|number',
     isNull: 'boolean',
     vToString: 'boolean',
     splitKey: 'string',
@@ -136,7 +136,7 @@ const typeProps = {
     treeDefaultExpandAll: 'boolean',
     treeNodeFilterProp: 'string',
     treeNodeLabelProp: 'string',
-    value: 'number | string | string[]',
+    value: 'number|string|array',
     multipleToStr: 'boolean',
     valKey: 'string',
     split: 'string',
@@ -154,13 +154,17 @@ const typeProps = {
 export default class WhereConf extends Component<any> {
   add = () => {
     const { value = [], onChange, values, field } = this.props
-    value.push({ field: '', type: '', props: [] })
+    value.push({ title: '', field: '', type: '', props: [], span: 8, rules: '', dfVal: '' })
     values[field] = value
     onChange(values)
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange, values, field, } = this.props
     value[i][type] = v
+    if (type === 'type') {
+      value[i].props = []
+      value[i].dfVal = ''
+    }
     values[field] = value
     onChange(values)
   }
@@ -182,68 +186,53 @@ export default class WhereConf extends Component<any> {
     } else {
       fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
     }
-
-    console.log(value);
     return <div>{value.map((item: any, index: number) =>
       <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
         <Row>
           <Col span={8}>
             <FormC.Item label="标题">
-              <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')}/>
+              <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')} />
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="字段">
               <Select value={item.field} mode={item.type === 'rangeDate' ? 'multiple' : 'tags'} data={fieldsData}
-                      onChange={(v) => this.change(v, index, 'field')}/>
+                onChange={(v) => this.change(v, index, 'field')} />
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="type">
-              <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')}/>
+              <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')} />
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="span">
               <Select value={item.span} data={[1, 2, 3, 4, 6, 8, 12, 24]}
-                      onChange={(v) => this.change(v, index, 'span')}/>
+                onChange={(v) => this.change(v, index, 'span')} />
             </FormC.Item>
           </Col>
           <Col span={16}>
             <FormC.Item label="默认值">
-              <div style={{ display: 'inline-block' }}>
-                <Radio.Group onChange={(e: any) => this.dfValChange(e, index)} value={item.dfVal}>
-                  <Radio value={true}>true</Radio>
-                  <Radio value={false}>false</Radio>
-                  <Radio value={'_[]'}>[]</Radio>
-                  <Radio value={'_{}'}>{'{}'}</Radio>
-                  <Radio value={''}>string</Radio>
-                </Radio.Group>
-              </div>
-              {typeof item.dfVal === 'string' && item.dfVal !== '_{}' && item.dfVal !== '_[]' &&
-              <div style={{ display: 'inline-block' }}>
-                <Input value={item.dfVal} onChange={(v: string) => this.change(v, index, 'dfVal')}/>
-              </div>
-              }
+              <DfVal value={item.dfVal} type={typeProps[item.type] && typeProps[item.type].value || ''} onChange={(v: any) => this.change(v, index, 'dfVal')} />
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="校验规则">
-              <Input value={item.rules} onChange={(v: string) => this.change(v, index, 'rules')}/>
+              <Input value={item.rules} onChange={(v: string) => this.change(v, index, 'rules')} />
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="数据">
-              <Input value={item.data} onChange={(v: string) => this.change(v, index, 'data')}/>
+              <Input value={item.data} onChange={(v: string) => this.change(v, index, 'data')} />
             </FormC.Item>
           </Col>
           {item.type &&
-          <Col span={24}>
-            <FormC.Item label="props">
-              <PropsEdit value={item.props} data={typeProps[item.type]}
-                         onChange={(v: any[]) => this.change(v, index, 'props')}/>
-            </FormC.Item>
-          </Col>}
+            <Col span={24}>
+              <FormC.Item label="props">
+                <PropsEdit value={item.props} data={typeProps[item.type]}
+                  onChange={(v: any[]) => this.change(v, index, 'props')} />
+              </FormC.Item>
+            </Col>}
         </Row>
       </div>
     )}
@@ -262,6 +251,9 @@ class PropsEdit extends Component<any> {
   change = (v: any, index: number, type: string) => {
     const { value = [], onChange } = this.props
     value[index][type] = v
+    if (type === 'type') {
+      value[index].val = ''
+    }
     onChange(value)
   }
 
@@ -272,16 +264,19 @@ class PropsEdit extends Component<any> {
         <Row>
           <Col span={12}>
             <FormC.Item label="key">
-              <Select value={item.type} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'type')}/>
+              <Select value={item.type} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'type')} />
             </FormC.Item>
           </Col>
           {item.type &&
-          <Col span={12}>
-            <FormC.Item label="val">
-              <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')}/>
-            </FormC.Item>
-          </Col>
+            <Col span={12}>
+              <FormC.Item label="val">
+                <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')} />
+              </FormC.Item>
+            </Col>
           }
+          <Col span={24}>
+            123
+          </Col>
         </Row>
       </div>)}
       <Button onClick={this.add}>+</Button>
@@ -298,8 +293,12 @@ class PropVal extends Component<any> {
 
   render() {
     const { type, value, onChange } = this.props
+    const typeArr = type.split('|')
     if (type === 'string') {
-      return <Input value={value} onChange={onChange}/>
+      return <Input value={value} onChange={onChange} />
+    }
+    if (type === 'number') {
+      return <InputNumber value={value} onChange={onChange} />
     }
     if (type === 'boolean') {
       return <Radio.Group onChange={this.change} value={value}>
@@ -307,5 +306,48 @@ class PropVal extends Component<any> {
         <Radio value={false}>false</Radio>
       </Radio.Group>
     }
+    if (typeArr.length > 1) {
+      return <Select value={value} data={typeArr} onChange={onChange} />
+    }
+  }
+}
+@observer
+class DfVal extends Component<any>{
+  render() {
+    const { value, type, onChange } = this.props
+    if (!type) {
+      return <div>请选择类型</div>
+    }
+    const typeArr = type.split('|')
+    return <div>
+      <div style={{ display: 'inline-block' }}>
+        <Radio.Group onChange={(e: any) => onChange(e.target.value)} value={value}>
+          {typeArr.indexOf('boolean') >= 0 &&
+            <>
+              <Radio value={true}>true</Radio>
+              <Radio value={false}>false</Radio>
+            </>
+          }
+          {typeArr.indexOf('array') >= 0 &&
+            <Radio value={'_[]'}>[]</Radio>
+          }
+          {typeArr.indexOf('object') >= 0 &&
+            <Radio value={'_{}'}>{'{}'}</Radio>
+          }
+          {typeArr.length > 1 && typeArr.indexOf('string') >= 0 &&
+            <Radio value={''}>string</Radio>
+          }
+          {typeArr.length > 1 && typeArr.indexOf('number') >= 0 &&
+            <Radio value={0}>number</Radio>
+          }
+        </Radio.Group>
+      </div>
+      {(value !== '_{}' && value !== '_[]') &&
+        <div style={{ display: 'inline-block' }}>
+          {(type === 'string' || typeof value === 'string' && type !== 'number') && <Input value={value} onChange={onChange} />}
+          {(type === 'number' || typeof value === 'number' && type !== 'string') && <InputNumber value={value} onChange={onChange} />}
+        </div>
+      }
+    </div>
   }
 }
