@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
-import { observer } from 'mobx-react'
-import { TreeSelect } from 'antd'
-import { TreeSelectProps } from 'antd/lib/tree-select'
+import React, {Component} from 'react'
+import {observer} from 'mobx-react'
+import {TreeSelect} from 'antd'
+import {TreeSelectProps} from 'antd/lib/tree-select'
 
 const TreeNode = TreeSelect.TreeNode;
 
-interface IProps extends TreeSelectProps {
+interface IProps extends TreeSelectProps<any> {
   value?: number | string | Array<string>,
   multipleToStr?: boolean,
   data?: Array<any>,
@@ -19,7 +19,7 @@ interface IProps extends TreeSelectProps {
 @observer
 export default class SelectTree extends Component<IProps> {
   change = (val: string | Array<any> = '') => {
-    const { onChange, multiple = true, multipleToStr = false, split = '/' } = this.props
+    const {onChange, multiple = true, multipleToStr = false, split = '/'} = this.props
     const isValToStr = multiple && multipleToStr
 
     if (onChange) {
@@ -34,7 +34,7 @@ export default class SelectTree extends Component<IProps> {
   }
 
   render() {
-    const { data = [], multiple = true, value = '', valKey = 'id', labelKey = 'title', childKey = 'child', multipleToStr = false, split = '/', ...args } = this.props
+    const {data = [], multiple = true, value = '', valKey = 'id', labelKey = 'title', childKey = 'child', multipleToStr = false, split = '/', ...args} = this.props
     const isValToStr = multiple && multipleToStr
     const treeProps = {
       treeNodeFilterProp: 'title',
@@ -55,19 +55,19 @@ export default class SelectTree extends Component<IProps> {
         {...treeProps}
         value={newVal === '' ? undefined : newVal}
         onChange={this.change}>
-        {childTree({ data, valKey, labelKey, childKey, isValToStr })}
+        {childTree({data, valKey, labelKey, childKey, isValToStr})}
       </TreeSelect>
     )
   }
 }
-const childTree = function ({ data = [], valKey = 'id', labelKey = 'title', childKey = 'child', isValToStr }: any = {}) {
+const childTree = function ({data = [], valKey = 'id', labelKey = 'title', childKey = 'child', isValToStr}: any = {}) {
   return data.map ? data.map((item: any) => {
     const title = item[labelKey]
     const value = isValToStr ? item[valKey] + '' : item[valKey]
     const child = item[childKey]
     return (
       <TreeNode title={title} value={value} key={value}>
-        {child && childTree({ data: child, valKey, labelKey, childKey })}
+        {child && childTree({data: child, valKey, labelKey, childKey})}
       </TreeNode>)
   }) : null
 }
