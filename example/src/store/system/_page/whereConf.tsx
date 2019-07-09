@@ -48,7 +48,6 @@ const typeProps = {
   rangeDate: {
     allowClear: 'boolean',
     autoFocus: 'boolean',
-    className: 'string',
     disabled: 'boolean',
     dropdownClassName: 'string',
     mode: 'time|date|month|year|decade',
@@ -59,7 +58,6 @@ const typeProps = {
   cascader: {
     allowClear: 'boolean',
     autoFocus: 'boolean',
-    className: 'string',
     disabled: 'boolean',
     expandTrigger: 'click|hover',
     notFoundContent: 'string',
@@ -268,13 +266,13 @@ class PropsEdit extends Component<any> {
             </FormC.Item>
           </Col>
           {item.type &&
-            <Col span={12}>
+            <Col span={11}>
               <FormC.Item label="val">
                 <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')} />
               </FormC.Item>
             </Col>
           }
-          <Col span={24}>
+          <Col span={1}>
             123
           </Col>
         </Row>
