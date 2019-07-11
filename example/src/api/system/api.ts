@@ -21,3 +21,15 @@ export function add(data: any) {
 export function edit(data: any) {
   return httpPost('/api/system/api/edit', data)
 }
+
+export function freeze(data: any) {
+  return httpPost('/api/system/api/freeze', data)
+}
+
+export function unfreeze(data: any) {
+  return httpPost('/api/system/api/unfreeze', data)
+}
+
+export function del(data: any) {
+  return httpPost('/api/system/api/del', data)
+}
