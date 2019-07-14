@@ -35,9 +35,12 @@ export default class Table implements IStore {
   }
   @action
   getApiRows = async () => {
-    const data = await apiRows({ _limit: 0 })
-    if (data.code === 0) {
-      this.dict.api = data.data
+    const { type, side } = this.addForm
+    if (type && side) {
+      const data = await apiRows({ _limit: 0, type, side })
+      if (data.code === 0) {
+        this.dict.api = data.data
+      }
     }
   }
 
@@ -112,6 +115,14 @@ export default class Table implements IStore {
       { title: '查询配置', field: 'whereConf', span: 24, render: (item: any) => <WhereConf {...item}/> },
     ]
   }
+  typeReaction = reaction(() => this.addForm.type, () => {
+    this.addForm.api = ''
+    this.getApiRows()
+  })
+  sideReaction = reaction(() => this.addForm.side, () => {
+    this.addForm.api = ''
+    this.getApiRows()
+  })
 
   apiReaction = reaction(() => this.addForm.api, async (id: string) => {
     // this.addForm.table = ''

@@ -156,6 +156,12 @@ export default class WhereConf extends Component<any> {
     values[field] = value
     onChange(values)
   }
+  cut = (index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value.splice(index, 1)
+    values[field] = value
+    onChange(values)
+  }
   change = (v: any, i: number, type: string) => {
     const { value = [], onChange, values, field, } = this.props
     value[i][type] = v
@@ -189,48 +195,52 @@ export default class WhereConf extends Component<any> {
         <Row>
           <Col span={8}>
             <FormC.Item label="标题">
-              <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')} />
+              <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="字段">
               <Select value={item.field} mode={item.type === 'rangeDate' ? 'multiple' : 'tags'} data={fieldsData}
-                onChange={(v) => this.change(v, index, 'field')} />
+                      onChange={(v) => this.change(v, index, 'field')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="type">
-              <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')} />
+              <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="span">
               <Select value={item.span} data={[1, 2, 3, 4, 6, 8, 12, 24]}
-                onChange={(v) => this.change(v, index, 'span')} />
+                      onChange={(v) => this.change(v, index, 'span')}/>
             </FormC.Item>
           </Col>
           <Col span={16}>
             <FormC.Item label="默认值">
-              <DfVal value={item.dfVal} type={typeProps[item.type] && typeProps[item.type].value || ''} onChange={(v: any) => this.change(v, index, 'dfVal')} />
+              <DfVal value={item.dfVal} type={typeProps[item.type] && typeProps[item.type].value || ''}
+                     onChange={(v: any) => this.change(v, index, 'dfVal')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="校验规则">
-              <Input value={item.rules} onChange={(v: string) => this.change(v, index, 'rules')} />
+              <Input value={item.rules} onChange={(v: string) => this.change(v, index, 'rules')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="数据">
-              <Input value={item.data} onChange={(v: string) => this.change(v, index, 'data')} />
+              <Input value={item.data} onChange={(v: string) => this.change(v, index, 'data')}/>
             </FormC.Item>
           </Col>
+          <Col span={8}>
+            <Button onClick={() => this.cut(index)}>-</Button>
+          </Col>
           {item.type &&
-            <Col span={24}>
-              <FormC.Item label="props">
-                <PropsEdit value={item.props} data={typeProps[item.type]}
-                  onChange={(v: any[]) => this.change(v, index, 'props')} />
-              </FormC.Item>
-            </Col>}
+          <Col span={24}>
+            <FormC.Item label="props">
+              <PropsEdit value={item.props} data={typeProps[item.type]}
+                         onChange={(v: any[]) => this.change(v, index, 'props')}/>
+            </FormC.Item>
+          </Col>}
         </Row>
       </div>
     )}
@@ -246,6 +256,11 @@ class PropsEdit extends Component<any> {
     value.push({ type: '', val: '' })
     onChange(value)
   }
+  cut = (index: number) => {
+    const { value = [], onChange } = this.props
+    value.splice(index, 1)
+    onChange(value)
+  }
   change = (v: any, index: number, type: string) => {
     const { value = [], onChange } = this.props
     value[index][type] = v
@@ -258,22 +273,22 @@ class PropsEdit extends Component<any> {
   render() {
     const { data = {}, value = [] } = this.props
     return <div>{value.map((item: any, index: number) =>
-      <div key={index} style={{ background: '#ddd', padding: '10px', marginBottom: '10px' }}>
+      <div key={index} style={{ background: '#ddd', padding: '10px', marginBottom: '10px', minWidth: '680px' }}>
         <Row>
-          <Col span={12}>
+          <Col span={8}>
             <FormC.Item label="key">
-              <Select value={item.type} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'type')} />
+              <Select value={item.type} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'type')}/>
             </FormC.Item>
           </Col>
           {item.type &&
-            <Col span={11}>
-              <FormC.Item label="val">
-                <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')} />
-              </FormC.Item>
-            </Col>
+          <Col span={12}>
+            <FormC.Item label="val">
+              <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')}/>
+            </FormC.Item>
+          </Col>
           }
-          <Col span={1}>
-            123
+          <Col span={4}>
+            <Button onClick={() => this.cut(index)}>-</Button>
           </Col>
         </Row>
       </div>)}
@@ -293,10 +308,10 @@ class PropVal extends Component<any> {
     const { type, value, onChange } = this.props
     const typeArr = type.split('|')
     if (type === 'string') {
-      return <Input value={value} onChange={onChange} />
+      return <Input value={value} onChange={onChange}/>
     }
     if (type === 'number') {
-      return <InputNumber value={value} onChange={onChange} />
+      return <InputNumber value={value} onChange={onChange}/>
     }
     if (type === 'boolean') {
       return <Radio.Group onChange={this.change} value={value}>
@@ -305,12 +320,13 @@ class PropVal extends Component<any> {
       </Radio.Group>
     }
     if (typeArr.length > 1) {
-      return <Select value={value} data={typeArr} onChange={onChange} />
+      return <Select value={value} data={typeArr} onChange={onChange}/>
     }
   }
 }
+
 @observer
-class DfVal extends Component<any>{
+class DfVal extends Component<any> {
   render() {
     const { value, type, onChange } = this.props
     if (!type) {
@@ -321,30 +337,32 @@ class DfVal extends Component<any>{
       <div style={{ display: 'inline-block' }}>
         <Radio.Group onChange={(e: any) => onChange(e.target.value)} value={value}>
           {typeArr.indexOf('boolean') >= 0 &&
-            <>
-              <Radio value={true}>true</Radio>
-              <Radio value={false}>false</Radio>
-            </>
+          <>
+            <Radio value={true}>true</Radio>
+            <Radio value={false}>false</Radio>
+          </>
           }
           {typeArr.indexOf('array') >= 0 &&
-            <Radio value={'_[]'}>[]</Radio>
+          <Radio value={'_[]'}>[]</Radio>
           }
           {typeArr.indexOf('object') >= 0 &&
-            <Radio value={'_{}'}>{'{}'}</Radio>
+          <Radio value={'_{}'}>{'{}'}</Radio>
           }
           {typeArr.length > 1 && typeArr.indexOf('string') >= 0 &&
-            <Radio value={''}>string</Radio>
+          <Radio value={''}>string</Radio>
           }
           {typeArr.length > 1 && typeArr.indexOf('number') >= 0 &&
-            <Radio value={0}>number</Radio>
+          <Radio value={0}>number</Radio>
           }
         </Radio.Group>
       </div>
       {(value !== '_{}' && value !== '_[]') &&
-        <div style={{ display: 'inline-block' }}>
-          {(type === 'string' || typeof value === 'string' && type !== 'number') && <Input value={value} onChange={onChange} />}
-          {(type === 'number' || typeof value === 'number' && type !== 'string') && <InputNumber value={value} onChange={onChange} />}
-        </div>
+      <div style={{ display: 'inline-block' }}>
+        {(type === 'string' || typeof value === 'string' && type !== 'number') &&
+        <Input value={value} onChange={onChange}/>}
+        {(type === 'number' || typeof value === 'number' && type !== 'string') &&
+        <InputNumber value={value} onChange={onChange}/>}
+      </div>
       }
     </div>
   }
