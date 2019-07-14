@@ -11,6 +11,7 @@ import { rows as serviceRows } from '../../api/system/service'
 import { getMap } from '../../api/system/dict'
 import Http from '../../api/http'
 import WhereConf from './_page/whereConf'
+import TableConf from './_page/tableConf'
 
 const { dfDataPage, dfDataObj } = Http
 @Curd @Form
@@ -85,10 +86,11 @@ export default class Table implements IStore {
     url: '',
     desc: '',
     status: 1,
-    fields: '',
     isConf: 1,
     type: 'list',
     side: 'admin',
+    whereConf: [],
+    tableConf: []
   }
   @observable addForm = { ...this.dfAddForm }
   @observable addErrs = { table: '', db: '', service: '' }
@@ -113,6 +115,7 @@ export default class Table implements IStore {
       { title: '是否配置', field: 'isConf', type: 'select', data: 'yesOrNo', span: 8, },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
       { title: '查询配置', field: 'whereConf', span: 24, render: (item: any) => <WhereConf {...item}/> },
+      { title: '表格配置', field: 'tableConf', span: 24, render: (item: any) => <TableConf {...item}/> },
     ]
   }
   typeReaction = reaction(() => this.addForm.type, () => {
