@@ -4,15 +4,39 @@ import { Button, Col, Form as FormC, Row } from "antd";
 import { Curd, Form, Input, Select, Link } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 
-const typeData: string[] = ['text']
+const typeData: string[] = ['text', 'currency', 'datetime', 'idCardEncrypt', 'keyToValue', 'phoneEncrypt', 'svg']
 const typeProps = {
-  text: {}
+  text: {},
+  currency: {
+    sign: 'string',
+    fixed: 'number',
+  },
+  datetime: {
+    format: 'string'
+  },
+  idCardEncrypt: {
+    startLen: 'number',
+    endLen: 'number',
+    sign: 'string',
+  },
+  keyToValue: {
+    data: 'string',
+    color: 'string',
+    colors: 'string',
+    isTag: 'boolean'
+  },
+  phoneEncrypt: {
+    startLen: 'number',
+    endLen: 'number',
+    sign: 'string',
+  },
+  svg: { src: 'string' }
 }
 @observer
 export default class TableConf extends Component<any> {
   add = () => {
     const { value = [], onChange, values, field } = this.props
-    value.push({ title: '', field: '', type: '', props: [], span: 8, rules: '', dfVal: '' })
+    value.push({ field: '', align: '', type: '', dataIndex: '', width: '', fixed: '', props: [], })
     values[field] = value
     onChange(values)
   }
