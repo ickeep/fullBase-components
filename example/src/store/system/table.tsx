@@ -74,7 +74,18 @@ export default class Table implements IStore {
       { title: '备注', dataIndex: 'desc' },
     ]
   }
-  dfAddForm = { name: '', db: '', desc: '', dict: '', fields: {}, join: [], cloudFields: '', service: '', unique: [] }
+  dfAddForm = {
+    name: '',
+    db: '',
+    desc: '',
+    dict: '',
+    fields: {},
+    join: [],
+    cloudFields: '',
+    jsonFields: '',
+    service: '',
+    unique: []
+  }
   @observable addForm = { ...this.dfAddForm }
   @observable addErrs = { name: '', db: '', service: '' }
   @observable addStatus: IFormStatus = { submit: false, loading: false }
@@ -101,10 +112,13 @@ export default class Table implements IStore {
       {
         title: '云文件', field: 'cloudFields', span: 8, type: 'select', data: 'fields',
         props: { mode: 'multiple', valKey: 'name' }
+      }, {
+        title: 'JSON字段', field: 'jsonFields', span: 8, type: 'select', data: 'fields',
+        props: { mode: 'multiple', valKey: 'name' }
       },
-      { title: '备注', field: 'desc', type: 'input', span: 8, },
       { title: '主键', field: 'pk', data: 'fields', span: 24, type: 'select', props: { valKey: 'name' } },
-      { title: '唯一键', field: 'unique', data: 'fields', span: 24, render: (item: any) => <RUnique {...item}/> },
+      { title: '唯一键', field: 'unique', data: 'fields', span: 16, render: (item: any) => <RUnique {...item}/> },
+      { title: '备注', field: 'desc', type: 'input', span: 8, },
       { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> },
       { title: '关联表', field: 'join', span: 24, data: 'db', render: (item: any) => <RJoin {...item}/> }
     ]
@@ -162,9 +176,12 @@ export default class Table implements IStore {
       {
         title: '云文件', field: 'cloudFields', span: 8, type: 'select', data: 'fields',
         props: { mode: 'multiple', valKey: 'name' }
+      }, {
+        title: 'JSON字段', field: 'jsonFields', span: 8, type: 'select', data: 'fields',
+        props: { mode: 'multiple', valKey: 'name' }
       },
+      { title: '唯一键', field: 'unique', data: 'fields', span: 16, render: (item: any) => <RUnique {...item}/> },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
-      { title: '唯一键', field: 'unique', data: 'fields', span: 24, render: (item: any) => <RUnique {...item}/> },
       { title: '字段', field: 'fields', span: 24, render: (item: any) => <RFields {...item}/> },
       { title: '关联表', field: 'join', span: 24, data: 'db', render: (item: any) => <RJoin {...item}/> }
     ]
