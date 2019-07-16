@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { Button, Col, Form as FormC, InputNumber, Row } from "antd";
+import { Button, Col, Form as FormC, InputNumber, Row, Checkbox } from "antd";
 import { Curd, Form, Input, Select, Link } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 
@@ -34,8 +34,73 @@ const typeProps = {
 }
 @observer
 export default class TableConf extends Component<any> {
+  change = (v: any, type: string) => {
+    const { value = {}, onChange, values, field, } = this.props
+    value[type] = v
+    values[field] = value
+    onChange(values)
+  }
+
+  render() {
+    const { value = {}, dict } = this.props
+
+    return (
+      <div style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
+        <Row>
+          <Col span={8}>
+            <FormC.Item label="dataKey">
+              <Input value={value.dataKey} onChange={(v: any) => this.change(v, 'dataKey')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="scrollX">
+              <InputNumber value={value.scrollX} onChange={(v: any) => this.change(v, 'scrollX')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="scrollY">
+              <InputNumber value={value.scrollY} onChange={(v: any) => this.change(v, 'scrollY')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="rowKey">
+              <Input value={value.rowKey} onChange={(v: any) => this.change(v, 'rowKey')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="size">
+              <Select value={value.size} data={['default', 'middle', 'small']}
+                      onChange={(v) => this.change(v, 'size')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="isRowSelection">
+              <Checkbox value={value.isRowSelection}
+                        onChange={(e: any) => this.change(e.target.checked, 'isRowSelection')}/>
+            </FormC.Item>
+          </Col>
+          {value.isRowSelection &&
+          <Col span={24}>
+            <FormC.Item label="rowSelection">
+              <TableRowSelection value={value.rowSelection} onChange={(v: any) => this.change(v, 'rowSelection')}/>
+            </FormC.Item>
+          </Col>
+          }
+          <Col span={24}>
+            <FormC.Item label="列">
+              <TableColumns value={value.columns} dict={dict} onChange={(v: any) => this.change(v, 'columns')}/>
+            </FormC.Item>
+          </Col>
+        </Row>
+      </div>)
+  }
+
+}
+
+@observer
+class TableColumns extends Component<any> {
   add = () => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     value.push({
       field: '',
       align: '',
@@ -47,24 +112,21 @@ export default class TableConf extends Component<any> {
       rule: '',
       expression: ''
     })
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
   cut = (index: number) => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     value.splice(index, 1)
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, values, field, } = this.props
+    const { value = [], onChange, } = this.props
     value[i][type] = v
     if (type === 'type') {
       value[i].props = []
       value[i].dfVal = ''
     }
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
 
   render() {
@@ -79,7 +141,7 @@ export default class TableConf extends Component<any> {
       fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
     }
     return <div>{value.map((item: any, index: number) =>
-      <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
+      <div key={index} style={{ width: '100%', background: '#ddd', padding: '10px', marginBottom: '10px' }}>
         <Row>
           <Col span={8}>
             <FormC.Item label="字段">
@@ -137,5 +199,40 @@ export default class TableConf extends Component<any> {
     )}
       <Button onClick={this.add}>+</Button>
     </div>
+  }
+}
+
+@observer
+class TableRowSelection extends Component<any> {
+
+  change = (v: any, type: string) => {
+    const { value = {}, onChange, } = this.props
+    value[type] = v
+    onChange(value)
+  }
+
+  render() {
+    const { value = {} } = this.props
+    return (
+      <div style={{ width: '100%', background: '#ddd', padding: '10px', marginBottom: '10px', minWidth: '780px' }}>
+        <Row>
+          <Col span={8}>
+            <FormC.Item label="width">
+              <InputNumber value={value.columnWidth} onChange={(v: any) => this.change(v, 'columnWidth')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="title">
+              <Input value={value.columnTitle} onChange={(v: any) => this.change(v, 'columnTitle')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="fixed">
+              <Checkbox value={value.fixed} onChange={(e: any) => this.change(e.target.checked, 'fixed')}/>
+            </FormC.Item>
+          </Col>
+        </Row>
+      </div>
+    )
   }
 }

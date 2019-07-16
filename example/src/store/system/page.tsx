@@ -90,7 +90,7 @@ export default class Table implements IStore {
     type: 'list',
     side: 'admin',
     whereConf: [],
-    tableConf: []
+    tableConf: {}
   }
   @observable addForm = { ...this.dfAddForm }
   @observable addErrs = { table: '', db: '', service: '' }
