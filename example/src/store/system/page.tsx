@@ -35,8 +35,8 @@ export default class Table implements IStore {
     }
   }
   @action
-  getApiRows = async () => {
-    const { type, side } = this.addForm
+  getApiRows = async (form: string) => {
+    const { type, side } = this[form]
     if (type && side) {
       const data = await apiRows({ _limit: 0, type, side })
       if (data.code === 0) {
@@ -98,7 +98,7 @@ export default class Table implements IStore {
   @observable addData = { ...dfDataObj }
   addInitData = () => {
     this.getDict()
-    this.getApiRows()
+    this.getApiRows('addForm')
   }
   @observable
   addFormConf: IAddFormConf = {
@@ -120,11 +120,11 @@ export default class Table implements IStore {
   }
   typeReaction = reaction(() => this.addForm.type, () => {
     this.addForm.api = ''
-    this.getApiRows()
+    this.getApiRows('addForm')
   })
   sideReaction = reaction(() => this.addForm.side, () => {
     this.addForm.api = ''
-    this.getApiRows()
+    this.getApiRows('addForm')
   })
 
   apiReaction = reaction(() => this.addForm.api, async (id: string) => {
@@ -150,7 +150,10 @@ export default class Table implements IStore {
     }
   })
 
-  editInitData = this.addInitData
+  editInitData = () => {
+    this.getDict()
+    this.getApiRows('editForm')
+  }
   @observable detailData = { ...dfDataObj }
   @observable detailLoading = false
   @observable detailForm = { id: '' }
@@ -159,5 +162,15 @@ export default class Table implements IStore {
   @observable editStatus = { ...this.addStatus }
   @observable editData = { ...this.addData }
   @observable editFormConf = { ...this.addFormConf }
+
+  editTypeReaction = reaction(() => this.editForm.type, () => {
+    this.editForm.api = ''
+    this.getApiRows('editForm')
+  })
+  editSideReaction = reaction(() => this.editForm.side, () => {
+    this.editForm.api = ''
+    this.getApiRows('editForm')
+  })
+
 
 }

@@ -200,8 +200,9 @@ export default class Table implements IStore {
     ]
   }
 
-  dbReaction = reaction(() => this.addForm.db, async (db: string) => {
-    this.addForm.table = ''
+  @action
+  dbEffect = async (db: string, form: string) => {
+    this[form].table = ''
     this.dict.table = []
     if (db) {
       const data = await tableRows(db)
@@ -209,19 +210,23 @@ export default class Table implements IStore {
         this.dict.table = data.data
       }
     }
-  })
-  tableReaction = reaction(() => this.addForm.table, async (table: string) => {
+  }
+
+  @action
+  tableEffect = async (table: string, form: string) => {
     this.dict.fields = []
-    this.addForm.fields = ''
-    this.addForm.optFields = ''
-    this.addForm.orderFields = ''
+    this[form].fields = ''
+    this[form].optFields = ''
+    this[form].orderFields = ''
     if (table) {
-      const data = await getFields({ db: this.addForm.db, name: table })
+      const data = await getFields({ db: this[form].db, name: table })
       if (data.code === 0) {
         this.dict.fields = data.data
       }
     }
-  })
+  }
+  dbReaction = reaction(() => this.addForm.db, (db: string) => this.dbEffect(db, 'addForm'))
+  tableReaction = reaction(() => this.addForm.table, async (table: string) => this.tableEffect(table, 'addForm'))
   editInitData = this.addInitData
   @observable detailData = { ...dfDataObj }
   @observable detailLoading = false
@@ -231,5 +236,6 @@ export default class Table implements IStore {
   @observable editStatus = { ...this.addStatus }
   @observable editData = { ...this.addData }
   @observable editFormConf = { ...this.addFormConf }
-
+  editDbReaction = reaction(() => this.editForm.db, (db: string) => this.dbEffect(db, 'editForm'))
+  editTableReaction = reaction(() => this.editForm.table, async (table: string) => this.tableEffect(table, 'editForm'))
 }
