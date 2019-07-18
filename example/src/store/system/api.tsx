@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { observer } from 'mobx-react'
 import { Curd, Form, Input, Select, Link } from 'fullbase-components'
 import IStore, {
   IFormStatus,
@@ -14,6 +15,7 @@ import { getFields } from '../../api/system/table'
 import { rows as serviceRows } from '../../api/system/service'
 import { rows as dictRows, getMap } from '../../api/system/dict'
 import Http from '../../api/http'
+import { Button } from "antd";
 
 const { dfDataPage, dfDataObj } = Http
 @Curd @Form
@@ -25,6 +27,7 @@ export default class Table implements IStore {
     table: [],
     httpMethod: {},
     fields: [],
+    joinFields: [],
     service: [],
     on: ['HAS_ONE', 'HAS_MANY']
   }
@@ -154,6 +157,7 @@ export default class Table implements IStore {
     fields: '',
     optFields: '',
     orderFields: '',
+    joinFields: [],
     isConf: 1,
     type: 'list',
     side: 'admin',
@@ -196,7 +200,11 @@ export default class Table implements IStore {
       },
       { title: '状态', field: 'status', type: 'select', data: 'status', span: 8, },
       { title: '是否配置', field: 'isConf', type: 'select', data: 'yesOrNo', span: 8, },
+
       { title: '备注', field: 'desc', type: 'input', span: 8, },
+      {
+        title: '联表字段', field: 'joinFields', span: 24, data: 'joinFields', render: (item: any) => <JoinFields {...item}/>
+      },
     ]
   }
 
@@ -215,13 +223,16 @@ export default class Table implements IStore {
   @action
   tableEffect = async (table: string, form: string) => {
     this.dict.fields = []
+    this.dict.joinFields = []
     this[form].fields = ''
     this[form].optFields = ''
     this[form].orderFields = ''
+    this[form].joinFields = []
     if (table) {
       const data = await getFields({ db: this[form].db, name: table })
       if (data.code === 0) {
-        this.dict.fields = data.data
+        this.dict.fields = data.data.fields
+        this.dict.joinFields = data.data.join
       }
     }
   }
@@ -238,4 +249,50 @@ export default class Table implements IStore {
   @observable editFormConf = { ...this.addFormConf }
   editDbReaction = reaction(() => this.editForm.db, (db: string) => this.dbEffect(db, 'editForm'))
   editTableReaction = reaction(() => this.editForm.table, async (table: string) => this.tableEffect(table, 'editForm'))
+}
+
+@observer
+class JoinFields extends Component<any> {
+  add = () => {
+    const { value = [], onChange, values, field } = this.props
+    const df = { table: '', fields: '' }
+    values[field] = value.push ? value.push(df) : [df]
+    onChange(values)
+  }
+  cut = (index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value.splice(index, 1)
+    values[field] = value
+    onChange(values)
+  }
+  change = (v: any, index: number, type: string) => {
+    const { value = [], onChange, values, field } = this.props
+    value[index][type] = v
+    values[field] = value
+    if (type === 'table') {
+      value[index].fields = ''
+    }
+    onChange(values)
+  }
+
+  render() {
+
+    const { value = [], data } = this.props
+    console.log(this.props);
+    return <div>
+      {value && value.map && value.map((item: any, index: number) =>
+        <div key={index}>
+          <div style={{ display: 'inline-block', marginRight: '10px' }}>
+            <Select data={Object.keys(data)} value={item.table} onChange={(v) => this.change(v, index, 'table')}/>
+          </div>
+          <div style={{ display: 'inline-block', marginRight: '10px' }}>
+            <Select data={data[item.table] || []} value={item.fields} mode="multiple" valKey="name"
+                    onChange={(v) => this.change(v, index, 'fields')}/>
+          </div>
+          <Button onClick={() => this.cut(index)} style={{ display: 'inline-block' }}>-</Button>
+        </div>
+      )}
+      <Button onClick={this.add}>+</Button>
+    </div>
+  }
 }

@@ -140,9 +140,9 @@ export default class Table implements IStore {
     if (name) {
       const data = await getFields({ db: this.addForm.db, name })
       if (data.code === 0) {
-        this.dict.fields = data.data
+        this.dict.fields = data.data.fields
         const conf = {}
-        data.data.forEach((item: any) => {
+        data.data.fields.forEach((item: any) => {
           conf[item.name] = { like: true, notLike: true, in: true, num: true, not: true }
         })
         this.addForm.fields = conf
@@ -193,8 +193,8 @@ export default class Table implements IStore {
     if (name) {
       const data = await getFields({ db: this.editForm.db, name })
       if (data.code === 0) {
-        this.dict.fields = data.data
-        data.data.forEach((item: any) => {
+        this.dict.fields = data.data.fields
+        data.data.fields.forEach((item: any) => {
           if (!this.editForm.fields[item.name]) {
             this.editForm.fields[item.name] = { like: true, notLike: true, in: true, num: true, not: true }
           }
