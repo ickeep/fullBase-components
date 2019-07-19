@@ -35,13 +35,28 @@ export default class PropsEdit extends Component<any> {
             </FormC.Item>
           </Col>
           {item.type &&
-          <Col span={12}>
-            <FormC.Item label="val">
-              <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')}/>
-            </FormC.Item>
-          </Col>
+          <>
+            <Col span={12}>
+              <FormC.Item label="val">
+                <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')}/>
+              </FormC.Item>
+            </Col>
+            <Col span={8}>
+              <FormC.Item label="rule">
+                <Select value={item.rule} data={['template', 'arithmetic']}
+                        onChange={(v) => this.change(v, index, 'rule')}/>
+              </FormC.Item>
+            </Col>
+            {item.rule &&
+            <Col span={8}>
+              <FormC.Item label="表达式">
+                <Input value={item.expression} onChange={(v: any) => this.change(v, index, 'expression')}/>
+              </FormC.Item>
+            </Col>
+            }
+          </>
           }
-          <Col span={4}>
+          <Col span={8}>
             <Button onClick={() => this.cut(index)}>-</Button>
           </Col>
         </Row>

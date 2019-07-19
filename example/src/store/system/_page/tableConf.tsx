@@ -4,9 +4,12 @@ import { Button, Col, Form as FormC, InputNumber, Row, Checkbox } from "antd";
 import { Curd, Form, Input, Select, Link } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 
-const typeData: string[] = ['text', 'currency', 'datetime', 'idCardEncrypt', 'keyToValue', 'phoneEncrypt', 'svg']
+const typeData: string[] = ['currency', 'datetime', 'idCardEncrypt', 'keyToValue', 'phoneEncrypt', 'svg']
 const typeProps = {
-  text: {},
+  link: {
+    href: 'string',
+    value: 'string'
+  },
   currency: {
     sign: 'string',
     fixed: 'number',
@@ -109,8 +112,8 @@ class TableColumns extends Component<any> {
       width: '',
       fixed: '',
       props: [],
-      rule: '',
-      expression: ''
+      // rule: '',
+      // expression: ''
     })
     onChange(value)
   }
@@ -177,21 +180,23 @@ class TableColumns extends Component<any> {
               <InputNumber value={item.width} onChange={(v) => this.change(v, index, 'width')}/>
             </FormC.Item>
           </Col>
-          <Col span={8}>
+          <Col span={6}>
             <FormC.Item label="fixed">
               <Select value={item.fixed} data={['left', 'right']} onChange={(v) => this.change(v, index, 'fixed')}/>
             </FormC.Item>
-          </Col><Col span={8}>
-          <FormC.Item label="rule">
-            <Select value={item.rule} data={['template', 'arithmetic']}
-                    onChange={(v) => this.change(v, index, 'rule')}/>
-          </FormC.Item>
-        </Col><Col span={8}>
-          <FormC.Item label="expression">
-            <Input value={item.expression} onChange={(v: any) => this.change(v, index, 'expression')}/>
-          </FormC.Item>
-        </Col>
-          <Col span={8}>
+          </Col>
+          {/*<Col span={8}>*/}
+          {/*  <FormC.Item label="rule">*/}
+          {/*    <Select value={item.rule} data={['template', 'arithmetic']}*/}
+          {/*            onChange={(v) => this.change(v, index, 'rule')}/>*/}
+          {/*  </FormC.Item>*/}
+          {/*</Col>*/}
+          {/*<Col span={8}>*/}
+          {/*  <FormC.Item label="expression">*/}
+          {/*    <Input value={item.expression} onChange={(v: any) => this.change(v, index, 'expression')}/>*/}
+          {/*  </FormC.Item>*/}
+          {/*</Col>*/}
+          <Col span={2}>
             <Button onClick={() => this.cut(index)}>-</Button>
           </Col>
         </Row>

@@ -1,13 +1,10 @@
-import React, { Component } from 'react'
-import { Curd, Form, Input, Select, Link } from 'fullbase-components'
+import React from 'react'
+import { Curd, Form, Link } from 'fullbase-components'
 import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
 import { observable, action, reaction } from 'mobx'
 import { list, add, detail, edit } from '../../api/system/page'
 import { rows as apiRows, detail as apiDetail } from '../../api/system/api'
 import { detail as tableDetail } from '../../api/system/table'
-import { rows as dbRows, tableRows } from '../../api/system/db'
-import { getFields } from '../../api/system/table'
-import { rows as serviceRows } from '../../api/system/service'
 import { getMap } from '../../api/system/dict'
 import Http from '../../api/http'
 import WhereConf from './_page/whereConf'
@@ -127,8 +124,8 @@ export default class Table implements IStore {
     this.getApiRows('addForm')
   })
 
-  apiReaction = reaction(() => this.addForm.api, async (id: string) => {
-    // this.addForm.table = ''
+  @action
+  getApiDetail = async (id: string) => {
     this.dict.apiDetail = {}
     if (id) {
       const data = await apiDetail({ id })
@@ -148,7 +145,9 @@ export default class Table implements IStore {
     } else {
       this.dict.tableDetail = { name: '' }
     }
-  })
+  }
+
+  apiReaction = reaction(() => this.addForm.api, this.getApiDetail)
 
   editInitData = () => {
     this.getDict()
@@ -171,6 +170,6 @@ export default class Table implements IStore {
     this.editForm.api = ''
     this.getApiRows('editForm')
   })
-
+  editApiReaction = reaction(() => this.editForm.api, this.getApiDetail)
 
 }
