@@ -278,7 +278,6 @@ class JoinFields extends Component<any> {
   render() {
 
     const { value = [], data } = this.props
-    console.log(this.props);
     return <div>
       {value && value.map && value.map((item: any, index: number) =>
         <div key={index}>

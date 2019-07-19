@@ -163,6 +163,24 @@ export default class WhereConf extends Component<any> {
     values[field] = value
     onChange(values)
   }
+  up = (index: number) => {
+    if (index > 0) {
+      const { value = [], onChange, values, field } = this.props
+      const tmp = value.splice(index, 1)
+      value.splice(index - 1, 0, tmp)
+      values[field] = value
+      onChange(values)
+    }
+  }
+  down = (index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    if (index < value.length - 1) {
+      const tmp = value.splice(index, 1)
+      value.splice(index + 1, 0, tmp)
+      values[field] = value
+      onChange(values)
+    }
+  }
   change = (v: any, i: number, type: string) => {
     const { value = [], onChange, values, field, } = this.props
     value[i][type] = v
@@ -234,6 +252,8 @@ export default class WhereConf extends Component<any> {
           </Col>
           <Col span={8}>
             <Button onClick={() => this.cut(index)}>-</Button>
+            {index > 0 && <Button onClick={() => this.up(index)} icon="up"/>}
+            {index < value.length - 1 && <Button onClick={() => this.down(index)} icon="down"/>}
           </Col>
           {item.type &&
           <Col span={24}>

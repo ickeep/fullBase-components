@@ -15,5 +15,7 @@ const beforeFn: IBeforeFn = function ({ url, data, conf = {} }: IBeforeFnOpt) {
   return opt
 }
 
-
-export default HTTP({ beforeFn })
+const Http = HTTP({ beforeFn })
+export default Http
+const { httpDel, httpGet, httpPatch, httpPost, httpPut } = Http
+export const HttpMap = { get: httpGet, post: httpPost, del: httpDel, patch: httpPatch, put: httpPut }
