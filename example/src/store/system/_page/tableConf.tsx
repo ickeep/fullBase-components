@@ -106,6 +106,7 @@ class TableColumns extends Component<any> {
     const { value = [], onChange } = this.props
     value.push({
       field: '',
+      title: '',
       align: '',
       type: '',
       dataIndex: '',
@@ -123,11 +124,16 @@ class TableColumns extends Component<any> {
     onChange(value)
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, } = this.props
+    const { value = [], onChange, dict } = this.props
+    const { tableDetail } = dict
+    const { fieldMap } = tableDetail
     value[i][type] = v
     if (type === 'type') {
       value[i].props = []
       value[i].dfVal = ''
+    }
+    if (type === 'field' && v && fieldMap[v]) {
+      value[i].title = fieldMap[v].desc
     }
     onChange(value)
   }
@@ -153,22 +159,15 @@ class TableColumns extends Component<any> {
             </FormC.Item>
           </Col>
           <Col span={8}>
+            <FormC.Item label="标题">
+              <Input value={item.title} onChange={(v: any) => this.change(v, index, 'title')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
             <FormC.Item label="index">
               <Input value={item.dataIndex} onChange={(v: any) => this.change(v, index, 'dataIndex')}/>
             </FormC.Item>
           </Col>
-          <Col span={8}>
-            <FormC.Item label="type">
-              <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')}/>
-            </FormC.Item>
-          </Col>
-          {item.type &&
-          <Col span={24}>
-            <FormC.Item label="props">
-              <PropsEdit value={item.props} data={typeProps[item.type]}
-                         onChange={(v: any[]) => this.change(v, index, 'props')}/>
-            </FormC.Item>
-          </Col>}
           <Col span={8}>
             <FormC.Item label="align">
               <Select value={item.align} data={['left', 'right', 'center']}
@@ -180,11 +179,27 @@ class TableColumns extends Component<any> {
               <InputNumber value={item.width} onChange={(v) => this.change(v, index, 'width')}/>
             </FormC.Item>
           </Col>
-          <Col span={6}>
+          <Col span={8}>
             <FormC.Item label="fixed">
               <Select value={item.fixed} data={['left', 'right']} onChange={(v) => this.change(v, index, 'fixed')}/>
             </FormC.Item>
           </Col>
+
+          <Col span={16}>
+            <FormC.Item label="type">
+              <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <Button onClick={() => this.cut(index)}>-</Button>
+          </Col>
+          {item.type &&
+          <Col span={24}>
+            <FormC.Item label="props">
+              <PropsEdit value={item.props} data={typeProps[item.type]}
+                         onChange={(v: any[]) => this.change(v, index, 'props')}/>
+            </FormC.Item>
+          </Col>}
           {/*<Col span={8}>*/}
           {/*  <FormC.Item label="rule">*/}
           {/*    <Select value={item.rule} data={['template', 'arithmetic']}*/}
@@ -196,9 +211,7 @@ class TableColumns extends Component<any> {
           {/*    <Input value={item.expression} onChange={(v: any) => this.change(v, index, 'expression')}/>*/}
           {/*  </FormC.Item>*/}
           {/*</Col>*/}
-          <Col span={2}>
-            <Button onClick={() => this.cut(index)}>-</Button>
-          </Col>
+
         </Row>
       </div>
     )}

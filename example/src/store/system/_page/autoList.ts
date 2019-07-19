@@ -37,8 +37,8 @@ export default class Table implements IStore {
       }
       const tbCols: any[] = []
       columns.forEach((item: any) => {
-        const { align = "", dataIndex = "", expression = "", field = "api", fixed = "", props = [], rule = "", type = "", width = 200 } = item
-        const tmpCol: { [key: string]: any } = { title: field, dataIndex: field || dataIndex }
+        const { align = "", dataIndex = "", expression = "", field = "api", title = '', fixed = "", props = [], rule = "", type = "", width = 200 } = item
+        const tmpCol: { [key: string]: any } = { title, dataIndex: field || dataIndex }
         if (width > 0) {
           tmpCol.width = width
         }

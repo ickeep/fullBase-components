@@ -182,11 +182,16 @@ export default class WhereConf extends Component<any> {
     }
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, values, field, } = this.props
+    const { value = [], onChange, values, field, dict } = this.props
+    const { tableDetail } = dict
+    const { fieldMap } = tableDetail
     value[i][type] = v
     if (type === 'type') {
       value[i].props = []
       value[i].dfVal = ''
+    }
+    if (type === 'field' && v && fieldMap[v]) {
+      value[i].title = fieldMap[v].desc
     }
     values[field] = value
     onChange(values)
@@ -213,14 +218,14 @@ export default class WhereConf extends Component<any> {
       <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
         <Row>
           <Col span={8}>
-            <FormC.Item label="标题">
-              <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')}/>
-            </FormC.Item>
-          </Col>
-          <Col span={8}>
             <FormC.Item label="字段">
               <Select value={item.field} mode={item.type === 'rangeDate' ? 'multiple' : 'tags'} data={fieldsData}
                       onChange={(v) => this.change(v, index, 'field')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="标题">
+              <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
