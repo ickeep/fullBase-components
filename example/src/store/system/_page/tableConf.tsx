@@ -123,6 +123,22 @@ class TableColumns extends Component<any> {
     value.splice(index, 1)
     onChange(value)
   }
+  up = (index: number) => {
+    if (index > 0) {
+      const { value = [], onChange } = this.props
+      const tmp = value.splice(index, 1)
+      value.splice(index - 1, 0, tmp[0])
+      onChange(value)
+    }
+  }
+  down = (index: number) => {
+    const { value = [], onChange } = this.props
+    if (index < value.length - 1) {
+      const tmp = value.splice(index, 1)
+      value.splice(index + 1, 0, tmp[0])
+      onChange(value)
+    }
+  }
   change = (v: any, i: number, type: string) => {
     const { value = [], onChange, dict } = this.props
     const { tableDetail } = dict
@@ -192,6 +208,8 @@ class TableColumns extends Component<any> {
           </Col>
           <Col span={8}>
             <Button onClick={() => this.cut(index)}>-</Button>
+            {index > 0 && <Button onClick={() => this.up(index)} icon="up"/>}
+            {index < value.length - 1 && <Button onClick={() => this.down(index)} icon="down"/>}
           </Col>
           {item.type &&
           <Col span={24}>
