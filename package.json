@@ -37,6 +37,7 @@
   },
   "devDependencies": {
     "@svgr/rollup": "^2.4.1",
+    "@types/ejs": "^2.6.3",
     "antd": "^3.18.2",
     "axios": "^0.18.0",
     "babel-core": "^6.26.3",

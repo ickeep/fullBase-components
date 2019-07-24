@@ -2,6 +2,7 @@ import { Curd, Form, } from 'fullbase-components'
 import IStore from 'fullbase-components/dist/store/_i'
 import { observable, action } from 'mobx'
 import Http, { HttpMap } from '../../../api/http'
+import Column from './column'
 
 const { dfDataPage } = Http
 @Curd @Form
@@ -36,14 +37,7 @@ export default class Table implements IStore {
         this.listTable.scroll.x = scrollX
       }
       const tbCols: any[] = []
-      columns.forEach((item: any) => {
-        const { align = "", dataIndex = "", expression = "", field = "api", title = '', fixed = "", props = [], rule = "", type = "", width = 200 } = item
-        const tmpCol: { [key: string]: any } = { title, dataIndex: field || dataIndex }
-        if (width > 0) {
-          tmpCol.width = width
-        }
-        tbCols.push(tmpCol)
-      })
+      columns.forEach((item: any) => tbCols.push(Column(item)))
       // @ts-ignore
       this.listTable.columns = tbCols
     }
@@ -78,3 +72,4 @@ export default class Table implements IStore {
     columns: []
   }
 }
+

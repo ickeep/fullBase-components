@@ -1,40 +1,11 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, InputNumber, Row, Checkbox } from "antd";
-import { Curd, Form, Input, Select, Link } from 'fullbase-components'
+import { Input, Select } from 'fullbase-components'
 import PropsEdit from './propsEdit'
+import { typeProps } from './displayMap'
 
-const typeData: string[] = ['currency', 'datetime', 'idCardEncrypt', 'keyToValue', 'phoneEncrypt', 'svg']
-const typeProps = {
-  link: {
-    href: 'string',
-    value: 'string'
-  },
-  currency: {
-    sign: 'string',
-    fixed: 'number',
-  },
-  datetime: {
-    format: 'string'
-  },
-  idCardEncrypt: {
-    startLen: 'number',
-    endLen: 'number',
-    sign: 'string',
-  },
-  keyToValue: {
-    data: 'string',
-    color: 'string',
-    colors: 'string',
-    isTag: 'boolean'
-  },
-  phoneEncrypt: {
-    startLen: 'number',
-    endLen: 'number',
-    sign: 'string',
-  },
-  svg: { src: 'string' }
-}
+const typeData = Object.keys(typeProps)
 @observer
 export default class TableConf extends Component<any> {
   change = (v: any, type: string) => {

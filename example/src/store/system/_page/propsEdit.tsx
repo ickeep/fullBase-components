@@ -7,7 +7,7 @@ import { Input, Select } from 'fullbase-components'
 export default class PropsEdit extends Component<any> {
   add = () => {
     const { value = [], onChange } = this.props
-    value.push({ type: '', val: '' })
+    value.push({ key: '', val: '', rule: '', expression: '' })
     onChange(value)
   }
   cut = (index: number) => {
@@ -18,7 +18,7 @@ export default class PropsEdit extends Component<any> {
   change = (v: any, index: number, type: string) => {
     const { value = [], onChange } = this.props
     value[index][type] = v
-    if (type === 'type') {
+    if (type === 'key') {
       value[index].val = ''
     }
     onChange(value)
@@ -31,7 +31,7 @@ export default class PropsEdit extends Component<any> {
         <Row>
           <Col span={8}>
             <FormC.Item label="key">
-              <Select value={item.type} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'type')}/>
+              <Select value={item.key} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'key')}/>
             </FormC.Item>
           </Col>
           {item.type &&
