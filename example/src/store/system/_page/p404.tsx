@@ -27,6 +27,23 @@ class P404 extends Component<any> {
     this.setState({ loading: false })
   }
 
+  // shouldComponentUpdate(nextProps: any, nextState: any) {
+  //   const pathname = this.props.location.pathname
+  //   const nextPathname = this.props.location.pathname
+  //   if (nextPathname !== pathname) {
+  //     console.log('pathname');
+  //     return true
+  //   }
+  //   if (this.state.loading !== nextState.loading) {
+  //     console.log('loading');
+  //     return true
+  //   }
+  //   return false
+  //   // console.log(this.props);
+  //   // console.log(nextProps);
+  //   // return true;
+  // }
+
   render() {
     const { loading, conf } = this.state
     if (loading) {

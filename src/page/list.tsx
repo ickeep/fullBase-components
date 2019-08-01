@@ -51,6 +51,7 @@ class List extends Component<IProps> {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+    console.log('xxxx');
     const { location } = this.props
     const newLocation = nextProps.location
     if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
@@ -120,9 +121,9 @@ class List extends Component<IProps> {
     return <div className="add-link"><Row> {
       maps.map(listAddConf => {
         return listAddConf.name && <Col key={listAddConf.name} span={24 / maps.length}>
-          <Link className=""
-                href={listAddConf.url ? (typeof listAddConf.url === 'function' ? listAddConf.url() : listAddConf.url) : 'javascript:;'}>
-            <Button type="primary" {...listAddConf.props}>{listAddConf.name}</Button></Link></Col>
+            <Link className=""
+                  href={listAddConf.url ? (typeof listAddConf.url === 'function' ? listAddConf.url() : listAddConf.url) : 'javascript:;'}>
+                <Button type="primary" {...listAddConf.props}>{listAddConf.name}</Button></Link></Col>
       })
     }
     </Row>
@@ -146,7 +147,7 @@ class List extends Component<IProps> {
   }
 
   render() {
-    const { Store, name = 'list', Auth, itemMap, UI: { layout: { clientWidth }, mobileWidth } = UI } = this.props
+    const { Store, name = 'list', Auth, itemMap, UI: { layout: { clientWidth }, mobileWidth } = UI, location } = this.props
     const { isPushListOperate } = this.state
     const listAddConf = Store[`${name}AddConf`] || []
     const Table = Store[`${name}TableUI`] || ListTable
@@ -195,7 +196,7 @@ class List extends Component<IProps> {
     const errmsg = listData[apiFormat.msg]
     const title = listFormConf.pageTitle || '列表页'
     return (
-      <div className="m-list">
+      <div className="m-list" data-url={location.pathname + location.search}>
         <div className="m-list-title">
           <Breadcrumb data={breadcrumb} dfTitle={title && title.split('-') && title.split('-')[0]}/>
           {this.getListAddConfInner(listAddConf)}
@@ -220,7 +221,7 @@ class List extends Component<IProps> {
                   icon={exportLoading ? '' : 'download'}
                   style={{ marginLeft: '10px' }}
                   onClick={this.exportList}>
-            导出
+              导出
           </Button>
           }
         </EditForm>

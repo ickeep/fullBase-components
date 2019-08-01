@@ -7,8 +7,8 @@ import Column from './column'
 const { dfDataPage } = Http
 @Curd @Form
 export default class Table implements IStore {
-  constructor(conf: any) {
-    console.log('class', conf);
+  @action
+  setConf = (conf: any) => {
     const { apiUrl = '', apiMethod = 'get', whereConf = [], desc, tableConf = {} } = conf
     this.listFormConf.pageTitle = desc
     const fn = HttpMap[apiMethod]
@@ -41,6 +41,10 @@ export default class Table implements IStore {
       // @ts-ignore
       this.listTable.columns = tbCols
     }
+  }
+
+  constructor(conf: any) {
+    this.setConf(conf)
   }
 
   @action

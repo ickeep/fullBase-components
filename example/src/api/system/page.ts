@@ -6,6 +6,10 @@ export function list(data: any) {
   return httpGet('/api/system/page/list', data)
 }
 
+export function rows(data: any) {
+  return httpGet('/api/system/page/rows', data)
+}
+
 export function detail(data: any) {
   return httpGet('/api/system/page/detail', data)
 }
