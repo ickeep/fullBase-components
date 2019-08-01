@@ -13,11 +13,19 @@ class AutoPage extends Component<any> {
     this.listStore = new ListStore(this.props.conf)
   }
 
+  componentDidUpdate(prevProps: any) {
+    const pathname = this.props.location.pathname
+    const nextPathname = prevProps.location.pathname
+    if (nextPathname !== pathname) {
+      this.listStore = new ListStore(this.props.conf)
+    }
+  }
+
   render() {
     const { conf } = this.props
     const { type } = conf
     if (type === 'list') {
-      return <LeftSider><List Store={this.listStore}/></LeftSider>
+      return <List Store={this.listStore}/>
     }
     return <div>autoPage {conf.type}</div>
   }

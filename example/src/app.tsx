@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Provider } from 'mobx-react'
 import { LocaleProvider } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
-import { Loading } from 'fullbase-components'
+// import { Loading } from 'fullbase-components'
 import routes from './route/_index'
 import './app.less'
 import Auth from './store/auth'

@@ -8,12 +8,13 @@ import P404 from '../store/system/_page/p404'
 
 const routerConf = {
   rootPath: '/system',
+  'p404': P404,
   routers: [
     { path: '', exact: true, component: JumpToOne },
     { path: 'table', store: Table, pages: { add: {}, edit: {}, detail: {}, list: {} } },
     { path: 'dict', store: Dict, pages: { add: {}, edit: {}, detail: {}, list: {} } },
     { path: 'api', store: Api, pages: { add: {}, edit: {}, detail: {}, list: {} } },
-    { path: 'page', store: Page, pages: { add: {}, edit: {}, detail: {}, list: { render: P404 } } },
+    { path: 'page', store: Page, pages: { add: {}, edit: {}, detail: {} } },
   ]
 }
 

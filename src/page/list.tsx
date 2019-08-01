@@ -51,7 +51,6 @@ class List extends Component<IProps> {
   }
 
   UNSAFE_componentWillReceiveProps(nextProps: IProps) {
-    console.log('xxxx');
     const { location } = this.props
     const newLocation = nextProps.location
     if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {

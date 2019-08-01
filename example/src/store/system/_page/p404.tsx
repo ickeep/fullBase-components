@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Link, Svg, Loading } from 'fullbase-components'
 import AutoPage from './autoPage'
 import { detail } from '../../../api/system/page'
+import { withRouter } from 'react-router-dom'
 
 class P404 extends Component<any> {
 
@@ -43,6 +44,13 @@ class P404 extends Component<any> {
   //   // console.log(nextProps);
   //   // return true;
   // }
+  componentDidUpdate(prevProps: any) {
+    const pathname = this.props.location.pathname
+    const nextPathname = prevProps.location.pathname
+    if (nextPathname !== pathname) {
+      this.fetchData()
+    }
+  }
 
   render() {
     const { loading, conf } = this.state
@@ -61,4 +69,4 @@ class P404 extends Component<any> {
   }
 }
 
-export default P404
+export default withRouter(P404)

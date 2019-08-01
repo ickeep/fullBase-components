@@ -8,9 +8,7 @@ const loading = () => <Loading isCenter={true}/>
 
 const router: Array<{ exact?: boolean | undefined, path: string, component: ComponentClass | FunctionComponent }> = [
   { exact: true, path: '/', component: IndexPage },
-  { path: '/system/page/list', component: PAuto },
   { path: '/system', component: Loadable({ loader: () => import('./system'), loading }) },
   { path: '*', component: P404 }
 ]
 export default router
-

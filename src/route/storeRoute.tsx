@@ -16,7 +16,8 @@ const pageMap = {
 export interface IStoreRouteProps {
   path: string,
   store: any,
-  pages: string[]
+  pages: string[],
+  p404: any
 }
 
 
@@ -25,17 +26,20 @@ export default class StoreRoute extends Component<IStoreRouteProps> {
 
   constructor(props: any) {
     super(props)
-    const { path, store, pages } = this.props
+    const { path, store, pages, p404 = P404 } = this.props
     const arr: any[] = []
     const s = new store()
     Object.keys(pages).forEach((page: any) => {
-      const props = pages[page] || {}
-      const C = pageMap[page]
+      const props: any = pages[page] || {}
+      let C = pageMap[page]
+      if (props.render) {
+        C = props.render
+      }
       if (C) {
         arr.push({ path: path + (page ? '/' + page : ''), component: () => <C Store={s} {...props}/> })
       }
     })
-    arr.push({ path: '*', component: P404 })
+    arr.push({ path: '*', component: p404 })
     this.router = (
       <Switch>
         {arr.map(route => (

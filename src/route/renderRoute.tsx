@@ -5,7 +5,8 @@ import P404 from "../page/p404";
 
 export interface IProps {
   rootPath: string,
-  routers: any[]
+  routers: any[],
+  p404: any
 }
 
 export default class RenderRoute extends Component<IProps> {
@@ -13,17 +14,17 @@ export default class RenderRoute extends Component<IProps> {
 
   constructor(props: any) {
     super(props)
-    const { rootPath, routers } = this.props
+    const { rootPath, routers, p404 = P404 } = this.props
     const arr: any[] = []
     routers.forEach((item: any) => {
       item.path = rootPath + (item.path ? '/' + item.path : '')
       if (item.store && item.pages) {
-        arr.push({ path: item.path, component: () => <StoreRoute {...item}/> })
+        arr.push({ path: item.path, component: () => <StoreRoute p404={p404} {...item}/> })
       } else {
         arr.push(item)
       }
     })
-    arr.push({ path: '*', component: P404 })
+    arr.push({ path: '*', component: p404 })
     this.router = (
       <Switch>
         {arr.map(route => (
