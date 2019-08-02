@@ -26,6 +26,7 @@ export default class PropsEdit extends Component<any> {
 
   render() {
     const { data = {}, value = [] } = this.props
+    console.log(this.props);
     return <div>{value.map((item: any, index: number) =>
       <div key={index} style={{ background: '#ddd', padding: '10px', marginBottom: '10px', minWidth: '680px' }}>
         <Row>
@@ -34,24 +35,25 @@ export default class PropsEdit extends Component<any> {
               <Select value={item.key} data={Object.keys(data)} onChange={(v) => this.change(v, index, 'key')}/>
             </FormC.Item>
           </Col>
-          {item.type &&
+          {item.key &&
           <>
-            <Col span={12}>
-              <FormC.Item label="val">
-                <PropVal value={item.val} type={data[item.type]} onChange={(v: any) => this.change(v, index, 'val')}/>
-              </FormC.Item>
-            </Col>
-            <Col span={8}>
-              <FormC.Item label="rule">
-                <Select value={item.rule} data={['template', 'arithmetic']}
-                        onChange={(v) => this.change(v, index, 'rule')}/>
-              </FormC.Item>
-            </Col>
+              <Col span={12}>
+                  <FormC.Item label="val">
+                      <PropVal value={item.val} type={data[item.key] || ''}
+                               onChange={(v: any) => this.change(v, index, 'val')}/>
+                  </FormC.Item>
+              </Col>
+              <Col span={8}>
+                  <FormC.Item label="rule">
+                      <Select value={item.rule} data={['template', 'arithmetic']}
+                              onChange={(v) => this.change(v, index, 'rule')}/>
+                  </FormC.Item>
+              </Col>
             {item.rule &&
             <Col span={8}>
-              <FormC.Item label="表达式">
-                <Input value={item.expression} onChange={(v: any) => this.change(v, index, 'expression')}/>
-              </FormC.Item>
+                <FormC.Item label="表达式">
+                    <Input value={item.expression} onChange={(v: any) => this.change(v, index, 'expression')}/>
+                </FormC.Item>
             </Col>
             }
           </>

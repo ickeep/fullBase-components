@@ -55,9 +55,9 @@ export default class TableConf extends Component<any> {
           </Col>
           {value.isRowSelection &&
           <Col span={24}>
-            <FormC.Item label="rowSelection">
-              <TableRowSelection value={value.rowSelection} onChange={(v: any) => this.change(v, 'rowSelection')}/>
-            </FormC.Item>
+              <FormC.Item label="rowSelection">
+                  <TableRowSelection value={value.rowSelection} onChange={(v: any) => this.change(v, 'rowSelection')}/>
+              </FormC.Item>
           </Col>
           }
           <Col span={24}>
@@ -132,7 +132,7 @@ class TableColumns extends Component<any> {
     const { fields: fieldsConf } = tableDetail
     let fieldsData: string[] = []
     if (fields) {
-      fieldsData = fields.splice(',')
+      fieldsData = fields.split(',')
     } else {
       fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
     }
@@ -184,10 +184,10 @@ class TableColumns extends Component<any> {
           </Col>
           {item.type &&
           <Col span={24}>
-            <FormC.Item label="props">
-              <PropsEdit value={item.props} data={typeProps[item.type]}
-                         onChange={(v: any[]) => this.change(v, index, 'props')}/>
-            </FormC.Item>
+              <FormC.Item label="props">
+                  <PropsEdit value={item.props} data={typeProps[item.type]}
+                             onChange={(v: any[]) => this.change(v, index, 'props')}/>
+              </FormC.Item>
           </Col>}
           {/*<Col span={8}>*/}
           {/*  <FormC.Item label="rule">*/}

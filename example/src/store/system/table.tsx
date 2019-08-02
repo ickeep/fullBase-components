@@ -152,6 +152,7 @@ export default class Table implements IStore {
   editInitData = () => {
     this.getServiceRows()
     this.getDictRows()
+    this.getDbRows()
   }
   @observable detailData = { ...dfDataObj }
   @observable detailLoading = false
@@ -286,7 +287,7 @@ class RJoin extends Component<any> {
     if (v) {
       const data = await getFields({ db: value[index].db, name: v })
       if (data.code === 0) {
-        this.setState({ fields: data.data })
+        this.setState({ fields: data.data.fields })
       }
     }
   }

@@ -1,11 +1,10 @@
-import React, { Component } from 'react'
-import { observer } from 'mobx-react'
+import React from 'react'
 import DisplayMap, { typeProps } from './displayMap'
 import Analyze from './analyzeVal'
 
 export default function (conf: any) {
   const { align = '', dataIndex = '', field = 'api', title = '', fixed = '', props = [], type = '', width } = conf
-  const tmpCol: { [key: string]: any } = { title, dataIndex: field || dataIndex, align, fixed }
+  const tmpCol: { [key: string]: any } = { title, dataIndex: dataIndex || field, align, fixed }
   if (width > 0) {
     tmpCol.width = width
   }

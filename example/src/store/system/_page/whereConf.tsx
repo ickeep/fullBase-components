@@ -4,8 +4,9 @@ import { Button, Col, Form as FormC, Row, Radio, InputNumber } from 'antd'
 import { Curd, Form, Input, Select, Link } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 
-const typeData: string[] = ['cascader', 'checkbox', 'input', 'inputNumber', 'radio', 'rangeDate', 'select', 'selectRemote', 'selectTree', 'timestamp']
+import { typeProps } from './formMap'
 
+const typeData: string[] = Object.keys(typeProps)
 
 // window.xxx = [].rows
 // window.tmpStr = ''
@@ -18,142 +19,12 @@ const typeData: string[] = ['cascader', 'checkbox', 'input', 'inputNumber', 'rad
 //   }
 // }
 // console.log(window.tmpStr);
-const typeProps = {
-  input: {
-    icon: 'string',
-    addonAfter: 'string',
-    addonBefore: 'string',
-    defaultValue: 'string',
-    disabled: 'boolean',
-    id: 'string',
-    prefix: 'string',
-    size: 'string',
-    suffix: 'string',
-    type: 'string',
-    value: 'string',
-    allowClear: 'boolean',
-  },
-  checkbox: {
-    value: 'string|array',
-    labelKey: 'string',
-    valKey: 'string',
-    split: 'string',
-  },
-  radio: {
-    value: 'string|number',
-    isAll: 'boolean',
-    type: 'string',
-    valKey: 'string',
-    labelKey: 'string',
-  },
-  rangeDate: {
-    allowClear: 'boolean',
-    autoFocus: 'boolean',
-    disabled: 'boolean',
-    dropdownClassName: 'string',
-    mode: 'time|date|month|year|decade',
-    open: 'boolean',
-    placeholder: 'string',
-    size: 'string',
-  },
-  cascader: {
-    allowClear: 'boolean',
-    autoFocus: 'boolean',
-    disabled: 'boolean',
-    expandTrigger: 'click|hover',
-    notFoundContent: 'string',
-    placeholder: 'string',
-    popupClassName: 'string',
-    popupPlacement: 'bottomLeft|bottomRight|topLeft|topRight',
-    popupVisible: 'boolean',
-    showSearch: 'boolean',
-    size: 'large|default|small',
-    value: 'string|array',
-    valIsArr: 'boolean',
-    split: 'string',
-    changeOnSelect: 'boolean',
-  },
-  inputNumber: {
-    autoFocus: 'boolean',
-    defaultValue: 'number',
-    disabled: 'boolean',
-    max: 'number',
-    min: 'number',
-    precision: 'number',
-    decimalSeparator: 'string',
-    size: 'string',
-    step: 'number',
-    value: 'number',
-  },
-  select: {
-    allowClear: 'boolean',
-    autoClearSearchValue: 'boolean',
-    autoFocus: 'boolean',
-    defaultActiveFirstOption: 'boolean',
-    disabled: 'boolean',
-    dropdownMatchSelectWidth: 'boolean',
-    firstActiveValue: 'string',
-    labelInValue: 'boolean',
-    maxTagCount: 'number',
-    maxTagTextLength: 'number',
-    mode: 'multiple|tags',
-    notFoundContent: 'string',
-    optionFilterProp: 'string',
-    optionLabelProp: 'string',
-    showArrow: 'boolean',
-    size: 'large|small',
-    tokenSeparators: 'string',
-    defaultOpen: 'boolean',
-    open: 'boolean',
-    loading: 'boolean',
-    value: 'string|array|number',
-    isNull: 'boolean',
-    vToString: 'boolean',
-    splitKey: 'string',
-    labelKey: 'string',
-    valKey: 'string',
-    showSearch: 'boolean',
-    placeholder: 'string',
-  },
-  selectTree: {
-    allowClear: 'boolean',
-    autoClearSearchValue: 'boolean',
-    disabled: 'boolean',
-    dropdownMatchSelectWidth: 'boolean',
-    labelInValue: 'boolean',
-    maxTagCount: 'number',
-    multiple: 'boolean',
-    placeholder: 'string',
-    searchPlaceholder: 'string',
-    searchValue: 'string',
-    treeIcon: 'boolean',
-    showCheckedStrategy: 'TreeSelect.SHOW_ALL|TreeSelect.SHOW_PARENT|TreeSelect.SHOW_CHILD',
-    showSearch: 'boolean',
-    size: 'large|small',
-    treeCheckable: 'boolean',
-    treeCheckStrictly: 'boolean',
-    treeDefaultExpandAll: 'boolean',
-    treeNodeFilterProp: 'string',
-    treeNodeLabelProp: 'string',
-    value: 'number|string|array',
-    multipleToStr: 'boolean',
-    valKey: 'string',
-    split: 'string',
-    labelKey: 'string',
-    childKey: 'string',
-  },
-  timestamp: {
-    value: 'string|number',
-    format: 'string',
-  },
-  selectRemote: {}
 
-}
 @observer
 export default class WhereConf extends Component<any> {
   add = () => {
     const { value = [], onChange, values, field } = this.props
-    value.push({ title: '', field: '', type: '', props: [], span: 8, rules: '', dfVal: '' })
+    value.push({ title: '', field: '', type: '', data: '', props: [], span: 8, rules: '', dfVal: '' })
     values[field] = value
     onChange(values)
   }
@@ -262,10 +133,10 @@ export default class WhereConf extends Component<any> {
           </Col>
           {item.type &&
           <Col span={24}>
-            <FormC.Item label="props">
-              <PropsEdit value={item.props} data={typeProps[item.type]}
-                         onChange={(v: any[]) => this.change(v, index, 'props')}/>
-            </FormC.Item>
+              <FormC.Item label="props">
+                  <PropsEdit value={item.props} data={typeProps[item.type]}
+                             onChange={(v: any[]) => this.change(v, index, 'props')}/>
+              </FormC.Item>
           </Col>}
         </Row>
       </div>
@@ -289,8 +160,8 @@ class DfVal extends Component<any> {
         <Radio.Group onChange={(e: any) => onChange(e.target.value)} value={value}>
           {typeArr.indexOf('boolean') >= 0 &&
           <>
-            <Radio value={true}>true</Radio>
-            <Radio value={false}>false</Radio>
+              <Radio value={true}>true</Radio>
+              <Radio value={false}>false</Radio>
           </>
           }
           {typeArr.indexOf('array') >= 0 &&

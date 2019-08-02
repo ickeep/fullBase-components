@@ -5,7 +5,7 @@ import { observable, action, reaction } from 'mobx'
 import { list, add, detail, edit } from '../../api/system/page'
 import { rows as apiRows, detail as apiDetail } from '../../api/system/api'
 import { detail as tableDetail } from '../../api/system/table'
-import { getMap } from '../../api/system/dict'
+import { getMap, rows as dictRows } from '../../api/system/dict'
 import Http from '../../api/http'
 import WhereConf from './_page/whereConf'
 import TableConf from './_page/tableConf'
@@ -22,7 +22,8 @@ export default class Table implements IStore {
     table: [],
     httpMethod: {},
     fields: [],
-    api: []
+    api: [],
+    dict: [],
   }
   @action
   getDict = async () => {
@@ -39,6 +40,13 @@ export default class Table implements IStore {
       if (data.code === 0) {
         this.dict.api = data.data
       }
+    }
+  }
+  @action
+  getDictRows = async () => {
+    const data = await dictRows({ _limit: 0 })
+    if (data.code === 0) {
+      this.dict.dict = data.data
     }
   }
 
@@ -96,6 +104,7 @@ export default class Table implements IStore {
   addInitData = () => {
     this.getDict()
     this.getApiRows('addForm')
+    this.getDictRows()
   }
   @observable
   addFormConf: IAddFormConf = {
@@ -110,6 +119,10 @@ export default class Table implements IStore {
       },
       { title: '状态', field: 'status', type: 'select', data: 'status', span: 8, },
       { title: '是否配置', field: 'isConf', type: 'select', data: 'yesOrNo', span: 8, },
+      {
+        title: '字典', field: 'dict', type: 'select', data: 'dict', span: 8,
+        props: { valKey: 'name', mode: 'multiple' }
+      },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
       { title: '查询配置', field: 'whereConf', span: 24, render: (item: any) => <WhereConf {...item}/> },
       { title: '表格配置', field: 'tableConf', span: 24, render: (item: any) => <TableConf {...item}/> },
@@ -152,6 +165,7 @@ export default class Table implements IStore {
   editInitData = () => {
     this.getDict()
     this.getApiRows('editForm')
+    this.getDictRows()
   }
   @observable detailData = { ...dfDataObj }
   @observable detailLoading = false
