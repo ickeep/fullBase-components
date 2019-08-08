@@ -1,6 +1,19 @@
 import { Link } from 'fullbase-components'
 
 export const typeProps = {
+  button: {
+    type: 'primary|dashed|danger|link',
+    size: 'small|large',
+    disabled: 'boolean',
+    ghost: 'boolean',
+    href: 'string',
+    htmlType: 'string',
+    icon: 'string',
+    loading: 'boolean',
+    shape: 'circle|round',
+    target: 'string',
+    block: 'boolean',
+  },
   link: {
     href: 'string',
     children: 'string'

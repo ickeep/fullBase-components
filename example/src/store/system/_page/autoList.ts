@@ -5,6 +5,8 @@ import Http, { HttpMap } from '../../../api/http'
 import { getMap as getApiMap } from '../../../api/system/dict'
 import Column from './column'
 import { typeProps } from './formMap'
+import { handleProps } from '../_page/propsEdit'
+import Analyze from "./analyzeVal";
 
 const { dfDataPage } = Http
 @Curd @Form
@@ -23,7 +25,7 @@ export default class Table implements IStore {
 
   @action
   setConf = (conf: any) => {
-    const { apiUrl = '', apiMethod = 'get', whereConf = [], desc, tableConf = {}, dict = '' } = conf
+    const { apiUrl = '', apiMethod = 'get', whereConf = [], desc, tableConf = {}, dict = '', operation } = conf
     dict && this.setDict(dict)
     this.listFormConf.pageTitle = desc
     const fn = HttpMap[apiMethod]
@@ -63,6 +65,47 @@ export default class Table implements IStore {
       // @ts-ignore
       this.listTable.columns = tbCols
     }
+    if (operation && operation.length > 0) {
+      const tableOperationArr: any[] = []
+      const batchOperationArr = []
+      operation.forEach((item: any) => {
+        const { name = '', isShow = '', isBatch = '', isShowRow, props = [], action = '', whom = '', isConfirm = '', urlExpression = '' } = item
+        const propsObj = handleProps(props)
+        console.log(props);
+        console.log(propsObj);
+        if (isBatch) {
+          batchOperationArr.push({ name, action: () => '', whom, isConfirm, props: propsObj })
+        }
+        if (isShowRow) {
+          const tmpObj: { [key: string]: any } = {
+            actionName: name,
+            action: () => '',
+            whom,
+            isConfirm,
+            props: propsObj
+          }
+          if (isShow.indexOf('<%') >= 0) {
+            tmpObj.show = (r: any, index: number) => Analyze({ r, index, rule: 'template', expression: isShow })
+          } else {
+            tmpObj.show = !!isShow
+          }
+          if (urlExpression) {
+            if (urlExpression.indexOf('<%') >= 0) {
+              tmpObj.urlFn = (r: any, index: number) => Analyze({
+                r,
+                index,
+                rule: 'template',
+                expression: urlExpression
+              })
+            } else {
+              tmpObj.urlFn = (r: any, index: number) => urlExpression
+            }
+          }
+          tableOperationArr.push(tmpObj)
+        }
+      })
+      this.listOperateConf.items = tableOperationArr
+    }
   }
 
   constructor(conf: any) {
@@ -74,6 +117,7 @@ export default class Table implements IStore {
     this.listForm = form
   }
   dataFn: { [key: string]: any } = {}
+  @observable listOperateConf: { [key: string]: any } = {}
 
   @observable listData = { ...dfDataPage, data: { data: [] } }
   @observable listLoading = false

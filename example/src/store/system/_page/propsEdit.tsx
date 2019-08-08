@@ -2,6 +2,7 @@ import { observer } from "mobx-react";
 import React, { Component } from "react";
 import { Button, Col, Form as FormC, InputNumber, Radio, Row } from "antd";
 import { Input, Select } from 'fullbase-components'
+import Analyze from "./analyzeVal";
 
 @observer
 export default class PropsEdit extends Component<any> {
@@ -26,7 +27,6 @@ export default class PropsEdit extends Component<any> {
 
   render() {
     const { data = {}, value = [] } = this.props
-    console.log(this.props);
     return <div>{value.map((item: any, index: number) =>
       <div key={index} style={{ background: '#ddd', padding: '10px', marginBottom: '10px', minWidth: '680px' }}>
         <Row>
@@ -96,4 +96,16 @@ class PropVal extends Component<any> {
     }
     return null
   }
+}
+
+
+export function handleProps(props: any[], data: { [key: string]: any } = {}) {
+  const obj = {}
+  props.forEach((propCnf: any) => {
+    const { key, val, rule, expression } = propCnf
+    // if (obj[key]) {
+      obj[key] = rule ? Analyze({ ...data, rule, expression }) : val
+    // }
+  })
+  return obj
 }
