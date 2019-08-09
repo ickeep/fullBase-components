@@ -22,6 +22,7 @@ export default class OperationConf extends Component<any> {
       isBatch: '',
       props: [],
       action: '',
+      actionApi: '',
       whom: '',
       isConfirm: '',
       urlExpression: ''
@@ -71,6 +72,15 @@ export default class OperationConf extends Component<any> {
 
   render() {
     const { value = [], dict } = this.props
+    const { apiDetail, tableDetail, actionApi } = dict
+    const { optFields } = apiDetail
+    const { fields: fieldsConf } = tableDetail
+    let fieldsData: string[] = []
+    if (optFields) {
+      fieldsData = optFields.splice(',')
+    } else {
+      fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
+    }
     return <div>{value.map && value.map((item: any, index: number) =>
       <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
         <Row>
@@ -103,8 +113,20 @@ export default class OperationConf extends Component<any> {
           </Col>
           <Col span={8}>
             <FormC.Item label="操作方法">
-              <Select value={item.action} data={{ freeze: '冻结', unfreeze: '解冻', del: '删除' }}
+              <Select value={item.action} data={['freeze', 'unfreeze', 'del']} valKey="url" labelKey="desc"
                       onChange={(v: any) => this.change(v, index, 'action')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="操作接口">
+              <Select value={item.actionApi} data={actionApi} valKey="url" labelKey="desc"
+                      onChange={(v: any) => this.change(v, index, 'actionApi')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="操作参数">
+              <Select value={item.actionOpt} data={fieldsData}
+                      onChange={(v: any) => this.change(v, index, 'actionOpt')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
@@ -113,7 +135,7 @@ export default class OperationConf extends Component<any> {
             </FormC.Item>
           </Col>
           <Col span={16}>
-            <FormC.Item label="URL">
+            <FormC.Item label="跳转URL">
               <Input value={item.urlExpression} onChange={(v: string) => this.change(v, index, 'urlExpression')}/>
             </FormC.Item>
           </Col>

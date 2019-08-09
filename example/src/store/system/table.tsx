@@ -44,7 +44,7 @@ export default class Table implements IStore {
   }
   @observable listData = { ...dfDataPage, data: { data: [] } }
   @observable listLoading = false
-  dfListForm = { nameLike: '', page: 1, pageSize: 10 }
+  dfListForm = { nameLike: '', page: 1, pageSize: 20 }
   @observable listForm = { ...this.dfListForm }
 
   listInitData = () => {

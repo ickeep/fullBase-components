@@ -1,14 +1,14 @@
 import { Curd, Form, } from 'fullbase-components'
-import IStore from 'fullbase-components/dist/store/_i'
+import IStore, { IListOperateActionOpt } from 'fullbase-components/dist/store/_i'
 import { observable, action } from 'mobx'
 import Http, { HttpMap } from '../../../api/http'
 import { getMap as getApiMap } from '../../../api/system/dict'
 import Column from './column'
 import { typeProps } from './formMap'
-import { handleProps } from '../_page/propsEdit'
+import { handleProps } from './propsEdit'
 import Analyze from "./analyzeVal";
 
-const { dfDataPage } = Http
+const { dfDataPage, httpPost } = Http
 @Curd @Form
 export default class Table implements IStore {
   @observable dict = {}
@@ -68,24 +68,52 @@ export default class Table implements IStore {
     if (operation && operation.length > 0) {
       const tableOperationArr: any[] = []
       const batchOperationArr = []
+      let rowColLength = 0
+      const actionFns: { [key: string]: any } = {}
       operation.forEach((item: any) => {
-        const { name = '', isShow = '', isBatch = '', isShowRow, props = [], action = '', whom = '', isConfirm = '', urlExpression = '' } = item
+        const { name = '', isShow = '', isBatch = '', isShowRow, props = [], action: actionName = '', actionApi, actionOpt, whom = '', isConfirm = '', urlExpression = '' } = item
         const propsObj = handleProps(props)
-        console.log(props);
-        console.log(propsObj);
         if (isBatch) {
           batchOperationArr.push({ name, action: () => '', whom, isConfirm, props: propsObj })
         }
         if (isShowRow) {
+          const self = this
+          if (!actionFns[actionName]) {
+            actionFns[actionName] = action(async ({ record, index }: IListOperateActionOpt) => {
+              const opts = {}
+              ;(actionOpt || 'id').split(',').forEach((opt: string) => {
+                opts[opt] = record[opt] || ''
+              })
+              const data = await httpPost(actionApi, opts)
+              if (data.code === 0) {
+                if (actionName === 'del') {
+                  self.listData.data.data.splice(index, 1)
+                }
+                if (actionName === 'freeze' && self.listData.data.data[index]) {
+                  // @ts-ignore
+                  self.listData.data.data[index].status = 0
+                }
+                if (actionName === 'unfreeze' && self.listData.data.data[index]) {
+                  // @ts-ignore
+                  self.listData.data.data[index].status = 1
+                }
+              }
+            })
+          }
           const tmpObj: { [key: string]: any } = {
             actionName: name,
-            action: () => '',
+            action: actionFns[actionName],
             whom,
             isConfirm,
             props: propsObj
           }
           if (isShow.indexOf('<%') >= 0) {
-            tmpObj.show = (r: any, index: number) => Analyze({ r, index, rule: 'template', expression: isShow })
+            tmpObj.show = (r: any, index: number) => Analyze({
+              r,
+              index,
+              rule: 'template',
+              expression: isShow
+            }) === 'true'
           } else {
             tmpObj.show = !!isShow
           }
@@ -101,9 +129,13 @@ export default class Table implements IStore {
               tmpObj.urlFn = (r: any, index: number) => urlExpression
             }
           }
+          rowColLength += name.length * 10 + 24
           tableOperationArr.push(tmpObj)
         }
       })
+      if (tableOperationArr.length > 0) {
+        this.listOperateConf.props = { width: rowColLength }
+      }
       this.listOperateConf.items = tableOperationArr
     }
   }

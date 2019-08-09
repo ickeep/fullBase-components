@@ -24,6 +24,7 @@ export default class Table implements IStore {
     httpMethod: {},
     fields: [],
     api: [],
+    actionApi: [],
     dict: [],
   }
   @action
@@ -53,7 +54,7 @@ export default class Table implements IStore {
 
   @observable listData = { ...dfDataPage, data: { data: [] } }
   @observable listLoading = false
-  dfListForm = { tableLike: '', page: 1, pageSize: 10 }
+  dfListForm = { tableLike: '', page: 1, pageSize: 20 }
   @observable listForm = { ...this.dfListForm }
 
   listInitData = () => {
@@ -146,12 +147,18 @@ export default class Table implements IStore {
       const data = await apiDetail({ id })
       if (data.code === 0) {
         this.dict.apiDetail = data.data
-        const { table } = data.data
+        const { table, type } = data.data
         if (table !== this.dict.tableDetail.name) {
           this.dict.tableDetail = { name: '' }
           const tbData = await tableDetail({ name: data.data.table })
           if (tbData.code === 0) {
             this.dict.tableDetail = tbData.data
+          }
+        }
+        if (type === 'list') { // 列表页 获取操作 api
+          const apiData = await apiRows({ _limit: 0, table, typeIn: 'freeze,unfreeze,del', })
+          if (apiData.code === 0) {
+            this.dict.actionApi = apiData.data
           }
         }
       } else {
