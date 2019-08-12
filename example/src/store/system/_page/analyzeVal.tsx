@@ -2,9 +2,10 @@
 import ejs from 'ejs/ejs.min'
 
 export default function analyze(conf: any) {
-  const { v, r, index, rule, expression = '' } = conf
+  const { data = {}, rule, expression = '' } = conf
+  console.log(data);
   if (rule === 'template' && expression) {
-    return ejs.render(expression, { v, r, index })
+    return ejs.render(expression, data)
   }
-  return v
+  return data && data.v || ''
 }

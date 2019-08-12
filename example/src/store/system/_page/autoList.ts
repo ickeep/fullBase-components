@@ -63,7 +63,6 @@ export default class Table implements IStore {
     if (tableConf && tableConf.columns) {
       const { scrollX, columns = [], isRowSelection, rowSelection, rowKey } = tableConf
       if (rowKey) {
-        // @ts-ignore
         this.listTable.rowKey = rowKey
       }
       if (scrollX > 0) {
@@ -81,6 +80,11 @@ export default class Table implements IStore {
           // @ts-ignore
           self.listTable.rowSelection.selectedRowKeys = keys
         })
+        // @ts-ignore
+        this.listTable.rowSelection.getCheckboxProps = (r: any) => ({
+          // disabled: record.name === 'Disabled User', // Column configuration not to be checked
+          // name: record.name,
+        })
       }
       const tbCols: any[] = []
       columns.forEach((item: any) => tbCols.push(Column(item)))
@@ -94,7 +98,7 @@ export default class Table implements IStore {
       const actionFns: { [key: string]: any } = {}
       operation.forEach((item: any) => {
         const { name = '', isShow = '', isBatch = '', isShowRow, props = [], action: actionName = '', actionApi, actionOpt, whom = '', isConfirm = '', urlExpression = '' } = item
-        const propsObj = handleProps(props)
+        const propsObj = handleProps(props, {}, 'button')
         if (isBatch) {
           batchOperationArr.push({ name, action: () => '', whom, isConfirm, props: propsObj })
         }
@@ -130,8 +134,10 @@ export default class Table implements IStore {
           }
           if (isShow.indexOf('<%') >= 0) {
             tmpObj.show = (r: any, index: number) => Analyze({
-              r,
-              index,
+              data: {
+                r,
+                index
+              },
               rule: 'template',
               expression: isShow
             }) === 'true'
@@ -141,8 +147,7 @@ export default class Table implements IStore {
           if (urlExpression) {
             if (urlExpression.indexOf('<%') >= 0) {
               tmpObj.urlFn = (r: any, index: number) => Analyze({
-                r,
-                index,
+                data: { r, index },
                 rule: 'template',
                 expression: urlExpression
               })

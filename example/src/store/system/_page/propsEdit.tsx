@@ -3,7 +3,10 @@ import React, { Component } from "react";
 import { Button, Col, Form as FormC, InputNumber, Radio, Row } from "antd";
 import { Input, Select } from 'fullbase-components'
 import Analyze from "./analyzeVal";
+import { typeProps as disTypeProps } from "./displayMap";
+import { typeProps as formTypeProps } from './formMap'
 
+// import
 @observer
 export default class PropsEdit extends Component<any> {
   add = () => {
@@ -98,14 +101,31 @@ class PropVal extends Component<any> {
   }
 }
 
-
-export function handleProps(props: any[], data: { [key: string]: any } = {}) {
+export function handleProps(props: any[], data: { [key: string]: any } = {}, name: string) {
   const obj = {}
+  const propsMap = disTypeProps[name] || formTypeProps[name] || {}
   props.forEach((propCnf: any) => {
     const { key, val, rule, expression } = propCnf
-    // if (obj[key]) {
-      obj[key] = rule ? Analyze({ ...data, rule, expression }) : val
-    // }
+    const keyType = propsMap[key]
+    if (keyType) {
+      if (rule) {
+        const tmpVal = Analyze({ data, rule, expression })
+        if (keyType === 'string') {
+          obj[key] = tmpVal
+        } else if (keyType === 'boolean') {
+          obj[key] = tmpVal === 'true'
+        } else if (keyType === 'number') {
+          obj[key] = Number(tmpVal)
+        } else if (keyType.indexOf('|') > 0) {
+          const keyArr = keyType.split('|')
+          if (keyArr.indexOf(tmpVal) >= 0) {
+            obj[key] = tmpVal
+          }
+        }
+      } else {
+        obj[key] = val
+      }
+    }
   })
   return obj
 }

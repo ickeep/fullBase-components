@@ -23,7 +23,7 @@ export default function (conf: any) {
           props.forEach((propCnf: any) => {
             const { key, val, rule, expression } = propCnf
             if (propsObj[key]) {
-              colProps[key] = rule ? Analyze({ v, r, index, rule, expression }) : val
+              colProps[key] = rule ? Analyze({ data: { v, r }, index, rule, expression }) : val
             }
           })
         }
