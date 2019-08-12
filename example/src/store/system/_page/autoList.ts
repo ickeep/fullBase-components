@@ -25,9 +25,15 @@ export default class Table implements IStore {
 
   @action
   setConf = (conf: any) => {
-    const { apiUrl = '', apiMethod = 'get', whereConf = [], desc, tableConf = {}, dict = '', operation } = conf
+    const self = this
+    const { apiUrl = '', apiMethod = 'get', whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {} } = conf
     dict && this.setDict(dict)
     this.listFormConf.pageTitle = desc
+
+    if (addConf && addConf.url) {
+      // @ts-ignore
+      this.listAddConf = { name: addConf.name || '添加', url: addConf.url, props: handleProps(addConf.props) }
+    }
     const fn = HttpMap[apiMethod]
     if (typeof fn === 'function' && apiUrl) {
       this.dataFn.list = async (data: any) => {
@@ -55,10 +61,24 @@ export default class Table implements IStore {
       this.listFormConf.fields = fields
     }
     if (tableConf && tableConf.columns) {
-      const { scrollX, columns = [] } = tableConf
+      const { scrollX, columns = [], isRowSelection, rowSelection, rowKey } = tableConf
+      if (rowKey) {
+        // @ts-ignore
+        this.listTable.rowKey = rowKey
+      }
       if (scrollX > 0) {
         // @ts-ignore
         this.listTable.scroll.x = scrollX
+      }
+      if (isRowSelection && rowSelection) {
+        rowSelection.selectedRowKeys = rowSelection.selectedRowKeys ? rowSelection.selectedRowKeys.split(',') : []
+        // rowSelection.selectedRowKeys = [0]
+        rowSelection.onChange = action((keys: string[]) => {
+          // @ts-ignore
+          self.listTable.rowSelection.selectedRowKeys = keys
+        })
+        // @ts-ignore
+        this.listTable.rowSelection = rowSelection
       }
       const tbCols: any[] = []
       columns.forEach((item: any) => tbCols.push(Column(item)))
@@ -77,7 +97,6 @@ export default class Table implements IStore {
           batchOperationArr.push({ name, action: () => '', whom, isConfirm, props: propsObj })
         }
         if (isShowRow) {
-          const self = this
           if (!actionFns[actionName]) {
             actionFns[actionName] = action(async ({ record, index }: IListOperateActionOpt) => {
               const opts = {}
@@ -155,10 +174,7 @@ export default class Table implements IStore {
   @observable listLoading = false
   dfListForm = { page: 1, pageSize: 20 }
   @observable listForm = { ...this.dfListForm }
-  //
-  // listInitData = () => {
-  //   this.getDict()
-  // }
+
   // listAddConf = { name: '添加API', url: '/system/api/add' }
   listFormConf = { pageTitle: '列表', fields: [] }
   listTable = {
