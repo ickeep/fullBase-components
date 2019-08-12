@@ -71,19 +71,16 @@ export default class Table implements IStore {
         this.listTable.scroll.x = scrollX
       }
       if (isRowSelection && rowSelection) {
-        rowSelection.selectedRowKeys = observable(rowSelection.selectedRowKeys ? rowSelection.selectedRowKeys.split(',') : [])
-        // rowSelection.selections = { key: 'id' }
-        // rowSelection.selectedRowKeys = [0]
+        rowSelection.selectedRowKeys = rowSelection.selectedRowKeys ? rowSelection.selectedRowKeys.split(',') : []
         // @ts-ignore
-        this.listTable.rowSelection.onChange = action((keys: string[], selectedRows: any) => {
-          console.log(keys);
-          console.log(self.listTable);
-          console.log(self.listTable.rowSelection.selectedRowKeys);
+        this.listTable.rowSelection = observable(rowSelection)
+        // @ts-ignore
+        this.listTable.rowSelection.selectedRowKeys = []
+        // @ts-ignore
+        this.listTable.rowSelection.onChange = action((keys: string[]) => {
           // @ts-ignore
           self.listTable.rowSelection.selectedRowKeys = keys
         })
-        // @ts-ignore
-        // this.listTable.rowSelection = rowSelection
       }
       const tbCols: any[] = []
       columns.forEach((item: any) => tbCols.push(Column(item)))
@@ -179,12 +176,9 @@ export default class Table implements IStore {
   @observable listLoading = false
   dfListForm = { page: 1, pageSize: 20 }
   @observable listForm = { ...this.dfListForm }
-
-  // listAddConf = { name: '添加API', url: '/system/api/add' }
   listFormConf = { pageTitle: '列表', fields: [] }
   listTable = {
     rowKey: 'id',
-    rowSelection: observable({ selectedRowKeys: [] }),
     scroll: {},
     columns: []
   }
