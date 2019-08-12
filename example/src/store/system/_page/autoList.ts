@@ -71,14 +71,19 @@ export default class Table implements IStore {
         this.listTable.scroll.x = scrollX
       }
       if (isRowSelection && rowSelection) {
-        rowSelection.selectedRowKeys = rowSelection.selectedRowKeys ? rowSelection.selectedRowKeys.split(',') : []
+        rowSelection.selectedRowKeys = observable(rowSelection.selectedRowKeys ? rowSelection.selectedRowKeys.split(',') : [])
+        // rowSelection.selections = { key: 'id' }
         // rowSelection.selectedRowKeys = [0]
-        rowSelection.onChange = action((keys: string[]) => {
+        // @ts-ignore
+        this.listTable.rowSelection.onChange = action((keys: string[], selectedRows: any) => {
+          console.log(keys);
+          console.log(self.listTable);
+          console.log(self.listTable.rowSelection.selectedRowKeys);
           // @ts-ignore
           self.listTable.rowSelection.selectedRowKeys = keys
         })
         // @ts-ignore
-        this.listTable.rowSelection = rowSelection
+        // this.listTable.rowSelection = rowSelection
       }
       const tbCols: any[] = []
       columns.forEach((item: any) => tbCols.push(Column(item)))
@@ -178,6 +183,8 @@ export default class Table implements IStore {
   // listAddConf = { name: '添加API', url: '/system/api/add' }
   listFormConf = { pageTitle: '列表', fields: [] }
   listTable = {
+    rowKey: 'id',
+    rowSelection: observable({ selectedRowKeys: [] }),
     scroll: {},
     columns: []
   }

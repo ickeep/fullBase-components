@@ -194,6 +194,7 @@ class List extends Component<IProps> {
     const errno = listData[apiFormat.code]
     const errmsg = listData[apiFormat.msg]
     const title = listFormConf.pageTitle || '列表页'
+    console.log(tableProps);
     return (
       <div className="m-list" data-url={location.pathname + location.search}>
         <div className="m-list-title">

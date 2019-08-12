@@ -64,9 +64,13 @@ export default class extends Component<IProps, IState> {
   render() {
     const props = this.props
     // const { tableEl, tableScroll } = this.state
-    const { operate = {}, rowKey = 'id', scroll, listTableActions, pagination, showPaginationTotal = true } = props
+    const { operate = {}, rowKey = 'id', scroll, listTableActions, pagination, showPaginationTotal = true, rowSelection } = props
     return (
-      <div className='m-list-table' data-operate-loading={operate.loading}>
+      <div
+        className='m-list-table'
+        data-operate-loading={operate.loading}
+        data-selected-row-keys={rowSelection && rowSelection.selectedRowKeys || []}
+      >
         {showPaginationTotal && pagination && pagination.total > 0 ?
           <p>符合条件的信息共 {pagination.total} 条 共 {Math.ceil(pagination.total / pagination.pageSize)} 页</p> :
           <p>暂无数据</p>
@@ -77,12 +81,12 @@ export default class extends Component<IProps, IState> {
           )}
         </div>
         <Table
-          {...props}
           // ref={ref => this.tableNode = ref}
           bordered
           scroll={scroll}
           size="small"
           rowKey={rowKey}
+          {...props}
           loading={props.loading || operate.loading || false}
           pagination={pagination}
           onChange={this.change}
