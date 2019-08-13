@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 // import ReactDOM from 'react-dom'
-import { Table, Button } from 'antd'
+import { Table } from 'antd'
 import { TableProps } from 'antd/lib/table/interface'
 import { observer } from 'mobx-react'
+import ListOperate from '../_unit/listOperate'
+
 
 // import TableHeadFixed from './tableHeadFixed'
 
@@ -14,10 +16,12 @@ interface IProps extends TableProps<any> {
   data?: { [key: string]: any },
   dataKey?: string,
   searchMsg?: string,
+  name?: string,
   operate: { [key: string]: any },
   listTableActions?: any[],
   showPaginationTotal?: boolean
   pagination?: any
+  Store: any
 }
 
 interface IState {
@@ -64,7 +68,7 @@ export default class extends Component<IProps, IState> {
   render() {
     const props = this.props
     // const { tableEl, tableScroll } = this.state
-    const { operate = {}, rowKey = 'id', scroll, listTableActions, pagination, showPaginationTotal = true, rowSelection } = props
+    const { operate = {}, Store, rowKey = 'id', scroll, name, pagination, showPaginationTotal = true, rowSelection } = props
     return (
       <div
         className='m-list-table'
@@ -75,11 +79,12 @@ export default class extends Component<IProps, IState> {
           <p>符合条件的信息共 {pagination.total} 条 共 {Math.ceil(pagination.total / pagination.pageSize)} 页</p> :
           <p>暂无数据</p>
         }
-        <div className='u-table-row-selection-btn'>
-          {listTableActions && listTableActions.map && listTableActions.map((item, index) =>
-            <Button key={index}  {...item} >{item.children || '操作'}</Button>
-          )}
-        </div>
+        <ListOperate Store={Store} name={name} type="batch"/>
+        {/*<div className='u-table-row-selection-btn'>*/}
+        {/*  {listTableActions && listTableActions.map && listTableActions.map((item, index) =>*/}
+        {/*    <Button key={index}  {...item} >{item.children || '操作'}</Button>*/}
+        {/*  )}*/}
+        {/*</div>*/}
         <Table
           // ref={ref => this.tableNode = ref}
           bordered

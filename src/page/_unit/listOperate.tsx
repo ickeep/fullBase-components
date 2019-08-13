@@ -6,14 +6,27 @@ import { Button, Modal } from 'antd'
 const confirm = Modal.confirm
 
 @observer
-export default class listOperate extends Component<{ Store?: object, record?: any, index?: number, name?: string, value?: any }> {
+export default class listOperate extends Component<{ Store?: object, type?: 'row' | 'batch', record?: any, index?: number, name?: string, value?: any }> {
   render() {
-    const { Store = {}, record, index = 0, name = 'list', value } = this.props
-    const conf = Store[`${name}OperateConf`] || {}
+    const { Store = {}, record, index = 0, name = 'list', value, type = 'row' } = this.props
+    let items: any[] = []
     const listOperateStatus = Store[`${name}OperateStatus`]
-    const { items = [] } = conf
+    let className = ''
+    let btnSize = ''
+    if (type === 'row') {
+      const conf = Store[`${name}OperateConf`] || {}
+      items = conf.items
+      className = 'm-list-operate'
+      btnSize = 'small'
+    }
+    if (type === 'batch') {
+      items = Store[`${name}TableActions`] || []
+      className = 'u-table-row-selection-btn'
+      btnSize = 'default'
+    }
+
     return (
-      <div className="m-list-operate">
+      <div className={className}>
         {items.map && items.map((item: any, itemIndex: number) => {
           const { show, action, actionName, whom, urlFn, isConfirm, props = {} } = item
           const isShow = typeof show === 'function' ? show(record) : (show !== false)
@@ -22,24 +35,32 @@ export default class listOperate extends Component<{ Store?: object, record?: an
           }
           const url = typeof urlFn === 'function' ? urlFn(record) : ''
           if (url) {
-            return (<Link key={itemIndex} href={url}><Button {...props} size="small">{actionName}</Button></Link>)
+            return (
+              <Link key={itemIndex} href={url}>
+                <Button size={btnSize} {...props} >{actionName}</Button>
+              </Link>
+            )
           }
           if (typeof action !== 'function') {
             return `action 必须是一个到函数`
           }
-          return (<Operate
-              Store={Store}
-              name={name}
-              key={itemIndex}
-              btnProps={props}
-              isConfirm={isConfirm}
-              actionName={actionName}
-              whom={record[whom]}
-              index={index}
-              operateStatus={listOperateStatus}
-              fn={() => action.call(Store, { record, index, value })}
-            />
-          )
+          const opeProps: any = {
+            Store,
+            name,
+            btnProps: props,
+            isConfirm,
+            actionName,
+            type,
+            operateStatus: listOperateStatus
+          }
+          if (type === 'row') {
+            opeProps.index = index
+            opeProps.whom = record[whom]
+            opeProps.fn = () => action.call(Store, { record, index, value })
+          } else {
+            opeProps.fn = () => action.call(Store)
+          }
+          return <Operate key={itemIndex}{...opeProps}/>
         })}
       </div>
     )
@@ -47,26 +68,25 @@ export default class listOperate extends Component<{ Store?: object, record?: an
 }
 
 @observer
-class Operate extends Component<{ Store?: any, name: string, btnProps?: object, fn?: Function, isConfirm?: boolean, actionName?: string, whom?: string, index: number, operateStatus: object }> {
+class Operate extends Component<{ Store?: any, name: string, btnProps?: object, type: 'row' | 'batch', fn?: Function, isConfirm?: boolean, actionName?: string, whom?: string, index?: number, operateStatus: object }> {
   execute = async () => {
-    const { fn = () => '', Store, name, index, actionName } = this.props
+    const { fn = () => '', Store, name, index, actionName, type = 'row' } = this.props
     const setListOperateStatus = Store && Store.setListOperateStatus
-    typeof setListOperateStatus === 'function' && setListOperateStatus({
-      name,
-      status: { index, actionName, loading: true }
-    })
+    const statusObj: { [key: string]: any } = { actionName, loading: true }
+    if (type === 'row') {
+      statusObj.index = index
+    }
+    typeof setListOperateStatus === 'function' && setListOperateStatus({ name, status: statusObj })
     await fn()
-    typeof setListOperateStatus === 'function' && setListOperateStatus({
-      name,
-      status: { index, actionName, loading: false }
-    })
+    statusObj.loading = false
+    typeof setListOperateStatus === 'function' && setListOperateStatus({ name, status: statusObj })
   }
   click = () => {
-    const { isConfirm = true, actionName, whom } = this.props
+    const { isConfirm = true, actionName, whom, type = 'row' } = this.props
     if (isConfirm) {
       confirm({
         title: `${actionName}确认?`,
-        content: `您确定要${actionName} ${whom}?`,
+        content: type === 'row' ? `您确定要${actionName} ${whom}?` : `您确定要批量${actionName}?`,
         onOk: () => {
           this.execute()
         },
@@ -77,12 +97,18 @@ class Operate extends Component<{ Store?: any, name: string, btnProps?: object, 
   }
 
   render() {
-    const { operateStatus, index, actionName, btnProps = {} } = this.props
+    const { operateStatus, index, actionName, btnProps = {}, type = 'row', name, Store } = this.props
+    if (type === 'batch') {
+      const listTable = Store[`${name}Table`] || {}
+      const selectedRowKeys = listTable.rowSelection && listTable.rowSelection.selectedRowKeys || []
+      // @ts-ignore
+      btnProps.disabled = !(selectedRowKeys.length > 0)
+    }
     return (
       <Button
         htmlType="button"
-        size="small"
-        loading={operateStatus && operateStatus[`${actionName}-${index}`]}
+        size={type === 'row' ? 'small' : 'default'}
+        loading={operateStatus && operateStatus[`${actionName}-${type === 'row' ? index : type}`]}
         onClick={this.click}
         {...btnProps}
       >

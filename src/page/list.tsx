@@ -128,16 +128,16 @@ class List extends Component<IProps> {
     </Row>
     </div>
   };
-  getListBatchOperationsRender = (listBatchOperations: any) => {
-    if (!listBatchOperations) return null;
-    const { Store } = this.props;
-    let isArray = Object.prototype.toString.call(listBatchOperations).includes('Array');
-    let maps = isArray ? Array.from(listBatchOperations) : [listBatchOperations];
-    return maps.map((item, key) => {
-      const { ModalUI, modalProps = {} } = item;
-      return ModalUI && <ModalUI {...modalProps} Store={Store} key={key}/>
-    });
-  };
+  // getListBatchOperationsRender = (listBatchOperations: any) => {
+  //   if (!listBatchOperations) return null;
+  //   const { Store } = this.props;
+  //   let isArray = Object.prototype.toString.call(listBatchOperations).includes('Array');
+  //   let maps = isArray ? Array.from(listBatchOperations) : [listBatchOperations];
+  //   return maps.map((item, key) => {
+  //     const { ModalUI, modalProps = {} } = item;
+  //     return ModalUI && <ModalUI {...modalProps} Store={Store} key={key}/>
+  //   });
+  // };
 
   componentDidUpdate() {
     const { Store, name = 'list', } = this.props;
@@ -158,8 +158,8 @@ class List extends Component<IProps> {
     const listForm = Store[`${name}Form`] || {}
     const listData = Store[`${name}Data`] || Object.assign({}, Store.dfDataPage)
     const tableFn = Store[`${name}TableFn`]
-    const listTableActions = Store[`${name}TableActions`]
-    const listBatchOperations = Store[`${name}BatchOperations`] || []
+    // const listTableActions = Store[`${name}TableActions`]
+    // const listBatchOperations = Store[`${name}BatchOperations`] || []
     const listTips = Store[`${name}Tips`]
     const breadcrumb = Store[`${name}Breadcrumb`]
     let columnsOperate: any[] = []
@@ -231,20 +231,22 @@ class List extends Component<IProps> {
           <Content code={errno} msg={errmsg} loading={loading}/>
           :
           <Table
+            name={name}
             loading={loading}
             operate={listOperate}
             data={listData.data}
             onPageSizeChange={this.pageSizeChange}
             onPageChange={this.pageChange}
             onSorter={this.sorter}
-            listTableActions={listTableActions}
+            // listTableActions={listTableActions}
             pagination={pagination}
+            Store={Store}
             {...tableProps}
             columns={[...tableProps.columns, ...columnsOperate]}
           />
         }
         {listPageTableAfterNode}
-        {this.getListBatchOperationsRender(listBatchOperations)}
+        {/*{this.getListBatchOperationsRender(listBatchOperations)}*/}
       </div>
     )
   }

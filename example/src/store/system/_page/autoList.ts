@@ -1,5 +1,5 @@
 import { Curd, Form, } from 'fullbase-components'
-import IStore, { IListOperateActionOpt } from 'fullbase-components/dist/store/_i'
+import IStore, { IListOperateActionOpt, IListOperateStatus } from 'fullbase-components/dist/store/_i'
 import { observable, action } from 'mobx'
 import Http, { HttpMap } from '../../../api/http'
 import { getMap as getApiMap } from '../../../api/system/dict'
@@ -98,14 +98,14 @@ export default class Table implements IStore {
     }
     if (operation && operation.length > 0) {
       const tableOperationArr: any[] = []
-      const batchOperationArr = []
+      const batchOperationArr: any[] = []
       let rowColLength = 0
       const actionFns: { [key: string]: any } = {}
       operation.forEach((item: any) => {
         const { name = '', isShow = '', isBatch = '', isShowRow, props = [], action: actionName = '', actionApi, actionOpt, whom = '', isConfirm = '', urlExpression = '' } = item
         const propsObj = handleProps(props, {}, 'button')
         if (isBatch) {
-          batchOperationArr.push({ name, action: () => '', whom, isConfirm, props: propsObj })
+          batchOperationArr.push({ actionName: name, action: () => '', whom, isConfirm, props: propsObj })
         }
         if (isShowRow) {
           if (!actionFns[actionName]) {
@@ -167,6 +167,7 @@ export default class Table implements IStore {
       if (tableOperationArr.length > 0) {
         this.listOperateConf.props = { width: rowColLength }
       }
+      this.listTableActions = batchOperationArr
       this.listOperateConf.items = tableOperationArr
     }
   }
@@ -181,6 +182,7 @@ export default class Table implements IStore {
   }
   dataFn: { [key: string]: any } = {}
   @observable listOperateConf: { [key: string]: any } = {}
+  @observable listOperateStatus: IListOperateStatus = {}
 
   @observable listData = { ...dfDataPage, data: { data: [] } }
   @observable listLoading = false
@@ -192,4 +194,5 @@ export default class Table implements IStore {
     scroll: {},
     columns: []
   }
+  listTableActions: any[] = []
 }
