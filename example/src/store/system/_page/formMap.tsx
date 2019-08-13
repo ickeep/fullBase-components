@@ -13,6 +13,13 @@ export const typeProps = {
     value: 'string',
     allowClear: 'boolean',
   },
+  aCheckbox: {
+    autoFocus: 'boolean',
+    checked: 'boolean',
+    defaultChecked: 'boolean',
+    disabled: 'boolean',
+    indeterminate: 'boolean',
+  },
   checkbox: {
     value: 'string|array',
     labelKey: 'string',

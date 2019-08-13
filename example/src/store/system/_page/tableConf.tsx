@@ -4,6 +4,7 @@ import { Button, Col, Form as FormC, InputNumber, Row, Checkbox } from "antd";
 import { Input, Select } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 import { typeProps } from './displayMap'
+import { typeProps as formTypeProps } from './formMap'
 
 const typeData = Object.keys(typeProps)
 @observer
@@ -236,6 +237,12 @@ class TableRowSelection extends Component<any> {
           <Col span={8}>
             <FormC.Item label="fixed">
               <Checkbox value={value.fixed} onChange={(e: any) => this.change(e.target.checked, 'fixed')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={24}>
+            <FormC.Item label="props">
+              <PropsEdit value={value.props || []} data={formTypeProps.aCheckbox}
+                         onChange={(v: any[]) => this.change(v, 'props')}/>
             </FormC.Item>
           </Col>
         </Row>

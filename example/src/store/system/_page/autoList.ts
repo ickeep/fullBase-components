@@ -32,7 +32,11 @@ export default class Table implements IStore {
 
     if (addConf && addConf.url) {
       // @ts-ignore
-      this.listAddConf = { name: addConf.name || '添加', url: addConf.url, props: handleProps(addConf.props) }
+      this.listAddConf = {
+        name: addConf.name || '添加',
+        url: addConf.url,
+        props: handleProps(addConf.props, {}, 'button')
+      }
     }
     const fn = HttpMap[apiMethod]
     if (typeof fn === 'function' && apiUrl) {
@@ -80,11 +84,12 @@ export default class Table implements IStore {
           // @ts-ignore
           self.listTable.rowSelection.selectedRowKeys = keys
         })
-        // @ts-ignore
-        this.listTable.rowSelection.getCheckboxProps = (r: any) => ({
-          // disabled: record.name === 'Disabled User', // Column configuration not to be checked
-          // name: record.name,
-        })
+        if (rowSelection.props && rowSelection.props.length > 0) {
+          // @ts-ignore
+          this.listTable.rowSelection.getCheckboxProps = (r: any) => {
+            return handleProps(rowSelection.props, { r }, 'aCheckbox')
+          }
+        }
       }
       const tbCols: any[] = []
       columns.forEach((item: any) => tbCols.push(Column(item)))
@@ -152,7 +157,7 @@ export default class Table implements IStore {
                 expression: urlExpression
               })
             } else {
-              tmpObj.urlFn = (r: any, index: number) => urlExpression
+              tmpObj.urlFn = () => urlExpression
             }
           }
           rowColLength += name.length * 10 + 24
