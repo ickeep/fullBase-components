@@ -76,10 +76,10 @@ class Operate extends Component<{ Store?: any, name: string, btnProps?: object, 
     if (type === 'row') {
       statusObj.index = index
     }
-    typeof setListOperateStatus === 'function' && setListOperateStatus({ name, status: statusObj })
+    typeof setListOperateStatus === 'function' && setListOperateStatus({ name, type, status: statusObj })
     await fn()
     statusObj.loading = false
-    typeof setListOperateStatus === 'function' && setListOperateStatus({ name, status: statusObj })
+    typeof setListOperateStatus === 'function' && setListOperateStatus({ name, type, status: statusObj })
   }
   click = () => {
     const { isConfirm = true, actionName, whom, type = 'row' } = this.props

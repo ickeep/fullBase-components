@@ -152,9 +152,9 @@ export default function <T extends { new(...args: any[]): { dataFn: { [key: stri
       return this[`${formName}Data`]
     })
 
-    setListOperateStatus = action(({ name = 'list', status: { index, actionName, loading } }) => {
+    setListOperateStatus = action(({ name = 'list', type = 'row', status: { index, actionName, loading } }) => {
       const listOperateStatus = this[`${name}OperateStatus`]
-      listOperateStatus && (listOperateStatus[`${actionName}-${index}`] = loading)
+      listOperateStatus && (listOperateStatus[`${actionName}-${type === 'row' ? index : type}`] = loading)
     })
 
     downBolb = (blob: any, name: string) => {

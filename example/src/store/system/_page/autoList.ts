@@ -27,6 +27,7 @@ export default class Table implements IStore {
   setConf = (conf: any) => {
     const self = this
     const { apiUrl = '', apiMethod = 'get', whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {} } = conf
+    const rowKey = tableConf.rowKey || 'id'
     dict && this.setDict(dict)
     this.listFormConf.pageTitle = desc
 
@@ -65,7 +66,7 @@ export default class Table implements IStore {
       this.listFormConf.fields = fields
     }
     if (tableConf && tableConf.columns) {
-      const { scrollX, columns = [], isRowSelection, rowSelection, rowKey } = tableConf
+      const { scrollX, columns = [], isRowSelection, rowSelection } = tableConf
       if (rowKey) {
         this.listTable.rowKey = rowKey
       }
@@ -105,7 +106,28 @@ export default class Table implements IStore {
         const { name = '', isShow = '', isBatch = '', isShowRow, props = [], action: actionName = '', actionApi, actionOpt, whom = '', isConfirm = '', urlExpression = '' } = item
         const propsObj = handleProps(props, {}, 'button')
         if (isBatch) {
-          batchOperationArr.push({ actionName: name, action: () => '', whom, isConfirm, props: propsObj })
+          if (!actionFns[`batch${actionName}`]) {
+            actionFns[`batch${actionName}`] = async () => {
+              if (rowKey === (actionOpt || 'id')) {
+                // @ts-ignore
+                const selectedRowKeys = self.listTable && self.listTable.rowSelection && self.listTable.rowSelection.selectedRowKeys || []
+                const opts: { [key: string]: any } = {}
+                opts[rowKey] = selectedRowKeys
+                const data = await httpPost(actionApi, opts)
+                if (data.code === 0) {
+                  // @ts-ignore
+                  self.getList()
+                }
+              }
+            }
+            batchOperationArr.push({
+              actionName: name,
+              action: actionFns[`batch${actionName}`],
+              whom,
+              isConfirm,
+              props: propsObj
+            })
+          }
         }
         if (isShowRow) {
           if (!actionFns[actionName]) {

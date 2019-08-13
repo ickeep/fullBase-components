@@ -44,8 +44,6 @@ class List extends Component<IProps> {
     const { Store, location, name = 'list', Auth } = this.props
     Store.urlSetForm({ name, url: location.search })
     const initDataFn = Store[`${name}InitData`]
-    // let ListOperateStatus: { [key: string]: any } = Store[`${name}listOperateStatus`]
-    // ListOperateStatus = {}
     typeof initDataFn === 'function' && initDataFn.call(Store, { location, Auth })
     Store.getList({ formName: name })
   }
@@ -158,7 +156,6 @@ class List extends Component<IProps> {
     const listForm = Store[`${name}Form`] || {}
     const listData = Store[`${name}Data`] || Object.assign({}, Store.dfDataPage)
     const tableFn = Store[`${name}TableFn`]
-    // const listTableActions = Store[`${name}TableActions`]
     // const listBatchOperations = Store[`${name}BatchOperations`] || []
     const listTips = Store[`${name}Tips`]
     const breadcrumb = Store[`${name}Breadcrumb`]
@@ -238,7 +235,6 @@ class List extends Component<IProps> {
             onPageSizeChange={this.pageSizeChange}
             onPageChange={this.pageChange}
             onSorter={this.sorter}
-            // listTableActions={listTableActions}
             pagination={pagination}
             Store={Store}
             {...tableProps}
