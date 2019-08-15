@@ -81,7 +81,7 @@ export default class WhereConf extends Component<any> {
     const { fields: fieldsConf } = tableDetail
     let fieldsData: string[] = []
     if (optFields) {
-      fieldsData = optFields.splice(',')
+      fieldsData = optFields.split(',')
     } else {
       fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
     }

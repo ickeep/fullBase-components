@@ -15,7 +15,7 @@ class P404 extends Component<any> {
   getPageConf = async () => {
     const { location = {} } = this.props
     const { pathname } = location
-    const confData = await detail({ url: '/admin' + pathname })
+    const confData = await detail({ url: pathname })
     const { code, data } = confData
     if (code === 0) {
       this.setState({ conf: data })
@@ -69,4 +69,5 @@ class P404 extends Component<any> {
   }
 }
 
+// export default P404
 export default withRouter(P404)

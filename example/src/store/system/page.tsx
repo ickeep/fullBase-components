@@ -1,7 +1,7 @@
 import React from 'react'
 import { Curd, Form, Link } from 'fullbase-components'
 import IStore, { IFormStatus, IAddFormConf } from 'fullbase-components/dist/store/_i'
-import { observable, action, reaction } from 'mobx'
+import { observable, action, reaction, computed } from 'mobx'
 import { list, add, detail, edit } from '../../api/system/page'
 import { rows as apiRows, detail as apiDetail } from '../../api/system/api'
 import { detail as tableDetail } from '../../api/system/table'
@@ -99,6 +99,11 @@ export default class Table implements IStore {
     type: 'list',
     side: 'admin',
     whereConf: [],
+    operation: [],
+    addForm: [],
+    editForm: [],
+    dict: '',
+    breadcrumbConf: [],
     tableConf: {},
     addConf: {}
   }
@@ -111,10 +116,11 @@ export default class Table implements IStore {
     this.getApiRows('addForm')
     this.getDictRows()
   }
-  @observable
-  addFormConf: IAddFormConf = {
-    pageTitle: '添加页面',
-    fields: [
+
+  // @ts-ignore
+  @computed get addFormConf() {
+    let fields: any[] = []
+    const dfFields = [
       { title: '路径', field: 'url', type: 'input', span: 8, rules: 'required', },
       { title: '页面类型', field: 'type', type: 'select', data: 'pageType', span: 8, rules: 'required', },
       { title: '端', field: 'side', type: 'select', data: 'apiSide', span: 8, rules: 'required', },
@@ -130,12 +136,24 @@ export default class Table implements IStore {
       },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
       { title: '面包屑', field: 'breadcrumbConf', span: 24, render: (item: any) => <BreadcrumbConf {...item}/> },
-      { title: '添加配置', field: 'addConf', span: 24, render: (item: any) => <AddConf {...item}/> },
-      { title: '查询配置', field: 'whereConf', span: 24, render: (item: any) => <WhereConf {...item}/> },
-      { title: '表格配置', field: 'tableConf', span: 24, render: (item: any) => <TableConf {...item}/> },
-      { title: '操作配置', field: 'operation', span: 24, render: (item: any) => <OperationConf {...item}/> },
+
     ]
+    if (this.addForm.type === 'list') {
+      fields = [
+        ...dfFields,
+        { title: '添加配置', field: 'addConf', span: 24, render: (item: any) => <AddConf {...item}/> },
+        { title: '查询配置', field: 'whereConf', span: 24, render: (item: any) => <WhereConf {...item}/> },
+        { title: '表格配置', field: 'tableConf', span: 24, render: (item: any) => <TableConf {...item}/> },
+        { title: '操作配置', field: 'operation', span: 24, render: (item: any) => <OperationConf {...item}/> }]
+    } else {
+      fields = [...dfFields]
+    }
+    return {
+      pageTitle: '添加页面',
+      fields,
+    }
   }
+
   typeReaction = reaction(() => this.addForm.type, () => {
     this.addForm.api = ''
     this.getApiRows('addForm')
