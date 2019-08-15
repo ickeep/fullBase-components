@@ -26,11 +26,13 @@ export default class Table implements IStore {
   @action
   setConf = (conf: any) => {
     const self = this
-    const { apiUrl = '', apiMethod = 'get', whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {} } = conf
+    const { apiUrl = '', apiMethod = 'get', breadcrumbConf = [], whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {} } = conf
     const rowKey = tableConf.rowKey || 'id'
     dict && this.setDict(dict)
     this.listFormConf.pageTitle = desc
-
+    if (breadcrumbConf && breadcrumbConf.length > 0) {
+      this.listBreadcrumb = breadcrumbConf
+    }
     if (addConf && addConf.url) {
       // @ts-ignore
       this.listAddConf = {
@@ -202,6 +204,7 @@ export default class Table implements IStore {
   setListForm = (form: any) => {
     this.listForm = form
   }
+  listBreadcrumb = []
   dataFn: { [key: string]: any } = {}
   @observable listOperateConf: { [key: string]: any } = {}
   @observable listOperateStatus: IListOperateStatus = {}

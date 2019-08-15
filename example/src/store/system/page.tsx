@@ -11,6 +11,7 @@ import WhereConf from './_page/whereConf'
 import TableConf from './_page/tableConf'
 import OperationConf from './_page/operationConf'
 import AddConf from './_page/addConf'
+import BreadcrumbConf from './_page/breadcrumbConf'
 
 const { dfDataPage, dfDataObj } = Http
 @Curd @Form
@@ -128,10 +129,11 @@ export default class Table implements IStore {
         props: { valKey: 'name', mode: 'multiple' }
       },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
+      { title: '面包屑', field: 'breadcrumbConf', span: 24, render: (item: any) => <BreadcrumbConf {...item}/> },
+      { title: '添加配置', field: 'addConf', span: 24, render: (item: any) => <AddConf {...item}/> },
       { title: '查询配置', field: 'whereConf', span: 24, render: (item: any) => <WhereConf {...item}/> },
       { title: '表格配置', field: 'tableConf', span: 24, render: (item: any) => <TableConf {...item}/> },
       { title: '操作配置', field: 'operation', span: 24, render: (item: any) => <OperationConf {...item}/> },
-      { title: '添加配置', field: 'addConf', span: 24, render: (item: any) => <AddConf {...item}/> },
     ]
   }
   typeReaction = reaction(() => this.addForm.type, () => {

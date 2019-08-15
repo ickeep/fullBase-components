@@ -82,5 +82,6 @@ export {
   Loading3QuartersOutline,
   EllipsisOutline,
   DownSquareOutline,
-  SearchOutline
+  SearchOutline,
+  EnvironmentOutline
 } from '@ant-design/icons'
