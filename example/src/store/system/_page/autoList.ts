@@ -77,7 +77,7 @@ export default class Table implements IStore {
         this.listTable.scroll.x = scrollX
       }
       if (isRowSelection && rowSelection) {
-        rowSelection.selectedRowKeys = rowSelection.selectedRowKeys ? rowSelection.selectedRowKeys.split(',') : []
+        rowSelection.selectedRowKeys = typeof rowSelection.selectedRowKeys === 'string' ? rowSelection.selectedRowKeys.split(',') : []
         // @ts-ignore
         this.listTable.rowSelection = observable(rowSelection)
         // @ts-ignore
