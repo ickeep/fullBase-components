@@ -1,10 +1,5 @@
 import { Config } from 'fullbase-components'
-
-interface IConfig {
-  hosts: { [key: string]: string },
-
-  [key: string]: any
-}
+import { IConfig } from 'fullbase-components/dist/config'
 
 const config: IConfig = {
   ...Config,

@@ -1,7 +1,4 @@
 import { observable, action, computed } from 'mobx'
-import Config from '../config'
-
-const { validatedErrno, authErrno, successErrno, format } = Config
 
 export interface IUI {
   pageTitle: string,

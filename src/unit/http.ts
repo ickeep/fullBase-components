@@ -30,7 +30,8 @@ export interface IHttp {
   conf?: AxiosRequestConfig
 }
 
-export default function HTTP({ beforeFn, afterFn, conf = {} }: IHttp) {
+export default function HTTP(opt?: IHttp) {
+  const { beforeFn = '', afterFn = '', conf = {} } = opt || {}
   const axiox = Axios.create({
     timeout: 30000,
     responseType: 'json',

@@ -1,3 +1,6 @@
+import React from 'react'
+import HTTP from './unit/http'
+
 export interface IConfig {
   codeSuccess: number,
   codeUnauthorized: number,
@@ -12,7 +15,8 @@ export interface IConfig {
     currentPage: string,
     count: string,
     totalPages: string
-  }
+  },
+  hosts?: { [key: string]: string }
 }
 
 const Config: IConfig = {
@@ -33,3 +37,4 @@ const Config: IConfig = {
 }
 
 export default Config
+export const ConfigContext = React.createContext({ config: Config, Http: HTTP() });

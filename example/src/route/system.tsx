@@ -11,7 +11,7 @@ const routerConf = {
   'p404': P404,
   routers: [
     { path: '', exact: true, component: JumpToOne },
-    { path: 'table', store: Table, pages: { add: {}, edit: {}, detail: {}, list: {} } },
+    { path: 'table', store: Table, pages: { add: {}, edit: {}, detail: {} } },
     { path: 'dict', store: Dict, pages: { add: {}, edit: {}, detail: {}, list: {} } },
     { path: 'api', store: Api, pages: { add: {}, edit: {}, detail: {}, list: {} } },
     { path: 'page', store: Page, pages: { add: {}, edit: {}, detail: {} } },
