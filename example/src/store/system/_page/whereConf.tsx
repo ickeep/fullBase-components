@@ -47,9 +47,6 @@ export default class WhereConf extends Component<any> {
     const { value = [], onChange, values, field } = this.props
     if (index < value.length - 1) {
       const tmp = value.splice(index, 1)
-      console.log(tmp);
-      console.log(value.length);
-
       value.splice(index + 1, 0, tmp[0])
       values[field] = value
       onChange(values)
