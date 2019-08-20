@@ -38,7 +38,7 @@ export default class WhereConf extends Component<any> {
     if (index > 0) {
       const { value = [], onChange, values, field } = this.props
       const tmp = value.splice(index, 1)
-      value.splice(index - 1, 0, tmp)
+      value.splice(index - 1, 0, tmp[0])
       values[field] = value
       onChange(values)
     }
@@ -47,7 +47,10 @@ export default class WhereConf extends Component<any> {
     const { value = [], onChange, values, field } = this.props
     if (index < value.length - 1) {
       const tmp = value.splice(index, 1)
-      value.splice(index + 1, 0, tmp)
+      console.log(tmp);
+      console.log(value.length);
+
+      value.splice(index + 1, 0, tmp[0])
       values[field] = value
       onChange(values)
     }
@@ -64,12 +67,6 @@ export default class WhereConf extends Component<any> {
     if (type === 'field' && v && fieldMap[v]) {
       value[i].title = fieldMap[v].desc
     }
-    values[field] = value
-    onChange(values)
-  }
-  dfValChange = (e: any, index: number) => {
-    const { value = [], onChange, values, field } = this.props
-    value[index].dfVal = e.target.value
     values[field] = value
     onChange(values)
   }
