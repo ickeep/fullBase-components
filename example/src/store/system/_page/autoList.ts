@@ -3,6 +3,7 @@ import IStore, { IListOperateActionOpt, IListOperateStatus } from 'fullbase-comp
 import { observable, action } from 'mobx'
 import Http, { HttpMap } from '../../../api/http'
 import { getMap as getApiMap } from '../../../api/system/dict'
+import { rows as apiRows } from '../../../api/system/api'
 import Column from './column'
 import { typeProps } from './formMap'
 import { handleProps } from './propsEdit'
@@ -11,24 +12,60 @@ import Analyze from "./analyzeVal";
 const { dfDataPage, httpPost } = Http
 @Curd @Form
 export default class Table implements IStore {
-  @observable dict = {}
+  @observable dict: { [key: string]: any } = {}
   @action
   getDict = async () => {
   }
   @action
-  setDict = async (dict: string) => {
-    const data = await getApiMap(dict)
-    if (data.code === 0) {
-      this.dict = { ...this.dict, ...data.data }
+  setDict = async (dict: string, dictApi: any[]) => {
+    const self = this
+    getApiMap(dict).then((data: any) => {
+      if (data.code === 0) {
+        self.dict = { ...self.dict, ...data.data }
+      }
+    })
+    if (dictApi && dictApi.forEach) {
+      const apiIdArr: any[] = []
+      const apiOptArr: any[] = []
+      const keyArr: string[] = []
+      dictApi.forEach((item: any) => {
+        apiIdArr.push(item.api)
+        keyArr.push(item.key)
+        const tmpOpt = {}
+        item.opt && item.opt.forEach && item.opt.forEach(({ key, val }: any) => {
+          tmpOpt[key] = val
+        })
+        apiOptArr.push(tmpOpt)
+      })
+      const apiArrData = await apiRows({ _limit: 0, idIn: apiIdArr.join(',') })
+      const apiMap = {}
+      if (apiArrData.code === 0) {
+        apiArrData.data && apiArrData.data.forEach((apiDetail: any) => {
+          apiMap[apiDetail.id] = apiDetail
+        })
+      }
+      for (let i = 0; i < apiIdArr.length; i += 1) {
+        const apiDetail = apiMap[apiIdArr[i]] || {}
+        const opt = apiOptArr[i]
+        const key = keyArr[i]
+        const { url, method } = apiDetail
+        if (url) {
+          const fn = HttpMap[method || 'get'] || HttpMap.get
+          fn(url, opt).then((data: any) => {
+            self.dict[key] = data.code === 0 ? data.data : []
+          })
+        }
+      }
     }
+
   }
 
   @action
   setConf = (conf: any) => {
     const self = this
-    const { apiUrl = '', apiMethod = 'get', breadcrumbConf = [], whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {} } = conf
+    const { apiUrl = '', apiMethod = 'get', breadcrumbConf = [], whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {}, dictApi = [] } = conf
     const rowKey = tableConf.rowKey || 'id'
-    dict && this.setDict(dict)
+    dict && this.setDict(dict, dictApi)
     this.listFormConf.pageTitle = desc
     if (breadcrumbConf && breadcrumbConf.length > 0) {
       this.listBreadcrumb = breadcrumbConf

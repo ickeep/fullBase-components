@@ -64,9 +64,9 @@ export default class DictApiConf extends Component<any> {
               <Input value={item.key} onChange={(v: string) => this.change(v, index, 'key')}/>
             </FormC.Item>
           </Col>
-          <Col span={8}>
+          <Col span={24}>
             <FormC.Item label="参数">
-              <Input value={item.opt} onChange={(v: string) => this.change(v, index, 'opt')}/>
+              <OptArr value={item.opt} onChange={(v: string) => this.change(v, index, 'opt')}/>
             </FormC.Item>
           </Col>
           <Col span={16}>
@@ -75,6 +75,56 @@ export default class DictApiConf extends Component<any> {
             <Button onClick={() => this.cut(index)}>-</Button>
             {index > 0 && <Button onClick={() => this.up(index)} icon="up"/>}
             {index < value.length - 1 && <Button onClick={() => this.down(index)} icon="down"/>}
+          </Col>
+        </Row>
+      </div>
+    )}
+      <Button onClick={this.add}>+</Button>
+    </div>
+  }
+}
+
+@observer
+class OptArr extends Component<any> {
+  add = () => {
+    const { value = [], onChange } = this.props
+    let newValue
+    if (typeof value.push !== 'function') {
+      newValue = []
+    } else {
+      newValue = value
+    }
+    newValue.push({ key: '', val: '', })
+    onChange(newValue)
+  }
+  cut = (index: number) => {
+    const { value = [], onChange } = this.props
+    value.splice(index, 1)
+    onChange(value)
+  }
+  change = (v: any, i: number, type: string) => {
+    const { value = [], onChange } = this.props
+    value[i][type] = v
+    onChange(value)
+  }
+
+  render() {
+    const { value = [] } = this.props
+    return <div>{value && value.map && value.map((item: any, index: number) =>
+      <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
+        <Row>
+          <Col span={8}>
+            <FormC.Item label="key">
+              <Input value={item.key} onChange={(v: string) => this.change(v, index, 'key')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <FormC.Item label="val">
+              <Input value={item.val} onChange={(v: string) => this.change(v, index, 'val')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={8}>
+            <Button onClick={() => this.cut(index)}>-</Button>
           </Col>
         </Row>
       </div>
