@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, Row, } from 'antd'
-import { Input } from 'fullbase-components'
+import { Input, SelectRemote } from 'fullbase-components'
 
 @observer
 export default class DictApiConf extends Component<any> {
@@ -55,7 +55,8 @@ export default class DictApiConf extends Component<any> {
         <Row>
           <Col span={8}>
             <FormC.Item label="接口">
-              <Input value={item.api} onChange={(v: string) => this.change(v, index, 'api')}/>
+              <SelectRemote url="/admin/system/api/rows" labelKey="desc" apiKey="descLike" value={item.api}
+                            onChange={(v: string) => this.change(v, index, 'api')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>

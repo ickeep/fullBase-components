@@ -12,6 +12,7 @@ import TableConf from './_page/tableConf'
 import OperationConf from './_page/operationConf'
 import AddConf from './_page/addConf'
 import BreadcrumbConf from './_page/breadcrumbConf'
+import DictApiConf from './_page/dictApiConf'
 
 const { dfDataPage, dfDataObj } = Http
 @Curd @Form
@@ -135,6 +136,11 @@ export default class Table implements IStore {
         props: { valKey: 'name', mode: 'multiple' }
       },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
+      // {
+      //   title: '备注', field: 'xxx', type: 'selectRemote', span: 8,
+      //   // props: { url: '/admin/system/api/rows', labelKey: 'desc', apiKey: 'descLike', mode: 'multiple' }
+      // },
+      { title: '字典接口', field: 'dictApi', span: 24, render: (item: any) => <DictApiConf {...item}/> },
       { title: '面包屑', field: 'breadcrumbConf', span: 24, render: (item: any) => <BreadcrumbConf {...item}/> },
 
     ]

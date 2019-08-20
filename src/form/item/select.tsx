@@ -5,7 +5,7 @@ import { SelectProps } from 'antd/lib/select'
 
 const Option = Select.Option
 
-interface IProps extends SelectProps<any> {
+export interface IProps extends SelectProps<any> {
   value?: string | string[] | number | number[]
   data?: Object | Array<any>,
   isNull?: boolean,

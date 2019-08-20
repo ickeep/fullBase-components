@@ -1,71 +1,100 @@
 import React, { Component } from 'react'
-import { Select, Spin } from 'antd'
-// @ts-ignore
+import { Spin } from 'antd'
 import debounce from 'lodash/debounce'
+import Select, { IProps as ISelectProps } from './select'
+import { ConfigContext } from '../../config'
 
-const Option = Select.Option;
-
-export interface IProps {
-
+export interface IProps extends ISelectProps {
+  url: string,
+  method?: string,
+  apiKey?: string,
+  dataKey?: string,
+  valInKey?: string,
 }
 
-export default class RemoteSelect extends Component<IProps> {
+export default class SelectRemote extends Component<IProps> {
+  static contextType = ConfigContext;
+  static defaultProps = {
+    value: '',
+    method: 'get',
+    labelKey: 'name',
+    dataKey: 'data',
+    valKey: 'id',
+    valInKey: 'idIn'
+  }
   lastFetchId: number
 
-  constructor(props:IProps) {
+  constructor(props: IProps) {
     super(props);
     this.lastFetchId = 0;
-    this.fetchUser = debounce(this.fetchUser, 800);
+    this.searchData = debounce(this.searchData, 300);
   }
 
   state = {
     data: [],
-    value: [],
     fetching: false,
+  };
+  fetchData = async (opt: { [key: string]: any }) => {
+    const { url, method = 'get', dataKey } = this.props
+    if (url) {
+      this.setState({ data: [], fetching: true })
+      this.lastFetchId += 1
+      const fetchId = this.lastFetchId
+      const { Http, config } = this.context
+      const { apiFormat, codeSuccess } = config
+      const fn = method ? Http[`http${method}`] || Http.httpGet : Http.httpGet
+      const data = await fn(url, opt)
+      if (fetchId === this.lastFetchId && data[apiFormat.code] === codeSuccess) {
+        this.setState({ data: data[dataKey || apiFormat.data], fetching: false });
+      }
+    }
   }
 
-  fetchUser = (value:string) => {
-    console.log('fetching user', value);
-    this.lastFetchId += 1;
-    const fetchId = this.lastFetchId;
-    this.setState({ data: [], fetching: true });
-    fetch('https://randomuser.me/api/?results=5')
-      .then(response => response.json())
-      .then((body) => {
-        if (fetchId !== this.lastFetchId) { // for fetch callback order
-          return;
-        }
-        const data = body.results.map((user:any) => ({
-          text: `${user.name.first} ${user.name.last}`,
-          value: user.login.username,
-        }));
-        this.setState({ data, fetching: false });
-      });
+  initData = () => {
+    const { valKey = 'id', value, valInKey = 'idIn', mode } = this.props
+    if (typeof value !== 'undefined' && value !== '') {
+      const opt: { [key: string]: any } = {}
+      if (mode === 'multiple' || mode === 'tags') {
+        opt[valInKey] = value
+      } else {
+        opt[valKey] = value
+      }
+      this.fetchData(opt)
+    }
   }
 
-  handleChange = (value: any) => {
-    this.setState({
-      value,
-      data: [],
-      fetching: false,
-    });
+  searchData = async (value: any) => {
+    const { apiKey, labelKey = 'name' } = this.props
+    const opt = {}
+    opt[apiKey || labelKey] = value
+    this.fetchData(opt)
+  }
+
+
+  handleChange = (val: any) => {
+    this.setState({ fetching: false, })
+    const { onChange } = this.props
+    if (onChange) {
+      onChange(val)
+    }
+  };
+
+  componentDidMount() {
+    this.initData()
   }
 
   render() {
-    const { fetching, data, value } = this.state;
+    const { fetching, data } = this.state;
     return (
       <Select
-        mode="multiple"
-        labelInValue
-        value={value}
-        placeholder="Select users"
+        {...this.props}
+        data={data}
         notFoundContent={fetching ? <Spin size="small"/> : null}
         filterOption={false}
-        onSearch={this.fetchUser}
+        showSearch={true}
+        onSearch={this.searchData}
         onChange={this.handleChange}
-        style={{ width: '100%' }}
       >
-        {data.map((d: any) => <Option key={d.value}>{d.text}</Option>)}
       </Select>
     );
   }
