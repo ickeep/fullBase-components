@@ -69,7 +69,6 @@ export default class extends Component<IProps, IState> {
     const props = this.props
     // const { tableEl, tableScroll } = this.state
     const { operate = {}, Store, rowKey = 'id', scroll, name, pagination, showPaginationTotal = true, rowSelection } = props
-    console.log(scroll);
     return (
       <div
         className='m-list-table'

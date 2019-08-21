@@ -230,7 +230,6 @@ export default class Table implements IStore {
       this.listTableActions = batchOperationArr
       this.listOperateConf.items = tableOperationArr
     }
-    console.log(this.listTable);
   }
 
   constructor(conf: any) {
