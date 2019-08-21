@@ -76,15 +76,26 @@ export default class WhereConf extends Component<any> {
     let fieldsData: string[] = []
     if (optFields) {
       fieldsData = optFields.split(',')
-    } else {
-      fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
+    } else if (fieldsConf) {
+      Object.keys(fieldsConf).forEach((key: string) => {
+        const item = fieldsConf[key]
+        fieldsData.push(key)
+        item.in && fieldsData.push(`${key}In`)
+        item.like && fieldsData.push(`${key}Like`)
+        item.notLike && fieldsData.push(`${key}NotLike`)
+        item.not && fieldsData.push(`${key}Not`)
+        item.num && fieldsData.push(`${key}Max`, `${key}Min`)
+      })
+      // fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
     }
     return <div>{value.map((item: any, index: number) =>
       <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
         <Row>
           <Col span={8}>
             <FormC.Item label="字段">
-              <Select value={item.field} mode={item.type === 'rangeDate' ? 'multiple' : 'tags'} data={fieldsData}
+              <Select showSearch={true}
+                      value={item.field} mode={item.type === 'rangeDate' ? 'multiple' : 'tags'}
+                      data={fieldsData}
                       onChange={(v) => this.change(v, index, 'field')}/>
             </FormC.Item>
           </Col>
