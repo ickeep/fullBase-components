@@ -47,7 +47,21 @@ export const typeProps = {
     sign: 'string',
     value: 'string',
   },
-  svg: { src: 'string' }
+  svg: { src: 'string' },
+  tableColumn: {
+    align: 'left|right|center',
+    className: 'string',
+    colSpan: 'number',
+    dataIndex: 'string',
+    defaultSortOrder: 'ascend|descend',
+    filterDropdownVisible: 'boolean',
+    filtered: 'boolean',
+    filterMultiple: 'boolean',
+    fixed: 'boolean',
+    key: 'string',
+    sortOrder: 'string',
+    width: 'number',
+  }
 }
 
 export default {

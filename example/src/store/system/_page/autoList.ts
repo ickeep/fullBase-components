@@ -139,7 +139,6 @@ export default class Table implements IStore {
     if (operation && operation.length > 0) {
       const tableOperationArr: any[] = []
       const batchOperationArr: any[] = []
-      let rowColLength = 0
       const actionFns: { [key: string]: any } = {}
       operation.forEach((item: any) => {
         const { name = '', isShow = '', isBatch = '', isShowRow, props = [], action: actionName = '', actionApi, actionOpt, whom = '', isConfirm = '', urlExpression = '' } = item
@@ -213,7 +212,7 @@ export default class Table implements IStore {
           if (urlExpression) {
             if (urlExpression.indexOf('<%') >= 0) {
               tmpObj.urlFn = (r: any, index: number) => Analyze({
-                data: { r, index },
+                data: { r: r || {}, index },// 批量操作
                 rule: 'template',
                 expression: urlExpression
               })
@@ -221,16 +220,17 @@ export default class Table implements IStore {
               tmpObj.urlFn = () => urlExpression
             }
           }
-          rowColLength += name.length * 10 + 24
           tableOperationArr.push(tmpObj)
         }
       })
       if (tableOperationArr.length > 0) {
-        this.listOperateConf.props = { width: rowColLength }
+        const { actionProps = [] } = tableConf
+        this.listOperateConf.props = handleProps(actionProps, {}, 'tableColumn')
       }
       this.listTableActions = batchOperationArr
       this.listOperateConf.items = tableOperationArr
     }
+    console.log(this.listTable);
   }
 
   constructor(conf: any) {

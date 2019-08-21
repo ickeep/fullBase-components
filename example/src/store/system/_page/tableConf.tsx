@@ -62,6 +62,12 @@ export default class TableConf extends Component<any> {
           </Col>
           }
           <Col span={24}>
+            <FormC.Item label="操作列配置">
+              <PropsEdit value={value.actionProps} data={typeProps.tableColumn}
+                         onChange={(v: any) => this.change(v, 'actionProps')}/>
+            </FormC.Item>
+          </Col>
+          <Col span={24}>
             <FormC.Item label="列">
               <TableColumns value={value.columns} dict={dict} onChange={(v: any) => this.change(v, 'columns')}/>
             </FormC.Item>
