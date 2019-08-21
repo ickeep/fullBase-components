@@ -35,7 +35,7 @@ export default class Table implements IStore {
         render: (v: string, r: any) => <Link href={`/system/dict/detail?id=${r.id}`}>{v}</Link>
       },
       { title: '描述', dataIndex: 'desc' },
-      { title: 'values', dataIndex: 'values' },
+      // { title: 'values', dataIndex: 'values' },
     ]
   }
   dfAddForm = { name: '', values: [], desc: '' }

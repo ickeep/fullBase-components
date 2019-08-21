@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { Button, Col, Form as FormC, Row, } from 'antd'
+import { Button, Col, Form as FormC, Row, Checkbox } from 'antd'
 import { Input, Select } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 import { typeProps } from './displayMap'
@@ -96,19 +96,19 @@ export default class OperationConf extends Component<any> {
           </Col>
           <Col span={8}>
             <FormC.Item label="是否行显示">
-              <Select value={item.isShowRow} data={dict.yesOrNo}
-                      onChange={(v: any) => this.change(v, index, 'isShowRow')}/>
+              <Checkbox checked={!!item.isShowRow}
+                        onChange={(e: any) => this.change(e.target.checked, index, 'isShowRow')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="是否批量">
-              <Select value={item.isBatch} data={dict.yesOrNo} onChange={(v: any) => this.change(v, index, 'isBatch')}/>
+              <Checkbox checked={!!item.isBatch} onChange={(e: any) => this.change(e.target.checked, index, 'isBatch')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
             <FormC.Item label="是否确认">
-              <Select value={item.isConfirm} data={dict.yesOrNo}
-                      onChange={(v: any) => this.change(v, index, 'isConfirm')}/>
+              <Checkbox checked={!!item.isConfirm}
+                        onChange={(e: any) => this.change(e.target.checked, index, 'isConfirm')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
