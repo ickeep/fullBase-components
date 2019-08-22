@@ -88,7 +88,7 @@ export default class Table implements IStore {
       const listForm = {}
       const fields: any[] = []
       whereConf.forEach((where: any) => {
-        const { dfVAl, field, props = [], data, span, title, type } = where
+        const { dfVAl, field, props = [], data, span = 8, title, type } = where
         listForm[field] = dfVAl
         const propsObj: { [key: string]: any } = {}
         const propsMap = typeProps[type]
@@ -97,7 +97,7 @@ export default class Table implements IStore {
             propsObj[prop.key] = prop.val
           }
         })
-        fields.push({ title, field, type, span, data, props: propsObj })
+        fields.push({ title, field, type, span: parseInt(span), data, props: propsObj })
       })
       this.dfListForm = { ...this.dfListForm, ...listForm }
       this.setListForm({ ...this.dfListForm })

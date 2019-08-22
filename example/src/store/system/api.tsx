@@ -256,7 +256,14 @@ class JoinFields extends Component<any> {
   add = () => {
     const { value = [], onChange, values, field } = this.props
     const df = { table: '', fields: '' }
-    values[field] = value.push ? value.push(df) : [df]
+    let newValue
+    if (typeof value.push !== 'function') {
+      newValue = []
+    } else {
+      newValue = value
+    }
+    newValue.push(df)
+    values[field] = newValue
     onChange(values)
   }
   cut = (index: number) => {
