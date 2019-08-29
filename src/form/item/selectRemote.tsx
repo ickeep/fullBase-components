@@ -83,6 +83,16 @@ export default class SelectRemote extends Component<IProps> {
     this.initData()
   }
 
+  componentDidUpdate(prevProps: IProps) {
+    const { value } = this.props
+    const { data } = this.state;
+    if (value !== prevProps.value) {
+      if (value !== '' && (!data || data.length < 1)) {
+        this.initData()
+      }
+    }
+  }
+
   render() {
     const { fetching, data } = this.state;
     return (

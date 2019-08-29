@@ -7,8 +7,8 @@ export interface IAdd {
   name: string,
   icon: string,
   api: string,
-  method: string,
-  path: string
+  path: string,
+  page: string,
   desc: string,
   status: number,
   order: number,

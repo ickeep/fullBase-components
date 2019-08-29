@@ -4,14 +4,13 @@ import { Modal, Spin, notification } from 'antd'
 import { tree as getTree, add, edit, del, detail, IAdd } from '../../../api/account/admin/privilege'
 import { Curd, Form, Tree, EditForm, ItemMapPlus as itemMapPlus } from 'fullbase-components'
 import IStore, { IAddFormConf, IFormStatus, IDetailShowConf, } from 'fullbase-components/dist/store/_i'
-import { IResult } from 'fullbase-components/dist/unit/http'
 import Http from '../../../api/http'
 import Config from '../../../config'
 import { ICURD } from 'fullbase-components/dist/store/curd'
 import { IForm } from 'fullbase-components/dist/store/form'
 
-const { codeSuccess, codeValidated, codeUnauthorized, apiFormat: { code, msg } } = Config
-const { dfData, dfDataArr, dfDataObj, dfDataPage } = Http
+const { codeSuccess, apiFormat: { code, msg } } = Config
+const { dfDataArr, dfDataObj } = Http
 
 interface ICurd extends ICURD<any> {
 
@@ -26,7 +25,7 @@ class Privilege implements IStore {
   }
 
   dataFn = { tree: getTree, add, edit, del, detail }
-  dict: { [key: string]: any } = {  tree: [] }
+  dict: { [key: string]: any } = { tree: [] }
 
   @observable treeForm = { id: '' }
   @observable treeLoading = false
@@ -178,7 +177,7 @@ class Privilege implements IStore {
     name: '',
     icon: '',
     api: '',
-    method: 'POST',
+    page: '',
     path: '',
     desc: '',
     status: 1,
@@ -200,12 +199,15 @@ class Privilege implements IStore {
         title: '父节点', type: 'selectTree', field: 'parentId', span: 24, rules: 'required', data: 'tree',
         props: { labelKey: 'name', multiple: false }
       },
-      { title: 'api地址', type: 'input', field: 'api', span: 24, },
+      {
+        title: 'api地址', type: 'selectRemote', field: 'api', span: 24,
+        props: { url: '/admin/system/api/rows', labelKey: 'desc', apiKey: 'descLike' }
+      },
 
       { title: '图标', type: 'input', field: 'icon', span: 24, },
       {
-        title: '请求方法', type: 'select', field: 'method', span: 24, data: 'method',
-        props: { isNull: false, allowClear: false },
+        title: '页面', type: 'selectRemote', field: 'page', span: 24,
+        props: { url: '/admin/system/page/rows', labelKey: 'desc', apiKey: 'descLike' }
       },
       { title: '前端路径', type: 'input', field: 'path', span: 24 },
 
