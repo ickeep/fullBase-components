@@ -8,6 +8,7 @@ import Http from '../../../api/http'
 import Config from '../../../config'
 import { ICURD } from 'fullbase-components/dist/store/curd'
 import { IForm } from 'fullbase-components/dist/store/form'
+import { getMap } from "../../../api/system/dict";
 
 const { codeSuccess, apiFormat: { code, msg } } = Config
 const { dfDataArr, dfDataObj } = Http
@@ -26,14 +27,22 @@ class Privilege implements IStore {
 
   dataFn = { tree: getTree, add, edit, del, detail }
   dict: { [key: string]: any } = { tree: [] }
-
+  @action
+  getDict = async () => {
+    const data = await getMap('status,privilegeType')
+    if (data.code === 0) {
+      this.dict = { ...this.dict, ...data.data }
+    }
+  }
   @observable treeForm = { id: '' }
   @observable treeLoading = false
   @observable treeData = { ...dfDataArr }
   @observable selectPrivilege = { id: '', title: '' }
   @observable isAddPrivilege = false
   @observable isEditPrivilege = false
-
+  treeInitData = () => {
+    this.getDict()
+  }
   treeRequestAfterFn = ({ data, form }: any) => {
     if (data[code] === codeSuccess) {
       this.dict.tree = [{ id: 0, parentId: 0, name: '顶级节点' }].concat(data.data)
@@ -176,6 +185,7 @@ class Privilege implements IStore {
     parentId: 0,
     name: '',
     icon: '',
+    type: '',
     api: '',
     page: '',
     path: '',
@@ -210,9 +220,12 @@ class Privilege implements IStore {
         props: { url: '/admin/system/page/rows', labelKey: 'desc', apiKey: 'descLike' }
       },
       { title: '前端路径', type: 'input', field: 'path', span: 24 },
-
       {
         title: '状态', type: 'select', field: 'status', data: 'status', span: 24,
+        props: { isNull: false, allowClear: false }
+      },
+      {
+        title: '类型', type: 'select', field: 'type', data: 'privilegeType', span: 24,
         props: { isNull: false, allowClear: false }
       },
       { title: '排序', type: 'inputNumber', field: 'order', span: 24, props: { min: 0 } },

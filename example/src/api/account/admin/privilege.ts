@@ -7,6 +7,7 @@ export interface IAdd {
   name: string,
   icon: string,
   api: string,
+  type: string,
   path: string,
   page: string,
   desc: string,
