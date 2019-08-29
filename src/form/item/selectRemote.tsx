@@ -32,10 +32,11 @@ export default class SelectRemote extends Component<IProps> {
 
   state = {
     data: [],
+    idMap: {},
     fetching: false,
   };
   fetchData = async (opt: { [key: string]: any }) => {
-    const { url, method = 'get', dataKey } = this.props
+    const { valKey = 'id', url, method = 'get', dataKey } = this.props
     if (url) {
       this.setState({ data: [], fetching: true })
       this.lastFetchId += 1
@@ -43,9 +44,14 @@ export default class SelectRemote extends Component<IProps> {
       const { Http, config } = this.context
       const { apiFormat, codeSuccess } = config
       const fn = method ? Http[`http${method}`] || Http.httpGet : Http.httpGet
-      const data = await fn(url, opt)
-      if (fetchId === this.lastFetchId && data[apiFormat.code] === codeSuccess) {
-        this.setState({ data: data[dataKey || apiFormat.data], fetching: false });
+      const dataData = await fn(url, opt)
+      if (fetchId === this.lastFetchId && dataData[apiFormat.code] === codeSuccess) {
+        const data = dataData[dataKey || apiFormat.data]
+        const idMap = {}
+        data.forEach && data.forEach((item: any) => {
+          idMap[item[valKey]] = true
+        })
+        this.setState({ data, idMap, fetching: false });
       }
     }
   }
@@ -85,9 +91,10 @@ export default class SelectRemote extends Component<IProps> {
 
   componentDidUpdate(prevProps: IProps) {
     const { value } = this.props
-    const { data } = this.state;
+    const { data, idMap } = this.state;
     if (value !== prevProps.value) {
-      if (value !== '' && (!data || data.length < 1)) {
+      // @ts-ignore
+      if (value !== '' && ((!data || data.length < 1) || !idMap[value])) {
         this.initData()
       }
     }
