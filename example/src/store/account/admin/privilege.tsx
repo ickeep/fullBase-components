@@ -114,6 +114,7 @@ class Privilege implements IStore {
   addRequestAfterFn = ({ data, form }: any) => {
     if (data[code] === codeSuccess) {
       this.isAddPrivilege = false
+      this.addForm = { ...this.dfAddForm }
       this.self.getDetail({ formName: 'tree' })
     }
     return { data, form }
