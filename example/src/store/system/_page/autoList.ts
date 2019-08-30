@@ -83,9 +83,19 @@ export default class Table implements IStore {
     return { form, fields }
   }
   @action
+  setDataFn = (type: string, conf: any) => {
+    const { apiUrl = '', apiMethod = 'get', } = conf
+    const fn = HttpMap[apiMethod]
+    if (typeof fn === 'function' && apiUrl) {
+      this.dataFn[type] = async (data: any) => {
+        return await fn(apiUrl, data)
+      }
+    }
+  }
+  @action
   setListConf = (conf: any) => {
     const self = this
-    const { apiUrl = '', apiMethod = 'get', breadcrumbConf = [], whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {}, dictApi = [] } = conf
+    const { whereConf = [], tableConf = {}, operation, addConf = {} } = conf
     const rowKey = tableConf.rowKey || 'id'
     if (addConf && addConf.url) {
       // @ts-ignore
@@ -95,28 +105,9 @@ export default class Table implements IStore {
         props: handleProps(addConf.props, {}, 'button')
       }
     }
-    const fn = HttpMap[apiMethod]
-    if (typeof fn === 'function' && apiUrl) {
-      this.dataFn.list = async (data: any) => {
-        return await fn(apiUrl.replace(/^\/admin/, '/api'), data)
-      }
-    }
+    this.setDataFn('list', conf)
     if (whereConf && whereConf.forEach) {
       const { form: listForm, fields: whereFields } = this.getFormConf(whereConf)
-      // const listForm = {}
-      // const fields: any[] = []
-      // whereConf.forEach((where: any) => {
-      //   const { dfVAl, field, props = [], data, span = 8, title, type } = where
-      //   listForm[field] = dfVAl
-      //   const propsObj: { [key: string]: any } = {}
-      //   const propsMap = typeProps[type]
-      //   props.forEach && props.forEach((prop: any) => {
-      //     if (prop.key && propsMap[prop.key]) {
-      //       propsObj[prop.key] = prop.val
-      //     }
-      //   })
-      //   fields.push({ title, field, type, span: parseInt(span), data, props: propsObj })
-      // })
       this.dfListForm = { ...this.dfListForm, ...listForm }
       this.setListForm({ ...this.dfListForm })
       // @ts-ignore
@@ -250,14 +241,13 @@ export default class Table implements IStore {
     }
   }
   @action
+  setDetailConf = (conf: any) => {
+    this.setDataFn('detail', conf)
+  }
+  @action
   setFormConf = (type: 'add' | 'edit', conf: any) => {
-    const { apiUrl = '', apiMethod = 'post', formConf = [] } = conf
-    const fn = HttpMap[apiMethod]
-    if (typeof fn === 'function' && apiUrl) {
-      this.dataFn[type] = async (data: any) => {
-        return await fn(apiUrl, data)
-      }
-    }
+    const { formConf = [] } = conf
+    this.setDataFn(type, conf)
     let dfForm = {}
     const blocks: any[] = []
     formConf.forEach && formConf.forEach((formConf: any) => {
@@ -280,7 +270,12 @@ export default class Table implements IStore {
   setConf = (conf: any) => {
     const { breadcrumbConf = [], desc, dict = '', dictApi = [], type = 'list' } = conf
     dict && this.setDict(dict, dictApi)
-    this[`${type}FormConf`].pageTitle = desc
+    if (type === 'detail') {
+      this[`${type}ShowConf`].pageTitle = desc
+      this.setDetailConf(conf)
+    } else {
+      this[`${type}FormConf`].pageTitle = desc
+    }
     if (breadcrumbConf && breadcrumbConf.length > 0) {
       this[`${type}Breadcrumb`] = breadcrumbConf
     }
@@ -334,10 +329,10 @@ export default class Table implements IStore {
     blocks: [],
     type: 'grid'
   }
-
   @observable detailData = { ...dfDataObj }
   @observable detailLoading = false
   @observable detailForm = { id: '' }
+  detailShowConf = {}
 
   @observable editForm = {}
   @observable editErrs = {}

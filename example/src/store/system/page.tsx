@@ -10,6 +10,7 @@ import Http from '../../api/http'
 import WhereConf from './_page/whereConf'
 import FormConf from './_page/formConf'
 import TableConf from './_page/tableConf'
+import DetailConf from './_page/detailConf'
 import OperationConf from './_page/operationConf'
 import AddConf from './_page/addConf'
 import BreadcrumbConf from './_page/breadcrumbConf'
@@ -102,6 +103,7 @@ export default class Table implements IStore {
     side: 'admin',
     whereConf: [],
     operation: [],
+    detailConf: [],
     formConf: [],
     editForm: [],
     dict: '',
@@ -160,6 +162,11 @@ export default class Table implements IStore {
           props: { valKey: 'url', url: '/admin/system/api/rows', labelKey: 'desc', apiKey: 'descLike' }
         },
         { title: '表单配置', field: 'formConf', span: 24, render: (item: any) => <FormConf {...item}/> },
+      ]
+    } else if ((this.addForm.type === 'detail' && type === 'add') || (this.editForm.type === 'detail' && type === 'edit')) {
+      fields = [
+        ...dfFields,
+        { title: '详情配置', field: 'detailConf', span: 24, render: (item: any) => <DetailConf {...item}/> },
       ]
     } else {
       fields = [...dfFields]

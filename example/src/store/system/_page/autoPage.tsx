@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import ListStore from './autoList'
-import { List, Add, Edit } from 'fullbase-components'
+import { List, Add, Edit, Detail } from 'fullbase-components'
 import { withRouter } from 'react-router-dom'
+
+const pageMap = { list: List, add: Add, edit: Edit, detail: Detail }
 
 @observer
 class AutoPage extends Component<any> {
@@ -24,12 +26,9 @@ class AutoPage extends Component<any> {
   render() {
     const { conf } = this.props
     const { type } = conf
-    if (type === 'list') {
-      return <List Store={this.listStore}/>
-    } else if (type === 'add') {
-      return <Add Store={this.listStore}/>
-    } else if (type === 'edit') {
-      return <Edit Store={this.listStore}/>
+    const Page = pageMap[type]
+    if (Page) {
+      return <Page Store={this.listStore}/>
     }
     return <div>autoPage {conf.type}</div>
   }
