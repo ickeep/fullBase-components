@@ -62,7 +62,7 @@ export default class extends Component<IProps> {
   }
 
   render() {
-    const { data = [], valKey = 'id', isRemoveParentKey = false, labelKey = 'title', childKey = 'child', value = [], onChange, ...args } = this.props
+    const { data = [], valKey = 'id', isRemoveParentKey = false, labelKey = 'name', childKey = 'child', value = [], onChange, ...args } = this.props
     let newValue: any[]
     if (isRemoveParentKey) {
       const haveChildIdMap = this.haveChild(data)
@@ -84,7 +84,7 @@ export default class extends Component<IProps> {
   }
 }
 
-const childTree = function ({ data = [], valKey = 'id', labelKey = 'title', childKey = 'child' }: IProps = {}) {
+const childTree = function ({ data = [], valKey = 'id', labelKey = 'name', childKey = 'child' }: IProps = {}) {
   return data.map ? data.map((item) =>
     <TreeNode title={item[labelKey]} key={item[valKey]}>
       {item[childKey] && item[childKey].length > 0 && childTree({ data: item[childKey], valKey, labelKey, childKey })}

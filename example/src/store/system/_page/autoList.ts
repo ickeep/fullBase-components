@@ -68,8 +68,8 @@ export default class Table implements IStore {
     const fields: any[] = []
     if (formConf && formConf.forEach) {
       formConf.forEach((where: any) => {
-        const { dfVAl, field, props = [], data, span = 8, title, type } = where
-        form[field] = dfVAl
+        const { dfVal, field, props = [], data, span = 8, title, type } = where
+        form[field] = dfVal === '_[]' ? [] : dfVal
         const propsObj: { [key: string]: any } = {}
         const propsMap = typeProps[type]
         props.forEach && props.forEach((prop: any) => {
@@ -252,7 +252,13 @@ export default class Table implements IStore {
 
   @action
   setAddConf = (conf: any) => {
-    const { addForm: addFormConf } = conf
+    const { apiUrl = '', apiMethod = 'post', addForm: addFormConf } = conf
+    const fn = HttpMap[apiMethod]
+    if (typeof fn === 'function' && apiUrl) {
+      this.dataFn.add = async (data: any) => {
+        return await fn(apiUrl, data)
+      }
+    }
     let dfAddForm = {}
     const blocks: any[] = []
     addFormConf.forEach && addFormConf.forEach((formConf: any) => {
@@ -272,7 +278,7 @@ export default class Table implements IStore {
   }
   @action
   setConf = (conf: any) => {
-    const { apiUrl = '', apiMethod = 'get', breadcrumbConf = [], desc, dict = '', dictApi = [], type = 'list' } = conf
+    const { breadcrumbConf = [], desc, dict = '', dictApi = [], type = 'list' } = conf
     dict && this.setDict(dict, dictApi)
     this[`${type}FormConf`].pageTitle = desc
     if (breadcrumbConf && breadcrumbConf.length > 0) {

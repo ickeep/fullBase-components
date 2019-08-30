@@ -133,6 +133,13 @@ export const typeProps = {
     value: 'string|number',
     format: 'string',
   },
-  selectRemote: {}
-
+  selectRemote: {},
+  tree: {
+    value: 'string|array',
+    valKey: 'string',
+    labelKey: 'string',
+    childKey: 'string',
+    isRemoveParentKey: 'boolean',
+    checkable: 'boolean',
+  }
 }

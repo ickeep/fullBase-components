@@ -7,6 +7,8 @@ import SelectRemote from './item/selectRemote'
 import TextArea from './item/textArea'
 import ImgCaptcha from './item/imgCaptcha'
 import Captcha from './item/captcha'
+import SelectTree from "./item/selectTree";
+import Tree from "./item/tree";
 
 export default {
   input: Input,
@@ -18,5 +20,6 @@ export default {
   textArea: TextArea,
   imgCaptcha: ImgCaptcha,
   captcha: Captcha,
-
+  selectTree: SelectTree,
+  tree: Tree,
 }
