@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import ListStore from './autoList'
-import { LeftSider, List, Add, Edit } from 'fullbase-components'
+import { List, Add, Edit } from 'fullbase-components'
 import { withRouter } from 'react-router-dom'
 
 @observer

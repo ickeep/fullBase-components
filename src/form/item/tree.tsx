@@ -75,6 +75,9 @@ export default class extends Component<IProps> {
     } else {
       newValue = valueArr
     }
+    if (!data || data.length < 1) {
+      return <Tree/>
+    }
     return (
       <Tree checkable {...args} checkedKeys={newValue} onCheck={this.check}>
         {childTree({ data, valKey, labelKey, childKey })}
