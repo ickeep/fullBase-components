@@ -269,8 +269,8 @@ class JoinFields extends Component<any> {
   cut = (index: number) => {
     const { value = [], onChange, values, field } = this.props
     value.splice(index, 1)
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   change = (v: any, index: number, type: string) => {
     const { value = [], onChange, values, field } = this.props

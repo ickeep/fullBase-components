@@ -15,7 +15,6 @@ class P404 extends Component<any> {
   getPageConf = async () => {
     const { location = {} } = this.props
     const { pathname } = location
-    console.log(location);
     const confData = await detail({ url: pathname })
     const { code, data } = confData
     if (code === 0) {

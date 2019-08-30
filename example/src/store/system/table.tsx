@@ -251,14 +251,14 @@ class RJoin extends Component<any> {
       whereField: '',
       whereVal: ''
     })
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   cut = (index: number) => {
     const { value = [], onChange, values, field } = this.props
     value.splice(index, 1)
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
 
   dbChange = async (v: string, index: number) => {
@@ -268,8 +268,8 @@ class RJoin extends Component<any> {
     value[index].onField = ''
     value[index].bindField = ''
     value[index].fields = []
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
     if (v) {
       const data = await tableRows(v)
       if (data.code === 0) {
@@ -282,8 +282,8 @@ class RJoin extends Component<any> {
     value[index].table = v
     value[index].on = []
     value[index].fields = []
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
     if (v) {
       const data = await getFields({ db: value[index].db, name: v })
       if (data.code === 0) {
@@ -294,38 +294,38 @@ class RJoin extends Component<any> {
   typeChange = async (v: string, index: number) => {
     const { value = [], onChange, values, field } = this.props
     value[index].type = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   fieldsChange = async (v: string, index: number) => {
     const { value = [], onChange, values, field } = this.props
     value[index].fields = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   onFieldChange = async (v: string, index: number) => {
     const { value = [], onChange, values, field } = this.props
     value[index].onField = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   bindFieldChange = async (v: string, index: number) => {
     const { value = [], onChange, values, field } = this.props
     value[index].bindField = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   whereFieldChange = async (v: string, index: number) => {
     const { value = [], onChange, values, field } = this.props
     value[index].whereField = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   whereValChange = async (v: string, index: number) => {
     const { value = [], onChange, values, field } = this.props
     value[index].whereVal = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
 
   render() {
@@ -395,20 +395,20 @@ class RUnique extends Component<any> {
   add = () => {
     const { value = [], onChange, values, field } = this.props
     value.push('')
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   cut = (index: number) => {
     const { value = [], onChange, values, field } = this.props
     value.splice(index, 1)
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   change = (v: any, index: number) => {
     const { value = [], onChange, values, field } = this.props
     value[index] = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
 
 

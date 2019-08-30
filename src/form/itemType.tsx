@@ -44,8 +44,8 @@ export default class ItemType extends Component<IProps> {
       newProps.data = itemData
     }
     if (!Render.prototype.isReactComponent) {
-      newProps = { ...newProps, conf, field, onChange, loading, values, dict: data }
-      return <Render {...newProps} {...props}/>
+      newProps = { ...newProps, conf, field, onChangeForm: onChange, loading, values, dict: data }
+      return <Render {...newProps} {...props} onChange={(val: any) => this.change(val, field)}/>
     }
     // if (type === 'input' || type === 'captcha' || type === 'select') {
     newProps.name = field

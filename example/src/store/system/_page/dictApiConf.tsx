@@ -6,7 +6,7 @@ import { Input, SelectRemote } from 'fullbase-components'
 @observer
 export default class DictApiConf extends Component<any> {
   add = () => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     let newValue
     if (typeof value.push !== 'function') {
       newValue = []
@@ -14,22 +14,19 @@ export default class DictApiConf extends Component<any> {
       newValue = value
     }
     newValue.push({ api: '', key: '', opt: [], })
-    values[field] = newValue
-    onChange(values)
+    onChange(newValue)
   }
   cut = (index: number) => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     value.splice(index, 1)
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
   up = (index: number) => {
     if (index > 0) {
-      const { value = [], onChange, values, field } = this.props
+      const { value = [], onChange } = this.props
       const tmp = value.splice(index, 1)
       value.splice(index - 1, 0, tmp)
-      values[field] = value
-      onChange(values)
+      onChange(value)
     }
   }
   down = (index: number) => {
@@ -37,15 +34,13 @@ export default class DictApiConf extends Component<any> {
     if (index < value.length - 1) {
       const tmp = value.splice(index, 1)
       value.splice(index + 1, 0, tmp)
-      values[field] = value
-      onChange(values)
+      onChange(value)
     }
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     value[i][type] = v
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
 
   render() {

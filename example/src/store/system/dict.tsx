@@ -68,20 +68,20 @@ class RUnique extends Component<any> {
   add = () => {
     const { value = [], onChange, values, field } = this.props
     value.push({ key: '', val: '' })
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   cut = (index: number) => {
     const { value = [], onChange, values, field } = this.props
     value.splice(index, 1)
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
   change = (v: any, index: number, type: string) => {
     const { value = [], onChange, values, field } = this.props
     value[index][type] = v
-    values[field] = value
-    onChange(values)
+    // values[field] = value
+    onChange(value)
   }
 
   render() {

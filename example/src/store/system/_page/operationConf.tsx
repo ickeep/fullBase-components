@@ -8,7 +8,7 @@ import { typeProps } from './displayMap'
 @observer
 export default class OperationConf extends Component<any> {
   add = () => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     let newValue
     if (typeof value.push !== 'function') {
       newValue = []
@@ -27,35 +27,31 @@ export default class OperationConf extends Component<any> {
       isConfirm: '',
       urlExpression: ''
     })
-    values[field] = newValue
     onChange(newValue)
   }
   cut = (index: number) => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     value.splice(index, 1)
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
   up = (index: number) => {
     if (index > 0) {
-      const { value = [], onChange, values, field } = this.props
+      const { value = [], onChange } = this.props
       const tmp = value.splice(index, 1)
       value.splice(index - 1, 0, tmp)
-      values[field] = value
-      onChange(values)
+      onChange(value)
     }
   }
   down = (index: number) => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     if (index < value.length - 1) {
       const tmp = value.splice(index, 1)
       value.splice(index + 1, 0, tmp)
-      values[field] = value
-      onChange(values)
+      onChange(value)
     }
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, values, field, dict } = this.props
+    const { value = [], onChange, dict } = this.props
     const { tableDetail } = dict
     const { fieldMap } = tableDetail
     value[i][type] = v
@@ -66,8 +62,7 @@ export default class OperationConf extends Component<any> {
     if (type === 'field' && v && fieldMap[v]) {
       value[i].title = fieldMap[v].desc
     }
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
 
   render() {
@@ -102,7 +97,8 @@ export default class OperationConf extends Component<any> {
           </Col>
           <Col span={8}>
             <FormC.Item label="是否批量">
-              <Checkbox checked={!!item.isBatch} onChange={(e: any) => this.change(e.target.checked, index, 'isBatch')}/>
+              <Checkbox checked={!!item.isBatch}
+                        onChange={(e: any) => this.change(e.target.checked, index, 'isBatch')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>

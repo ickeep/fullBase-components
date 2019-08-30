@@ -117,9 +117,7 @@ export default class Table implements IStore {
     this.getApiRows('addForm')
     this.getDictRows()
   }
-
-  // @ts-ignore
-  @computed get addFormConf() {
+  compFormConf = (type: 'add' | 'edit') => {
     let fields: any[] = []
     const dfFields = [
       { title: '路径', field: 'url', type: 'input', span: 8, rules: 'required', },
@@ -136,21 +134,22 @@ export default class Table implements IStore {
         props: { valKey: 'name', mode: 'multiple' }
       },
       { title: '备注', field: 'desc', type: 'input', span: 8, },
-      // {
-      //   title: '备注', field: 'xxx', type: 'selectRemote', span: 8,
-      //   // props: { url: '/admin/system/api/rows', labelKey: 'desc', apiKey: 'descLike', mode: 'multiple' }
-      // },
       { title: '字典接口', field: 'dictApi', span: 24, render: (item: any) => <DictApiConf {...item}/> },
       { title: '面包屑', field: 'breadcrumbConf', span: 24, render: (item: any) => <BreadcrumbConf {...item}/> },
 
     ]
-    if (this.addForm.type === 'list') {
+    if ((this.addForm.type === 'list' && type === 'add') || (this.editForm.type === 'list' && type === 'edit')) {
       fields = [
         ...dfFields,
         { title: '添加配置', field: 'addConf', span: 24, render: (item: any) => <AddConf {...item}/> },
         { title: '查询配置', field: 'whereConf', span: 24, render: (item: any) => <WhereConf {...item}/> },
         { title: '表格配置', field: 'tableConf', span: 24, render: (item: any) => <TableConf {...item}/> },
         { title: '操作配置', field: 'operation', span: 24, render: (item: any) => <OperationConf {...item}/> }]
+    } else if ((this.addForm.type === 'add' && type === 'add') || (this.editForm.type === 'add' && type === 'edit')) {
+      fields = [
+        ...dfFields,
+        { title: '表单配置', field: 'addForm', span: 24, render: (item: any) => <WhereConf {...item}/> },
+      ]
     } else {
       fields = [...dfFields]
     }
@@ -158,6 +157,11 @@ export default class Table implements IStore {
       pageTitle: '添加页面',
       fields,
     }
+  }
+
+  // @ts-ignore
+  @computed get addFormConf() {
+    return this.compFormConf('add')
   }
 
   typeReaction = reaction(() => this.addForm.type, () => {
@@ -212,7 +216,11 @@ export default class Table implements IStore {
   @observable editErrs = { ...this.addErrs }
   @observable editStatus = { ...this.addStatus }
   @observable editData = { ...this.addData }
-  @observable editFormConf = { ...this.addFormConf }
+
+  // @ts-ignore
+  @computed get editFormConf() {
+    return this.compFormConf('edit')
+  }
 
   editTypeReaction = reaction(() => this.editForm.type, () => {
     this.editForm.api = ''

@@ -1,25 +1,12 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, Row, Radio, InputNumber } from 'antd'
-import { Input, Select } from 'fullbase-components'
+import { Curd, Form, Input, Select, Link } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 
 import { typeProps } from './formMap'
 
 const typeData: string[] = Object.keys(typeProps)
-
-// window.xxx = [].rows
-// window.tmpStr = ''
-// for (let i = 1; i < window.xxx.length; i += 1) {
-//   const item = window.xxx[i]
-//   let value = item.cells[2].innerText
-//   if (value !== 'function(e)') {
-//     value = value.replace('string|ReactNode', 'string')
-//     window.tmpStr += `${item.cells[0].innerText}: '${value}',`
-//   }
-// }
-// console.log(window.tmpStr);
-
 @observer
 export default class WhereConf extends Component<any> {
   add = () => {
@@ -49,7 +36,7 @@ export default class WhereConf extends Component<any> {
     }
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, dict } = this.props
+    const { value = [], onChange, values, field, dict } = this.props
     const { tableDetail } = dict
     const { fieldMap } = tableDetail
     value[i][type] = v
@@ -81,6 +68,7 @@ export default class WhereConf extends Component<any> {
         item.not && fieldsData.push(`${key}Not`)
         item.num && fieldsData.push(`${key}Max`, `${key}Min`)
       })
+      // fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
     }
     return <div>{value.map((item: any, index: number) =>
       <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>

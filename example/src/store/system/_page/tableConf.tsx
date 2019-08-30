@@ -10,10 +10,9 @@ const typeData = Object.keys(typeProps)
 @observer
 export default class TableConf extends Component<any> {
   change = (v: any, type: string) => {
-    const { value = {}, onChange, values, field, } = this.props
+    const { value = {}, onChange } = this.props
     value[type] = v
-    values[field] = value
-    onChange(values)
+    onChange(value)
   }
 
   render() {
