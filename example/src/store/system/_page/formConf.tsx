@@ -1,18 +1,22 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, Row, Radio, InputNumber } from 'antd'
-import { Curd, Form, Input, Select, Link } from 'fullbase-components'
-import PropsEdit from './propsEdit'
+import { Input } from 'fullbase-components'
+import WhereConf from './whereConf'
 
-import { typeProps } from './formMap'
-
-const typeData: string[] = Object.keys(typeProps)
 @observer
-export default class WhereConf extends Component<any> {
+export default class FormConf extends Component<any> {
   add = () => {
     const { value = [], onChange } = this.props
-    value.push({ title: '', field: '', type: '', data: '', props: [], span: 8, rules: '', dfVal: '' })
-    onChange(value)
+    let newValue
+    if (typeof value.push !== 'function') {
+      newValue = []
+    } else {
+      newValue = value
+    }
+    onChange(newValue)
+    newValue.push({ title: '', fields: [] })
+    onChange(newValue)
   }
   cut = (index: number) => {
     const { value = [], onChange } = this.props
@@ -52,65 +56,17 @@ export default class WhereConf extends Component<any> {
 
   render() {
     const { value = [], dict } = this.props
-    const { apiDetail, tableDetail } = dict
-    const { optFields } = apiDetail
-    const { fields: fieldsConf } = tableDetail
-    let fieldsData: string[] = []
-    if (optFields) {
-      fieldsData = optFields.split(',')
-    } else if (fieldsConf) {
-      Object.keys(fieldsConf).forEach((key: string) => {
-        const item = fieldsConf[key]
-        fieldsData.push(key)
-        item.in && fieldsData.push(`${key}In`)
-        item.like && fieldsData.push(`${key}Like`)
-        item.notLike && fieldsData.push(`${key}NotLike`)
-        item.not && fieldsData.push(`${key}Not`)
-        item.num && fieldsData.push(`${key}Max`, `${key}Min`)
-      })
-      // fieldsData = fieldsConf ? Object.keys(fieldsConf) : []
-    }
     return <div>{value.map((item: any, index: number) =>
       <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
         <Row>
-          <Col span={8}>
-            <FormC.Item label="字段">
-              <Select showSearch={true}
-                      value={item.field} mode={item.type === 'rangeDate' ? 'multiple' : 'tags'}
-                      data={fieldsData}
-                      onChange={(v) => this.change(v, index, 'field')}/>
-            </FormC.Item>
-          </Col>
           <Col span={8}>
             <FormC.Item label="标题">
               <Input value={item.title} onChange={(v: string) => this.change(v, index, 'title')}/>
             </FormC.Item>
           </Col>
-          <Col span={8}>
-            <FormC.Item label="type">
-              <Select value={item.type} data={typeData} onChange={(v) => this.change(v, index, 'type')}/>
-            </FormC.Item>
-          </Col>
-          <Col span={8}>
-            <FormC.Item label="span">
-              <Select value={item.span} data={[1, 2, 3, 4, 6, 8, 12, 24]}
-                      onChange={(v) => this.change(v, index, 'span')}/>
-            </FormC.Item>
-          </Col>
-          <Col span={16}>
-            <FormC.Item label="默认值">
-              <DfVal value={item.dfVal} type={typeProps[item.type] && typeProps[item.type].value || ''}
-                     onChange={(v: any) => this.change(v, index, 'dfVal')}/>
-            </FormC.Item>
-          </Col>
-          <Col span={8}>
-            <FormC.Item label="校验规则">
-              <Input value={item.rules} onChange={(v: string) => this.change(v, index, 'rules')}/>
-            </FormC.Item>
-          </Col>
-          <Col span={8}>
-            <FormC.Item label="数据">
-              <Input value={item.data} onChange={(v: string) => this.change(v, index, 'data')}/>
+          <Col span={24}>
+            <FormC.Item label="字段">
+              <WhereConf dict={dict} value={item.fields} onChange={(v: string) => this.change(v, index, 'fields')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
@@ -118,13 +74,6 @@ export default class WhereConf extends Component<any> {
             {index > 0 && <Button onClick={() => this.up(index)} icon="up"/>}
             {index < value.length - 1 && <Button onClick={() => this.down(index)} icon="down"/>}
           </Col>
-          {item.type &&
-          <Col span={24}>
-              <FormC.Item label="props">
-                  <PropsEdit value={item.props} data={typeProps[item.type]}
-                             onChange={(v: any[]) => this.change(v, index, 'props')}/>
-              </FormC.Item>
-          </Col>}
         </Row>
       </div>
     )}

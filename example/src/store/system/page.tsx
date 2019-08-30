@@ -8,6 +8,7 @@ import { detail as tableDetail } from '../../api/system/table'
 import { getMap, rows as dictRows } from '../../api/system/dict'
 import Http from '../../api/http'
 import WhereConf from './_page/whereConf'
+import FormConf from './_page/formConf'
 import TableConf from './_page/tableConf'
 import OperationConf from './_page/operationConf'
 import AddConf from './_page/addConf'
@@ -148,7 +149,7 @@ export default class Table implements IStore {
     } else if ((this.addForm.type === 'add' && type === 'add') || (this.editForm.type === 'add' && type === 'edit')) {
       fields = [
         ...dfFields,
-        { title: '表单配置', field: 'addForm', span: 24, render: (item: any) => <WhereConf {...item}/> },
+        { title: '表单配置', field: 'addForm', span: 24, render: (item: any) => <FormConf {...item}/> },
       ]
     } else {
       fields = [...dfFields]

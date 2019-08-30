@@ -37,7 +37,8 @@ export default class EditForm extends Component<IProps> {
     if (Store && name) {
       formConf = Store[`${name}FormConf`]
       formConf && (formFields = formConf.fields || [])
-    } else {
+    }
+    if (fields && fields.length > 0) { // 字段可自定义
       formFields = fields
     }
     const rowArr: Array<any> = [[]]

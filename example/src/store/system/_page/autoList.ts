@@ -1,5 +1,10 @@
 import { Curd, Form, } from 'fullbase-components'
-import IStore, { IListOperateActionOpt, IListOperateStatus } from 'fullbase-components/dist/store/_i'
+import IStore, {
+  IAddFormConf,
+  IFormStatus,
+  IListOperateActionOpt,
+  IListOperateStatus
+} from 'fullbase-components/dist/store/_i'
 import { observable, action } from 'mobx'
 import Http, { HttpMap } from '../../../api/http'
 import { getMap as getApiMap } from '../../../api/system/dict'
@@ -9,7 +14,7 @@ import { typeProps } from './formMap'
 import { handleProps } from './propsEdit'
 import Analyze from "./analyzeVal";
 
-const { dfDataPage, httpPost } = Http
+const { dfDataPage, dfDataObj, httpPost } = Http
 @Curd @Form
 export default class Table implements IStore {
   @observable dict: { [key: string]: any } = {}
@@ -57,19 +62,31 @@ export default class Table implements IStore {
         }
       }
     }
-
   }
-
+  getFormConf = (formConf: any) => {
+    const form = {}
+    const fields: any[] = []
+    if (formConf && formConf.forEach) {
+      formConf.forEach((where: any) => {
+        const { dfVAl, field, props = [], data, span = 8, title, type } = where
+        form[field] = dfVAl
+        const propsObj: { [key: string]: any } = {}
+        const propsMap = typeProps[type]
+        props.forEach && props.forEach((prop: any) => {
+          if (prop.key && propsMap[prop.key]) {
+            propsObj[prop.key] = prop.val
+          }
+        })
+        fields.push({ title, field, type, span: parseInt(span), data, props: propsObj })
+      })
+    }
+    return { form, fields }
+  }
   @action
-  setConf = (conf: any) => {
+  setListConf = (conf: any) => {
     const self = this
     const { apiUrl = '', apiMethod = 'get', breadcrumbConf = [], whereConf = [], desc, tableConf = {}, dict = '', operation, addConf = {}, dictApi = [] } = conf
     const rowKey = tableConf.rowKey || 'id'
-    dict && this.setDict(dict, dictApi)
-    this.listFormConf.pageTitle = desc
-    if (breadcrumbConf && breadcrumbConf.length > 0) {
-      this.listBreadcrumb = breadcrumbConf
-    }
     if (addConf && addConf.url) {
       // @ts-ignore
       this.listAddConf = {
@@ -85,24 +102,25 @@ export default class Table implements IStore {
       }
     }
     if (whereConf && whereConf.forEach) {
-      const listForm = {}
-      const fields: any[] = []
-      whereConf.forEach((where: any) => {
-        const { dfVAl, field, props = [], data, span = 8, title, type } = where
-        listForm[field] = dfVAl
-        const propsObj: { [key: string]: any } = {}
-        const propsMap = typeProps[type]
-        props.forEach && props.forEach((prop: any) => {
-          if (prop.key && propsMap[prop.key]) {
-            propsObj[prop.key] = prop.val
-          }
-        })
-        fields.push({ title, field, type, span: parseInt(span), data, props: propsObj })
-      })
+      const { form: listForm, fields: whereFields } = this.getFormConf(whereConf)
+      // const listForm = {}
+      // const fields: any[] = []
+      // whereConf.forEach((where: any) => {
+      //   const { dfVAl, field, props = [], data, span = 8, title, type } = where
+      //   listForm[field] = dfVAl
+      //   const propsObj: { [key: string]: any } = {}
+      //   const propsMap = typeProps[type]
+      //   props.forEach && props.forEach((prop: any) => {
+      //     if (prop.key && propsMap[prop.key]) {
+      //       propsObj[prop.key] = prop.val
+      //     }
+      //   })
+      //   fields.push({ title, field, type, span: parseInt(span), data, props: propsObj })
+      // })
       this.dfListForm = { ...this.dfListForm, ...listForm }
       this.setListForm({ ...this.dfListForm })
       // @ts-ignore
-      this.listFormConf.fields = fields
+      this.listFormConf.fields = whereFields
     }
     if (tableConf && tableConf.columns) {
       const { scrollX, columns = [], isRowSelection, rowSelection } = tableConf
@@ -232,6 +250,38 @@ export default class Table implements IStore {
     }
   }
 
+  @action
+  setAddConf = (conf: any) => {
+    const { addForm: addFormConf } = conf
+    let dfAddForm = {}
+    const blocks: any[] = []
+    addFormConf.forEach && addFormConf.forEach((formConf: any) => {
+      const { form, fields } = this.getFormConf(formConf.fields)
+      dfAddForm = { ...dfAddForm, ...form }
+      blocks.push({ title: formConf.title, fields: [...fields] })
+    })
+    this.addForm = { ...this.addForm, ...dfAddForm }
+    this.dfAddForm = { ...this.dfAddForm, ...dfAddForm }
+    if (blocks.length === 1) {
+      this.addFormConf.fields = blocks[0].fields
+      this.addFormConf.type = 'grid'
+    } else if (blocks.length > 1) {
+      this.addFormConf.type = 'blocks'
+      this.addFormConf.blocks = blocks
+    }
+  }
+  @action
+  setConf = (conf: any) => {
+    const { apiUrl = '', apiMethod = 'get', breadcrumbConf = [], desc, dict = '', dictApi = [], type = 'list' } = conf
+    dict && this.setDict(dict, dictApi)
+    this[`${type}FormConf`].pageTitle = desc
+    if (breadcrumbConf && breadcrumbConf.length > 0) {
+      this[`${type}Breadcrumb`] = breadcrumbConf
+    }
+    type === 'list' && this.setListConf(conf)
+    type === 'add' && this.setAddConf(conf)
+  }
+
   constructor(conf: any) {
     this.setConf(conf)
   }
@@ -256,4 +306,17 @@ export default class Table implements IStore {
     columns: []
   }
   listTableActions: any[] = []
+
+  dfAddForm = {}
+  @observable addForm = { ...this.dfAddForm }
+  @observable addErrs = {}
+  @observable addStatus: IFormStatus = { submit: false, loading: false }
+  @observable addData = { ...dfDataObj }
+  @observable
+  addFormConf: IAddFormConf = {
+    pageTitle: '',
+    fields: [],
+    blocks: [],
+    type: 'grid'
+  }
 }
