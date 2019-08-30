@@ -1,22 +1,19 @@
 import React, { Component } from 'react'
 import { Tree } from 'antd'
-import { AntTreeNodeCheckedEvent, TreeProps } from "antd/lib/tree";
+import { TreeProps } from "antd/lib/tree";
 
 const TreeNode = Tree.TreeNode
 
-type IChange = (checkedKeys: string[] | {
-  checked: string[];
-  halfChecked: string[];
-}, e?: AntTreeNodeCheckedEvent) => void
 
 interface IProps extends TreeProps {
-  value?: Array<any>,
+  value?: Array<any> | string,
   data?: Array<any>,
   valKey?: string,
+  splitKey?: string,
   labelKey?: string,
   childKey?: string,
   isRemoveParentKey?: boolean,
-  onChange?: IChange,
+  onChange?: Function,
 }
 
 
@@ -42,8 +39,9 @@ export default class extends Component<IProps> {
   }
 
   // @ts-ignore
-  check = (keys: string[], e: any) => {
-    const { onChange, isRemoveParentKey, data = [] } = this.props
+  check = (keysOpt: any, e: any) => {
+    const { onChange, isRemoveParentKey, data = [], value, splitKey = ',', checkStrictly } = this.props
+    const keys = checkStrictly === true ? keysOpt.checked : keysOpt
     if (onChange) {
       if (isRemoveParentKey) {
         const haveChildIdMap = this.haveChild(data)
@@ -54,27 +52,28 @@ export default class extends Component<IProps> {
             newValue.push(item)
           }
         }
-        onChange(newValue, e)
+        onChange(typeof value === "string" || value === null ? newValue.join(splitKey) : newValue, e)
       } else {
-        onChange(keys, e)
+        onChange(typeof value === "string" || value === null ? keys.join(splitKey) : keys, e)
       }
     }
   }
 
   render() {
-    const { data = [], valKey = 'id', isRemoveParentKey = false, labelKey = 'name', childKey = 'child', value = [], onChange, ...args } = this.props
+    const { data = [], valKey = 'id', isRemoveParentKey = false, labelKey = 'name', childKey = 'child', value = [], splitKey = ',', ...args } = this.props
     let newValue: any[]
+    const valueArr = value === '' ? [] : (typeof value === 'string' ? value.split(splitKey) : value || [])
     if (isRemoveParentKey) {
       const haveChildIdMap = this.haveChild(data)
       newValue = []
-      for (let i = 0; value && i < value.length; i += 1) {
-        const item = value[i]
+      for (let i = 0; valueArr && i < valueArr.length; i += 1) {
+        const item = valueArr[i]
         if (!haveChildIdMap[item]) {
           newValue.push(item)
         }
       }
     } else {
-      newValue = value
+      newValue = valueArr
     }
     return (
       <Tree checkable {...args} checkedKeys={newValue} onCheck={this.check}>
