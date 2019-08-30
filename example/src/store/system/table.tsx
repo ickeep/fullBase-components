@@ -209,10 +209,9 @@ export default class Table implements IStore {
 class RFields extends Component<any> {
   change = (e: any, field: string, type: string) => {
     const { checked } = e.target
-    const { value, onChange, values, field: pField } = this.props
+    const { value, onChange } = this.props
     value[field][type] = checked
-    values[pField] = value
-    onChange(values)
+    onChange(value)
   }
 
   render() {

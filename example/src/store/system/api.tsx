@@ -254,7 +254,7 @@ export default class Table implements IStore {
 @observer
 class JoinFields extends Component<any> {
   add = () => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     const df = { table: '', fields: '' }
     let newValue
     if (typeof value.push !== 'function') {
@@ -263,23 +263,20 @@ class JoinFields extends Component<any> {
       newValue = value
     }
     newValue.push(df)
-    values[field] = newValue
-    onChange(values)
+    onChange(newValue)
   }
   cut = (index: number) => {
     const { value = [], onChange, values, field } = this.props
     value.splice(index, 1)
-    // values[field] = value
     onChange(value)
   }
   change = (v: any, index: number, type: string) => {
-    const { value = [], onChange, values, field } = this.props
+    const { value = [], onChange } = this.props
     value[index][type] = v
-    values[field] = value
     if (type === 'table') {
       value[index].fields = ''
     }
-    onChange(values)
+    onChange(value)
   }
 
   render() {

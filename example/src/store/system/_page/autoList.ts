@@ -14,7 +14,7 @@ import { typeProps } from './formMap'
 import { handleProps } from './propsEdit'
 import Analyze from "./analyzeVal";
 
-const { dfDataPage, dfDataObj, httpPost } = Http
+const { dfDataPage, dfDataObj, httpPost, httpGet } = Http
 @Curd @Form
 export default class Table implements IStore {
   @observable dict: { [key: string]: any } = {}
@@ -249,33 +249,33 @@ export default class Table implements IStore {
       this.listOperateConf.items = tableOperationArr
     }
   }
-
   @action
-  setAddConf = (conf: any) => {
-    const { apiUrl = '', apiMethod = 'post', addForm: addFormConf } = conf
+  setFormConf = (type: 'add' | 'edit', conf: any) => {
+    const { apiUrl = '', apiMethod = 'post', formConf = [] } = conf
     const fn = HttpMap[apiMethod]
     if (typeof fn === 'function' && apiUrl) {
-      this.dataFn.add = async (data: any) => {
+      this.dataFn[type] = async (data: any) => {
         return await fn(apiUrl, data)
       }
     }
-    let dfAddForm = {}
+    let dfForm = {}
     const blocks: any[] = []
-    addFormConf.forEach && addFormConf.forEach((formConf: any) => {
+    formConf.forEach && formConf.forEach((formConf: any) => {
       const { form, fields } = this.getFormConf(formConf.fields)
-      dfAddForm = { ...dfAddForm, ...form }
+      dfForm = { ...dfForm, ...form }
       blocks.push({ title: formConf.title, fields: [...fields] })
     })
-    this.addForm = { ...this.addForm, ...dfAddForm }
-    this.dfAddForm = { ...this.dfAddForm, ...dfAddForm }
+    this[`${type}Form`] = { ...this[`${type}Form`], ...dfForm }
+    type === 'add' ? this.dfAddForm = { ...this.dfAddForm, ...dfForm } : ''
     if (blocks.length === 1) {
-      this.addFormConf.fields = blocks[0].fields
-      this.addFormConf.type = 'grid'
+      this[`${type}FormConf`].fields = blocks[0].fields
+      this[`${type}FormConf`].type = 'grid'
     } else if (blocks.length > 1) {
-      this.addFormConf.type = 'blocks'
-      this.addFormConf.blocks = blocks
+      this[`${type}FormConf`].type = 'blocks'
+      this[`${type}FormConf`].blocks = blocks
     }
   }
+
   @action
   setConf = (conf: any) => {
     const { breadcrumbConf = [], desc, dict = '', dictApi = [], type = 'list' } = conf
@@ -285,7 +285,17 @@ export default class Table implements IStore {
       this[`${type}Breadcrumb`] = breadcrumbConf
     }
     type === 'list' && this.setListConf(conf)
-    type === 'add' && this.setAddConf(conf)
+    type === 'add' && this.setFormConf('add', conf)
+    if (type === 'edit') {
+      this.dataFn.detail = (data: any) => {
+        if (!conf.detailUrl) {
+          return { code: 404, msg: 'detailUrl 不能为空' }
+        } else {
+          return httpGet(conf.detailUrl, data)
+        }
+      }
+      this.setFormConf('edit', conf)
+    }
   }
 
   constructor(conf: any) {
@@ -318,8 +328,22 @@ export default class Table implements IStore {
   @observable addErrs = {}
   @observable addStatus: IFormStatus = { submit: false, loading: false }
   @observable addData = { ...dfDataObj }
-  @observable
   addFormConf: IAddFormConf = {
+    pageTitle: '',
+    fields: [],
+    blocks: [],
+    type: 'grid'
+  }
+
+  @observable detailData = { ...dfDataObj }
+  @observable detailLoading = false
+  @observable detailForm = { id: '' }
+
+  @observable editForm = {}
+  @observable editErrs = {}
+  @observable editStatus = { ...this.addStatus }
+  @observable editData = { ...dfDataObj }
+  editFormConf: IAddFormConf = {
     pageTitle: '',
     fields: [],
     blocks: [],

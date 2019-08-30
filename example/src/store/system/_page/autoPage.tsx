@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import ListStore from './autoList'
-import { LeftSider, List, Add } from 'fullbase-components'
+import { LeftSider, List, Add, Edit } from 'fullbase-components'
 import { withRouter } from 'react-router-dom'
 
 @observer
@@ -28,6 +28,8 @@ class AutoPage extends Component<any> {
       return <List Store={this.listStore}/>
     } else if (type === 'add') {
       return <Add Store={this.listStore}/>
+    } else if (type === 'edit') {
+      return <Edit Store={this.listStore}/>
     }
     return <div>autoPage {conf.type}</div>
   }

@@ -102,12 +102,13 @@ export default class Table implements IStore {
     side: 'admin',
     whereConf: [],
     operation: [],
-    addForm: [],
+    formConf: [],
     editForm: [],
     dict: '',
     breadcrumbConf: [],
     tableConf: {},
-    addConf: {}
+    addConf: {},
+    detailUrl: '',
   }
   @observable addForm = { ...this.dfAddForm }
   @observable addErrs = { table: '', db: '', service: '' }
@@ -149,7 +150,16 @@ export default class Table implements IStore {
     } else if ((this.addForm.type === 'add' && type === 'add') || (this.editForm.type === 'add' && type === 'edit')) {
       fields = [
         ...dfFields,
-        { title: '表单配置', field: 'addForm', span: 24, render: (item: any) => <FormConf {...item}/> },
+        { title: '表单配置', field: 'formConf', span: 24, render: (item: any) => <FormConf {...item}/> },
+      ]
+    } else if ((this.addForm.type === 'edit' && type === 'add') || (this.editForm.type === 'edit' && type === 'edit')) {
+      fields = [
+        ...dfFields,
+        {
+          title: '详情URL', field: 'detailUrl', span: 8, type: 'selectRemote',
+          props: { valKey: 'url', url: '/admin/system/api/rows', labelKey: 'desc', apiKey: 'descLike' }
+        },
+        { title: '表单配置', field: 'formConf', span: 24, render: (item: any) => <FormConf {...item}/> },
       ]
     } else {
       fields = [...dfFields]

@@ -56,7 +56,7 @@ export default class FormConf extends Component<any> {
 
   render() {
     const { value = [], dict } = this.props
-    return <div>{value.map((item: any, index: number) =>
+    return <div>{value && value.map && value.map((item: any, index: number) =>
       <div key={index} style={{ width: '100%', background: '#eee', padding: '10px', marginBottom: '10px' }}>
         <Row>
           <Col span={8}>
