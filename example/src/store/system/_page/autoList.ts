@@ -1,6 +1,6 @@
 import { Curd, Form, } from 'fullbase-components'
 import IStore, {
-  IAddFormConf,
+  IAddFormConf, IDetailShowConf,
   IFormStatus,
   IListOperateActionOpt,
   IListOperateStatus
@@ -243,6 +243,21 @@ export default class Table implements IStore {
   @action
   setDetailConf = (conf: any) => {
     this.setDataFn('detail', conf)
+    const { detailConf } = conf
+    const blocks: any[] = []
+    detailConf.forEach && detailConf.forEach((formConf: any) => {
+      const { fields } = this.getFormConf(formConf.fields)
+      blocks.push({ title: formConf.title, fields: [...fields] })
+    })
+
+    if (blocks.length === 1) {
+      this.detailShowConf.fields = blocks[0].fields
+      this.detailShowConf.type = 'grid'
+    } else if (blocks.length > 1) {
+      this.detailShowConf.type = 'blocks'
+      this.detailShowConf.blocks = blocks
+    }
+    console.log(detailConf);
   }
   @action
   setFormConf = (type: 'add' | 'edit', conf: any) => {
@@ -332,7 +347,7 @@ export default class Table implements IStore {
   @observable detailData = { ...dfDataObj }
   @observable detailLoading = false
   @observable detailForm = { id: '' }
-  detailShowConf = {}
+  detailShowConf: IDetailShowConf = { fields: [], type: 'grid', blocks: [] }
 
   @observable editForm = {}
   @observable editErrs = {}

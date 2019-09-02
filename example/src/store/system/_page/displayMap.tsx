@@ -61,6 +61,14 @@ export const typeProps = {
     key: 'string',
     sortOrder: 'string',
     width: 'number',
+  },
+  tree: {
+    value: 'string|array',
+    valKey: 'string',
+    labelKey: 'string',
+    childKey: 'string',
+    isRemoveParentKey: 'boolean',
+    checkable: 'boolean',
   }
 }
 

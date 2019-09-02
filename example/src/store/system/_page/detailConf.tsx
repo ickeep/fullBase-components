@@ -1,20 +1,19 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { Button, Col, Form as FormC, Row, Radio, InputNumber } from 'antd'
+import { Button, Col, Form as FormC, Row } from 'antd'
 import { Input } from 'fullbase-components'
-import WhereConf from './whereConf'
+import DetailFieldConf from './detailFieldConf'
 
 @observer
 export default class FormConf extends Component<any> {
   add = () => {
     const { value = [], onChange } = this.props
     let newValue
-    if (typeof value.push !== 'function') {
+    if (!value || typeof value.push !== 'function') {
       newValue = []
     } else {
       newValue = value
     }
-    onChange(newValue)
     newValue.push({ title: '', fields: [] })
     onChange(newValue)
   }
@@ -40,7 +39,7 @@ export default class FormConf extends Component<any> {
     }
   }
   change = (v: any, i: number, type: string) => {
-    const { value = [], onChange, values, field, dict } = this.props
+    const { value = [], onChange, dict } = this.props
     const { tableDetail } = dict
     const { fieldMap } = tableDetail
     value[i][type] = v
@@ -66,7 +65,8 @@ export default class FormConf extends Component<any> {
           </Col>
           <Col span={24}>
             <FormC.Item label="字段">
-              <WhereConf dict={dict} value={item.fields} onChange={(v: string) => this.change(v, index, 'fields')}/>
+              <DetailFieldConf dict={dict} value={item.fields}
+                               onChange={(v: string) => this.change(v, index, 'fields')}/>
             </FormC.Item>
           </Col>
           <Col span={8}>
@@ -78,49 +78,6 @@ export default class FormConf extends Component<any> {
       </div>
     )}
       <Button onClick={this.add}>+</Button>
-    </div>
-  }
-}
-
-@observer
-class DfVal extends Component<any> {
-  render() {
-    const { value, type, onChange } = this.props
-    if (!type) {
-      return <div>请选择类型</div>
-    }
-    const typeArr = type.split('|')
-    return <div>
-      <div style={{ display: 'inline-block' }}>
-        <Radio.Group onChange={(e: any) => onChange(e.target.value)} value={value}>
-          {typeArr.indexOf('boolean') >= 0 &&
-          <>
-              <Radio value={true}>true</Radio>
-              <Radio value={false}>false</Radio>
-          </>
-          }
-          {typeArr.indexOf('array') >= 0 &&
-          <Radio value={'_[]'}>[]</Radio>
-          }
-          {typeArr.indexOf('object') >= 0 &&
-          <Radio value={'_{}'}>{'{}'}</Radio>
-          }
-          {typeArr.length > 1 && typeArr.indexOf('string') >= 0 &&
-          <Radio value={''}>string</Radio>
-          }
-          {typeArr.length > 1 && typeArr.indexOf('number') >= 0 &&
-          <Radio value={0}>number</Radio>
-          }
-        </Radio.Group>
-      </div>
-      {(value !== '_{}' && value !== '_[]') &&
-      <div style={{ display: 'inline-block' }}>
-        {(type === 'string' || typeof value === 'string' && type !== 'number') &&
-        <Input value={value} onChange={onChange}/>}
-        {(type === 'number' || typeof value === 'number' && type !== 'string') &&
-        <InputNumber value={value} onChange={onChange}/>}
-      </div>
-      }
     </div>
   }
 }
