@@ -136,10 +136,21 @@ export const typeProps = {
   selectRemote: {},
   tree: {
     value: 'string|array',
+    data: 'string',
     valKey: 'string',
     labelKey: 'string',
     childKey: 'string',
     isRemoveParentKey: 'boolean',
     checkable: 'boolean',
+    autoExpandParent: 'boolean',
+    blockNode: 'boolean',
+    checkStrictly: 'boolean',
+    defaultExpandAll: 'boolean',
+    defaultExpandParent: 'bool',
+    disabled: 'bool',
+    draggable: 'boolean',
+    multiple: 'boolean',
+    showIcon: 'boolean',
+    showLine: 'boolean',
   }
 }

@@ -1,3 +1,6 @@
+import { typeProps } from './display/itemMap'
+
+export const displayTypeProps = typeProps
 export { default as Content } from './display/content'
 export { default as Currency } from './display/currency'
 export { default as Datetime } from './display/datetime'
@@ -7,6 +10,7 @@ export { default as Link } from './display/link'
 export { default as PhoneEncrypt } from './display/phoneEncrypt'
 export { default as Svg } from './display/svg'
 export { default as Loading } from './display/loading'
+export { default as DisplayMap } from './display/itemMap'
 export { default as Captcha } from './form/item/captcha'
 export { default as Cascader } from './form/item/cascader'
 export { default as Checkbox } from './form/item/checkbox'

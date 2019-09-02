@@ -14,8 +14,51 @@ export const typeProps = {
     target: 'string',
     block: 'boolean',
   },
+  avatar: {
+    icon: 'string',
+    shape: 'circle|square',
+    size: 'large|small|default',
+    value: 'string',
+    srcSet: 'string',
+    alt: 'string',
+  },
+  tooltip: {
+    arrowPointAtCenter: 'boolean',
+    autoAdjustOverflow: 'boolean',
+    defaultVisible: 'boolean',
+    mouseEnterDelay: 'number',
+    mouseLeaveDelay: 'number',
+    overlayClassName: 'string',
+    overlayStyle: 'object',
+    placement: 'string',
+    trigger: 'string',
+    visible: 'boolean',
+    value: 'string'
+  },
+  tab: {
+    closable: 'boolean',
+    color: 'string',
+    visible: 'boolean',
+    value: 'string',
+  },
+  progress: {
+    type: 'line|circle|dashboard',
+    percent: 'number',
+    showInfo: 'boolean',
+    status: 'success|exception|normal|active',
+    strokeLinecap: 'round|square',
+    strokeColor: 'string',
+    successPercent: 'number',
+  },
+  divider: {
+    value: 'string',
+    dashed: 'boolean',
+    orientation: 'left|right',
+    type: 'horizontal|vertical',
+  },
   link: {
     href: 'string',
+    value: 'string',
     children: 'string'
   },
   currency: {
@@ -64,11 +107,22 @@ export const typeProps = {
   },
   tree: {
     value: 'string|array',
+    data: 'string',
     valKey: 'string',
     labelKey: 'string',
     childKey: 'string',
     isRemoveParentKey: 'boolean',
     checkable: 'boolean',
+    autoExpandParent: 'boolean',
+    blockNode: 'boolean',
+    checkStrictly: 'boolean',
+    defaultExpandAll: 'boolean',
+    defaultExpandParent: 'bool',
+    disabled: 'bool',
+    draggable: 'boolean',
+    multiple: 'boolean',
+    showIcon: 'boolean',
+    showLine: 'boolean',
   }
 }
 

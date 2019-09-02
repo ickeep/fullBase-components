@@ -1,5 +1,5 @@
 import React from 'react'
-import DisplayMap, { typeProps } from './displayMap'
+import { DisplayMap, displayTypeProps as typeProps } from 'fullbase-components'
 import Analyze from './analyzeVal'
 
 export default function (conf: any) {
