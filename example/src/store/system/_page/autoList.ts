@@ -257,7 +257,6 @@ export default class Table implements IStore {
       this.detailShowConf.type = 'blocks'
       this.detailShowConf.blocks = blocks
     }
-    console.log(detailConf);
   }
   @action
   setFormConf = (type: 'add' | 'edit', conf: any) => {
