@@ -8,11 +8,10 @@ import { typeProps } from './displayMap'
 @observer
 export default class TableConf extends Component<any> {
   change = (v: any, type: string) => {
-    const { value = {}, onChange, values, field, } = this.props
+    const { value = {}, onChange } = this.props
     const newValue = typeof value === 'object' ? value : {}
     newValue[type] = v
-    values[field] = newValue
-    onChange(values)
+    onChange(newValue)
   }
 
   render() {

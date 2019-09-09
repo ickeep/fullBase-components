@@ -8,6 +8,7 @@ export interface IPros {
   colors?: { [key: string]: string },
   isTag?: boolean
 }
+
 export default class KeyToValue extends Component<IPros> {
   render() {
     const { value = '', data = {}, colors = {}, isTag = false, color = '' } = this.props

@@ -24,7 +24,7 @@ export default class DetailRender extends Component<{ item?: { type?: string, pr
     const { item: { type = '', props = {}, data = '' } = {}, value = '', Store, scroll = {} } = this.props
 
     if (!type) {
-      if (typeof value === 'string' || typeof value === 'number' || value === null) {
+      if (typeof value === 'string' || typeof value === 'number' || value === null || typeof value === 'boolean') {
         return value
       }
       console.error(`值类型为 ${typeof value}无法渲染`)
@@ -36,7 +36,7 @@ export default class DetailRender extends Component<{ item?: { type?: string, pr
         // @ts-ignore
         props.data = Store.dict[data]
       }
-      return <RenderCom Store={Store} {...props} scroll={scroll || {}}/>
+      return <RenderCom Store={Store} {...props} scroll={scroll || {}} value={value}/>
     }
     console.error(`渲染组件 ${type} 不存在`)
     return null

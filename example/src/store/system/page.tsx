@@ -207,7 +207,7 @@ export default class Table implements IStore {
           }
         }
         if (type === 'list') { // 列表页 获取操作 api
-          const apiData = await apiRows({ _limit: 0, table, typeIn: 'freeze,unfreeze,del', })
+          const apiData = await apiRows({ _limit: 0, table, typeIn: 'freeze,unfreeze,del,operate', })
           if (apiData.code === 0) {
             this.dict.actionApi = apiData.data
           }

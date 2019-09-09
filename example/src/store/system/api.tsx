@@ -28,6 +28,7 @@ export default class Table implements IStore {
     httpMethod: {},
     fields: [],
     joinFields: [],
+    autoFields: [],
     service: [],
     on: ['HAS_ONE', 'HAS_MANY']
   }
@@ -205,18 +206,26 @@ export default class Table implements IStore {
       {
         title: '联表字段', field: 'joinFields', span: 24, data: 'joinFields', render: (item: any) => <JoinFields {...item}/>
       },
+      {
+        title: '自动字段', field: 'autoFields', span: 24, data: 'autoFields', render: (item: any) => <AutoFields {...item}/>
+      },
     ]
   }
 
   @action
   dbEffect = async (db: string, form: string) => {
-    this[form].table = ''
+    const table = this[form].table
     this.dict.table = []
     if (db) {
       const data = await tableRows(db)
       if (data.code === 0) {
         this.dict.table = data.data
+        if (data.data.indexOf(table) < 0) {
+          this[form].table = ''
+        }
       }
+    } else {
+      this[form].table = ''
     }
   }
 
@@ -224,10 +233,10 @@ export default class Table implements IStore {
   tableEffect = async (table: string, form: string) => {
     this.dict.fields = []
     this.dict.joinFields = []
-    this[form].fields = ''
-    this[form].optFields = ''
-    this[form].orderFields = ''
-    this[form].joinFields = []
+    // this[form].fields = ''
+    // this[form].optFields = ''
+    // this[form].orderFields = ''
+    // this[form].joinFields = []
     if (table) {
       const data = await getFields({ db: this[form].db, name: table })
       if (data.code === 0) {
@@ -257,7 +266,7 @@ class JoinFields extends Component<any> {
     const { value = [], onChange } = this.props
     const df = { table: '', fields: '' }
     let newValue
-    if (typeof value.push !== 'function') {
+    if (!value || typeof value.push !== 'function') {
       newValue = []
     } else {
       newValue = value
@@ -291,6 +300,59 @@ class JoinFields extends Component<any> {
           <div style={{ display: 'inline-block', marginRight: '10px' }}>
             <Select data={data[item.table] || []} value={item.fields} mode="multiple" valKey="name"
                     onChange={(v) => this.change(v, index, 'fields')}/>
+          </div>
+          <Button onClick={() => this.cut(index)} style={{ display: 'inline-block' }}>-</Button>
+        </div>
+      )}
+      <Button onClick={this.add}>+</Button>
+    </div>
+  }
+}
+
+@observer
+class AutoFields extends Component<any> {
+  add = () => {
+    const { value = [], onChange } = this.props
+    const df = { field: '', rule: '' }
+    let newValue
+    if (!value || typeof value.push !== 'function') {
+      newValue = []
+    } else {
+      newValue = value
+    }
+    newValue.push(df)
+    onChange(newValue)
+  }
+  cut = (index: number) => {
+    const { value = [], onChange, values, field } = this.props
+    value.splice(index, 1)
+    onChange(value)
+  }
+  change = (v: any, index: number, type: string) => {
+    const { value = [], onChange } = this.props
+    value[index][type] = v
+    if (type === 'table') {
+      value[index].fields = ''
+    }
+    onChange(value)
+  }
+
+  render() {
+    const { value = [], dict } = this.props
+    const { fields = [] } = dict
+    return <div>
+      {value && value.map && value.map((item: any, index: number) =>
+        <div key={index}>
+          <div style={{ display: 'inline-block', marginRight: '10px' }}>
+            字段:<Select data={fields || []} value={item.field} valKey="name"
+                       onChange={(v) => this.change(v, index, 'field')}/>
+          </div>
+          <div style={{ display: 'inline-block', marginRight: '10px' }}>
+            值：<Input value={item.val} onChange={(v: any) => this.change(v, index, 'val')}/>
+          </div>
+          <div style={{ display: 'inline-block', marginRight: '10px' }}>
+            规则:<Select data={['empty', 'nowTime', 'uuid', 'ip']} value={item.rule}
+                       onChange={(v) => this.change(v, index, 'rule')}/>
           </div>
           <Button onClick={() => this.cut(index)} style={{ display: 'inline-block' }}>-</Button>
         </div>

@@ -1,12 +1,14 @@
 import React, { ReactNode } from 'react'
-import { Button, Divider, Progress, Tooltip, Avatar, Tag } from "antd";
-import Datetime from "./datetime";
-import DetailGrid from "../page/_unit/detailGrid";
-import PhoneEncrypt from "./phoneEncrypt";
-import IdCardEncrypt from "./idCardEncrypt";
-import Currency from "./currency";
-import Link from "../display/link";
-import Tree from "../form/item/tree";
+import { Button, Divider, Progress, Tooltip, Avatar, Tag } from 'antd'
+import Datetime from './datetime';
+import DetailGrid from '../page/_unit/detailGrid'
+import PhoneEncrypt from './phoneEncrypt'
+import IdCardEncrypt from './idCardEncrypt'
+import Currency from './currency'
+import Link from '../display/link'
+import Tree from '../form/item/tree'
+import KeyToValue from '../display/keyToValue'
+import SelectValues from '../display/selectValues'
 
 function ADC(C: ReactNode, opt: { valProp?: string, dataProp?: string } = {}) {
   const { valProp = 'children', dataProp = '' } = opt
@@ -32,11 +34,13 @@ export default {
   divider: ADC(Divider),
   link: ADC(Link),
   datetime: Datetime,
+  keyToValue: KeyToValue,
   detailGrid: DetailGrid,
   phoneEncrypt: PhoneEncrypt,
   idCardEncrypt: IdCardEncrypt,
   currency: Currency,
-  tree: Tree
+  tree: Tree,
+  selectValues: SelectValues,
 }
 export const typeProps = {
   button: {
@@ -107,7 +111,7 @@ export const typeProps = {
   datetime: {
     format: 'string',
     value: 'string',
-
+    accurate: 'second|millisecond',
   },
   idCardEncrypt: {
     startLen: 'number',
@@ -120,7 +124,7 @@ export const typeProps = {
     color: 'string',
     colors: 'string',
     isTag: 'boolean',
-    value: 'string',
+    value: 'string|number',
   },
   phoneEncrypt: {
     startLen: 'number',
@@ -142,6 +146,14 @@ export const typeProps = {
     key: 'string',
     sortOrder: 'string',
     width: 'number',
+  },
+  selectValues: {
+    value: 'string',
+    data: 'string',
+    vToString: 'boolean',
+    splitKey: 'string',
+    labelKey: 'string',
+    valKey: 'string',
   },
   tree: {
     value: 'string|array',

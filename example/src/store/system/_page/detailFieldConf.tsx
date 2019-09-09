@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, Row, Radio, InputNumber } from 'antd'
-import { Input, Select } from 'fullbase-components'
+import { Input, Select, displayTypeProps as typeProps } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 
-import { typeProps } from './displayMap'
+// import { typeProps } from './displayMap'
 
 const typeData: string[] = Object.keys(typeProps)
 

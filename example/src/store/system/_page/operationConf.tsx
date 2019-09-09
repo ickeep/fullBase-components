@@ -109,7 +109,7 @@ export default class OperationConf extends Component<any> {
           </Col>
           <Col span={8}>
             <FormC.Item label="操作方法">
-              <Select value={item.action} data={['freeze', 'unfreeze', 'del']} valKey="url" labelKey="desc"
+              <Select value={item.action} data={['freeze', 'unfreeze', 'del', 'operate']} valKey="url" labelKey="desc"
                       onChange={(v: any) => this.change(v, index, 'action')}/>
             </FormC.Item>
           </Col>
