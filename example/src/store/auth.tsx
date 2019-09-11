@@ -4,7 +4,7 @@ import { IFormStatus } from 'fullbase-components/dist/store/_i'
 import { IResult } from 'fullbase-components/dist/unit/http'
 import { ICURD } from 'fullbase-components/dist/store/curd'
 import { IForm } from 'fullbase-components/dist/store/form'
-import { getInfo, login, reset, logout, getCode, passwordInit, passwordReset, getImgCaptcha } from '../api/admin'
+import { getInfo, login, reset, logout, getCode, getImgCaptcha } from '../api/admin'
 import { Form } from 'fullbase-components'
 import Config from '../config'
 
@@ -40,33 +40,17 @@ export interface IAuth {
   logout(): Promise<IResult>,
 
   resetStatus: IFormStatus,
-  resetForm: { username: string, captcha: string, password: string, rePassword: string },
-  resetErrs: { username: string, captcha: string, password: string, rePassword: string },
+  resetForm: { phoneOrMail: string, captcha: string, password: string, rePassword: string },
+  resetErrs: { phoneOrMail: string, captcha: string, password: string, rePassword: string },
   resetFormConf: any,
 
   reset(): Promise<IResult>,
-
-  passwordInitStatus: IFormStatus,
-  passwordInitForm: { username: string, oldPassword: string, newPassword: string, rePassword: string },
-  passwordInitErrs: { username: string, oldPassword: string, newPassword: string, rePassword: string },
-  passwordInitFormConf: any,
-
-  passwordInit(): Promise<IResult>,
-
-  passwordResetStatus: IFormStatus,
-  passwordResetForm: { oldPassword: string, newPassword: string, rePassword: string },
-  passwordResetErrs: { oldPassword: string, newPassword: string, rePassword: string },
-  passwordResetFormConf: any,
-
-  passwordReset(): Promise<IResult>,
-
-
 }
 
 @Form
 class Auth implements IAuth {
   @observable dict = { loginImgCaptcha: { uuid: '', img: '' } }
-  dataFn = { login, getInfo, reset, logout, getCode, passwordInit, passwordReset, getImgCaptcha }
+  dataFn = { login, getInfo, reset, logout, getImgCaptcha, getCode }
   dfUser = { id: 0, name: '' }
   @observable user: IUser = { ...this.dfUser, ...(Store.get('user') || {}) }
   @observable referrer: string = ''
@@ -164,20 +148,20 @@ class Auth implements IAuth {
   }
 
   // 重置密码
-  dfResetForm = { username: '', captcha: '', password: '', rePassword: '', }
+  dfResetForm = { phoneOrMail: '', captcha: '', password: '', rePassword: '', }
   @observable resetStatus = { submit: false, loading: false }
   @observable resetForm = { ...this.dfResetForm }
-  @observable resetErrs = { username: '', password: '', captcha: '', rePassword: '' }
+  @observable resetErrs = { phoneOrMail: '', password: '', captcha: '', rePassword: '' }
 
   @computed get resetFormConf() {
-    const { resetErrs: { username: eUsername }, resetForm: { username } } = this
+    const { resetErrs: { phoneOrMail: eUsername }, resetForm: { phoneOrMail } } = this
     return {
       fields: [
         {
-          field: 'username',
+          field: 'phoneOrMail',
           type: 'input',
           span: 24,
-          rules: 'required',
+          rules: 'required|phoneOrMail',
           aliasName: '用户名',
           props: { placeholder: '用户名' }
         },
@@ -189,8 +173,8 @@ class Auth implements IAuth {
           aliasName: '验证码',
           props: {
             placeholder: '验证码',
-            isActive: !eUsername && username,
-            onGetCode: () => this.dataFn.getCode({ username })
+            isActive: !eUsername && phoneOrMail,
+            onGetCode: () => this.dataFn.getCode({ phoneOrMail, action: 'reset' })
           }
         },
         {
@@ -225,63 +209,6 @@ class Auth implements IAuth {
     this.resetStatus.loading = false
     return userData
   }
-  // 初始密码
-  dfPasswordInitForm = { username: '', oldPassword: '', newPassword: '', rePassword: '' }
-  @observable passwordInitStatus: IFormStatus = { submit: false, loading: false }
-  @observable passwordInitForm = { ...this.dfPasswordInitForm }
-  @observable passwordInitErrs = { ...this.dfPasswordInitForm }
-  passwordInitFormConf = {
-    fields: [
-      {
-        field: 'username',
-        type: 'input',
-        span: 24,
-        rules: 'required',
-        aliasName: '用户名',
-        props: { placeholder: '用户名' }
-      },
-      {
-        field: 'oldPassword',
-        type: 'input',
-        span: 24,
-        rules: 'required|password',
-        aliasName: '当前密码',
-        props: { type: 'password', placeholder: '当前密码' },
-      },
-      {
-        field: 'newPassword',
-        type: 'input',
-        span: 24,
-        rules: 'required|password',
-        aliasName: '新密码',
-        props: { type: 'password', placeholder: '新密码', autoComplete: 'new-password' },
-      },
-      {
-        field: 'rePassword',
-        type: 'input',
-        span: 24,
-        rules: { required: '', password: '', equals: { field: 'newPassword', original: '确认密码', equal: '密码' } },
-        aliasName: '确认密码',
-        props: { type: 'password', placeholder: '确认密码', autoComplete: 'new-password' },
-      }
-    ]
-  }
-
-  @action
-  passwordInit = async (): Promise<IResult> => {
-    this.passwordInitStatus.loading = true
-    const { username, oldPassword, newPassword } = this.passwordInitForm
-    const userData = await this.dataFn.passwordInit({ username, oldPassword, newPassword })
-    const { data } = userData
-    if (userData[code] === codeValidated) {
-      this.passwordInitErrs = Object.assign(this.passwordInitErrs, data)
-    } else if (userData[code] === codeSuccess) {
-      this.passwordInitForm = { ...this.dfPasswordInitForm }
-    }
-    this.passwordInitStatus.loading = false
-    return userData
-  }
-
 
   @action
   logout = async () => {
@@ -290,54 +217,6 @@ class Auth implements IAuth {
       this.setUser(this.dfUser)
     }
     return outData
-  }
-
-  // 初始密码
-  dfPasswordResetForm = { oldPassword: '', newPassword: '', rePassword: '' }
-  @observable passwordResetStatus: IFormStatus = { submit: false, loading: false }
-  @observable passwordResetForm = { ...this.dfPasswordResetForm }
-  @observable passwordResetErrs = { ...this.dfPasswordResetForm }
-  passwordResetFormConf = {
-    props: { layout: 'inline' },
-    fields: [
-      {
-        title: '当前密码',
-        field: 'oldPassword',
-        type: 'input',
-        span: 24,
-        rules: 'required|password',
-        props: { type: 'password', placeholder: '当前密码' },
-      },
-      {
-        field: 'newPassword',
-        type: 'input',
-        span: 24,
-        rules: 'required|password',
-        title: '新密码',
-        props: { type: 'password', placeholder: '新密码', autoComplete: 'new-password' },
-      },
-      {
-        field: 'rePassword',
-        type: 'input',
-        span: 24,
-        rules: { required: '', password: '', equals: { field: 'newPassword', original: '确认密码', equal: '密码' } },
-        title: '确认密码',
-        props: { type: 'password', placeholder: '确认密码', autoComplete: 'new-password' },
-      }
-    ]
-  }
-
-  @action
-  passwordReset = async (): Promise<IResult> => {
-    this.passwordResetStatus.loading = true
-    const resetData = await this.dataFn.passwordReset(this.passwordResetForm)
-    if (resetData[code] === codeValidated) {
-      this.resetErrs = Object.assign(this.resetErrs, resetData.data)
-    } else if (resetData[code] === codeSuccess) {
-      this.passwordResetForm = { ...this.dfPasswordResetForm }
-    }
-    this.passwordResetStatus.loading = false
-    return resetData
   }
 }
 
