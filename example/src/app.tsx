@@ -4,8 +4,8 @@ import { Provider } from 'mobx-react'
 import { LocaleProvider } from 'antd'
 import zh_CN from 'antd/lib/locale-provider/zh_CN';
 import { ConfigContext } from 'fullbase-components'
-import routes from './route/_index'
 import './app.less'
+import AuthPage from './page/_auth'
 import Auth from './store/auth'
 import UI from './store/ui'
 // import { rows } from './api/system/page'
@@ -44,15 +44,7 @@ export default class extends Component {
         <Provider Auth={Auth} UI={UI}>
           <Router>
             <LocaleProvider locale={zh_CN}>
-              <Switch>
-                {/*{pages.map((page) => (*/}
-                {/*  <Route key={page.url} exact={true} path={page.url.replace(/^\/admin/, '')}*/}
-                {/*         component={() => <AutoPage conf={page}/>}/>*/}
-                {/*))}*/}
-                {routes.map(route => (
-                  <Route key={route.path} {...route}/>
-                ))}
-              </Switch>
+              <AuthPage/>
             </LocaleProvider>
           </Router>
         </Provider>
