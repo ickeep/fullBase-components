@@ -45,9 +45,9 @@ class UI implements IUI {
     this.pageTitle = title
   }
   @observable site = {
-    name: '童绘管理后台',
-    keywords: '童绘 管理 后台',
-    description: '童绘管理后台'
+    name: '喜茶管理后台',
+    keywords: '喜茶 管理 后台',
+    description: '喜茶管理后台'
   }
   @observable layout = { clientHeight: 600, scrollTop: 0, clientWidth: 800, header: 48 }
   @action setLayout = (obj: any): void => {

@@ -33,21 +33,21 @@ export async function login(data: ILogin, tips: boolean | string = false) {
 
 
 export async function getImgCaptcha(type: string) {
-  return httpPost('/api/captcha/img', type)
+  return httpPost('/api/captcha/img', type, false)
 }
 
-export async function getPhoneCaptcha(opt: { phone: string, action: string }) {
+export async function getPhoneCaptcha(opt: { phone: string, action: string, imgCaptcha: string, imgUuid: string }) {
   return httpPost('/api/captcha/phone', opt)
 }
 
-export async function getMailCaptcha(opt: { mail: string, action: string }) {
+export async function getMailCaptcha(opt: { mail: string, action: string, imgCaptcha: string, imgUuid: string }) {
   return httpPost('/api/captcha/mail', opt)
 }
 
-export async function getCode({ phoneOrMail, action }: { phoneOrMail: string, action: string }) {
+export async function getCode({ phoneOrMail, action, imgCaptcha, imgUuid }: { phoneOrMail: string, action: string, imgCaptcha: string, imgUuid: string }) {
   return /\d+/.test(phoneOrMail) ?
-    getPhoneCaptcha({ phone: phoneOrMail, action }) :
-    getMailCaptcha({ mail: phoneOrMail, action })
+    getPhoneCaptcha({ phone: phoneOrMail, action, imgCaptcha, imgUuid }) :
+    getMailCaptcha({ mail: phoneOrMail, action, imgCaptcha, imgUuid })
 }
 
 export async function reset(data: IReset, tips: boolean | string = false) {

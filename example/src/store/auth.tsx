@@ -49,7 +49,7 @@ export interface IAuth {
 
 @Form
 class Auth implements IAuth {
-  @observable dict = { loginImgCaptcha: { uuid: '', img: '' } }
+  @observable dict = { loginImgCaptcha: { uuid: '', img: '' }, resetImgCaptcha: { uuid: '', img: '' } }
   dataFn = { login, getInfo, reset, logout, getImgCaptcha, getCode }
   dfUser = { id: 0, name: '' }
   @observable user: IUser = { ...this.dfUser, ...(Store.get('user') || {}) }
@@ -148,10 +148,19 @@ class Auth implements IAuth {
   }
 
   // 重置密码
-  dfResetForm = { phoneOrMail: '', captcha: '', password: '', rePassword: '', }
+  dfResetForm = { phoneOrMail: '', captcha: '', password: '', rePassword: '', imgCaptcha: '', imgUuid: '' }
   @observable resetStatus = { submit: false, loading: false }
   @observable resetForm = { ...this.dfResetForm }
-  @observable resetErrs = { phoneOrMail: '', password: '', captcha: '', rePassword: '' }
+  @observable resetErrs = { phoneOrMail: '', password: '', captcha: '', rePassword: '', imgCaptcha: '' }
+  @action
+  getResetCode = async (phoneOrMail: string) => {
+    const { imgCaptcha, imgUuid } = this.resetForm
+    const data = await this.dataFn.getCode({ phoneOrMail, action: 'reset', imgCaptcha, imgUuid })
+    if (data.code === 403001) {
+      this.dict.resetImgCaptcha = data.data
+    }
+    return data
+  }
 
   @computed get resetFormConf() {
     const { resetErrs: { phoneOrMail: eUsername }, resetForm: { phoneOrMail } } = this
@@ -166,15 +175,25 @@ class Auth implements IAuth {
           props: { placeholder: '用户名' }
         },
         {
+          field: 'imgCaptcha',
+          type: this.dict.resetImgCaptcha.img ? 'imgCaptcha' : 'none',
+          span: 24,
+          rules: 'imgCaptcha',
+          aliasName: '验证码',
+          data: 'resetImgCaptcha',
+          props: { onGetImg: () => this.getCaptcha('reset') }
+        },
+        {
           field: 'captcha',
           type: 'captcha',
           span: 24,
           rules: 'required|captcha',
           aliasName: '验证码',
+          data: 'resetImgCaptcha',
           props: {
             placeholder: '验证码',
             isActive: !eUsername && phoneOrMail,
-            onGetCode: () => this.dataFn.getCode({ phoneOrMail, action: 'reset' })
+            onGetCode: this.getResetCode
           }
         },
         {

@@ -16,14 +16,18 @@ interface IState {
 
 @observer
 export default class Captcha extends Component<IProps, IState> {
+  isUnmount: boolean
+
   constructor(props: IProps) {
     super(props)
     this.state = { remain: 0, loading: false }
+    this.isUnmount = false
   }
 
   componentWillUnmount() {
     const { intervalID } = this.state
     intervalID && clearInterval(intervalID)
+    this.isUnmount = true
   }
 
   getCode = async () => {
@@ -32,17 +36,19 @@ export default class Captcha extends Component<IProps, IState> {
     if (!loading && remain < 1 && isActive && typeof onGetCode === 'function') {
       this.setState({ loading: true })
       const codeData = await onGetCode()
-      this.setState({ loading: false })
-      if (codeData.code === 0) {
-        let remainNum = 60
-        const tmpIntervalID = setInterval(() => {
-          remainNum -= 1
-          this.setState({ remain: remainNum })
-          if (remainNum < 1) {
-            clearInterval(tmpIntervalID)
-          }
-        }, 1000)
-        this.setState({ remain: remainNum, intervalID: tmpIntervalID })
+      if (!this.isUnmount) {
+        this.setState({ loading: false })
+        if (codeData.code === 0) {
+          let remainNum = 60
+          const tmpIntervalID = setInterval(() => {
+            remainNum -= 1
+            this.setState({ remain: remainNum })
+            if (remainNum < 1) {
+              clearInterval(tmpIntervalID)
+            }
+          }, 1000)
+          this.setState({ remain: remainNum, intervalID: tmpIntervalID })
+        }
       }
     }
   }
