@@ -18,8 +18,8 @@ export function getInfo() {
   return httpGet('/api/index', '', false)
 }
 
-export function getNav() {
-  return httpPost('/api/my/menu', '', false)
+export function getPrivilege() {
+  return httpPost('/api/my/privilege', '', false)
 }
 
 export async function login(data: ILogin, tips: boolean | string = false) {

@@ -1,5 +1,5 @@
 import { observable, action, computed } from 'mobx'
-import { getNav } from '../api/admin'
+import { getPrivilege } from '../api/admin'
 import Config from '../config'
 import { IResult } from 'fullbase-components/dist/unit/http';
 import Http from "../api/http";
@@ -72,7 +72,7 @@ class UI implements IUI {
   //
   @action
   getMyMenu = async (): Promise<IResult> => {
-    this.menuData = await getNav()
+    this.menuData = await getPrivilege()
     if (this.menuData[apiFormat.code] === codeSuccess) {
       this.myMenu = this.menuData[apiFormat.data] || []
     }
