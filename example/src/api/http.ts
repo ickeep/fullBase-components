@@ -1,7 +1,7 @@
 import { HTTP } from 'fullbase-components'
 import Store from 'store'
 import Config from '../config'
-import { IBeforeFn, IBeforeFnOpt } from 'fullbase-components/dist/unit/http'
+import { IBeforeFn, IBeforeFnOpt, IAfterFn } from 'fullbase-components/dist/unit/http'
 
 export interface ITokenObj {
   time: number,
@@ -15,6 +15,12 @@ export function setToken(opt: ITokenObj) {
   Store.set('token', opt)
 }
 
+export function clearToken() {
+  tokenObj.time = 0
+  tokenObj.token = ''
+  Store.remove('token')
+}
+
 const beforeFn: IBeforeFn = function ({ url, data, conf = {} }: IBeforeFnOpt) {
   const opt: IBeforeFnOpt = { url: url, data, conf }
   const { hosts } = Config
@@ -26,7 +32,12 @@ const beforeFn: IBeforeFn = function ({ url, data, conf = {} }: IBeforeFnOpt) {
   }
   return opt
 }
-
+// const afterFn: IAfterFn = (res = {}) => {
+//   if (res.data && res.data.code === 401001) {
+//     clearToken()
+//   }
+//   return res.data
+// }
 const Http = HTTP({ beforeFn })
 export default Http
 const { httpDel, httpGet, httpPatch, httpPost, httpPut } = Http

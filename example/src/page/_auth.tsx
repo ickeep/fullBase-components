@@ -9,8 +9,9 @@ import routes from '../route/_index'
 import UI, { IUI } from '../store/ui'
 import Auth, { IAuth } from '../store/auth'
 import Config from '../config'
+import { IResult } from "../../../src/unit/http";
 
-const { apiFormat: { code }, codeSuccess } = Config
+const { apiFormat: { code }, codeSuccess, codeUnauthorized } = Config
 
 @inject('UI') @observer
 class AuthPage extends Component<{ UI?: IUI } & RouteComponentProps> {
@@ -57,15 +58,23 @@ class IndexPage extends Component<IProps & RouteComponentProps> {
     this.checkAuth()
   }
 
+  handleUIInit(data: IResult) {
+    if (data.code === codeUnauthorized) {
+      const { Auth: { setReferrer } = Auth, location: { pathname, search } } = this.props
+      setReferrer(pathname + search)
+      location.replace('/login')
+    }
+  }
+
   async checkAuth() {
     const { Auth: { user: { id }, getInfo } = Auth, UI: { initData } = UI } = this.props
     if (!(id > 0)) {
       const userData = await getInfo()
       if (userData[code] === codeSuccess) {
-        initData()
+        this.handleUIInit(await initData())
       }
     } else {
-      initData()
+      this.handleUIInit(await initData())
     }
   }
 
@@ -77,11 +86,12 @@ class IndexPage extends Component<IProps & RouteComponentProps> {
   }
 
   render() {
-    const { Auth: { infoLoading, user: { id } } = Auth } = this.props
+    const { Auth: { infoLoading, user: { id }, setReferrer } = Auth, location: { pathname, search } } = this.props
     if (infoLoading) {
       return (<div id="p-auth"><Spin tip="Loading..."/></div>)
     }
     if (!(id > 0)) {
+      setReferrer(pathname + search)
       return (<Redirect to="/login"/>)
     }
     return (

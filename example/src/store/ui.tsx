@@ -58,12 +58,11 @@ class UI implements IUI {
   @observable initDataLoading = false
 
   @action
-  initData = async () => {
+  initData = async (): Promise<IResult> => {
     this.initDataLoading = true
-    if (this.myMenu.length < 1) {
-      await this.getMyMenu()
-    }
+    const menuData = this.myMenu.length < 1 ? await this.getMyMenu() : this.menuData
     this.initDataLoading = false
+    return menuData
   }
 
   @action
@@ -72,11 +71,12 @@ class UI implements IUI {
   }
   //
   @action
-  getMyMenu = async (): Promise<void> => {
+  getMyMenu = async (): Promise<IResult> => {
     this.menuData = await getNav()
     if (this.menuData[apiFormat.code] === codeSuccess) {
       this.myMenu = this.menuData[apiFormat.data] || []
     }
+    return this.menuData
   }
 
   @computed
