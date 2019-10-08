@@ -7,6 +7,7 @@ import { IForm } from 'fullbase-components/dist/store/form'
 import { getInfo, login, reset, logout, getCode, getImgCaptcha } from '../api/admin'
 import { Form } from 'fullbase-components'
 import Config from '../config'
+import { setToken } from '../api/http'
 
 const { codeValidated, codeSuccess, apiFormat: { code, msg } } = Config
 
@@ -122,13 +123,14 @@ class Auth implements IAuth {
   login = async (): Promise<IResult> => {
     this.loginStatus.loading = true
     const userData = await this.dataFn.login(this.loginForm, '登录成功')
-    const dataErrno = userData[code]
-    if (dataErrno === codeValidated) {
-      this.loginErrs = Object.assign(this.loginErrs, userData[msg])
-      const { uuid = '', img = '' } = userData.data || {}
+    const { code, msg, data } = userData
+    if (code === codeValidated) {
+      this.loginErrs = Object.assign(this.loginErrs, msg)
+      const { uuid = '', img = '' } = data || {}
       img && this.setCaptcha('login', { uuid, img })
-    } else if (dataErrno === codeSuccess) {
-      this.setUser(userData.data)
+    } else if (code === codeSuccess) {
+      this.setUser(data.user)
+      setToken(data.tokenObj)
       this.loginForm = { ...this.dfLoginForm }
     }
     this.loginStatus.loading = false
@@ -153,11 +155,12 @@ class Auth implements IAuth {
   @observable resetForm = { ...this.dfResetForm }
   @observable resetErrs = { phoneOrMail: '', password: '', captcha: '', rePassword: '', imgCaptcha: '' }
   @action
-  getResetCode = async (phoneOrMail: string) => {
-    const { imgCaptcha, imgUuid } = this.resetForm
+  getResetCode = async () => {
+    const { imgCaptcha, imgUuid, phoneOrMail } = this.resetForm
     const data = await this.dataFn.getCode({ phoneOrMail, action: 'reset', imgCaptcha, imgUuid })
     if (data.code === 403001) {
       this.dict.resetImgCaptcha = data.data
+      this.resetForm.imgUuid = data.data.uuid
     }
     return data
   }
@@ -220,9 +223,12 @@ class Auth implements IAuth {
   reset = async (): Promise<IResult> => {
     this.resetStatus.loading = true
     const userData = await this.dataFn.reset(this.resetForm)
-    if (userData[code] === codeValidated) {
-      this.resetErrs = Object.assign(this.resetErrs, userData.data)
-    } else if (userData[code] === codeSuccess) {
+    const { code, msg, data } = userData
+    if (code === codeValidated) {
+      this.resetErrs = Object.assign(this.resetErrs, msg)
+    } else if (code === codeSuccess) {
+      this.setUser(data.user)
+      setToken(data.tokenObj)
       this.resetForm = { ...this.dfResetForm }
     }
     this.resetStatus.loading = false

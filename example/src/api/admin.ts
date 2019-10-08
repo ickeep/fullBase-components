@@ -19,7 +19,7 @@ export function getInfo() {
 }
 
 export function getNav() {
-  return httpPost('/api/rbac/privilege/my', '', false)
+  return httpPost('/api/my/menu', '', false)
 }
 
 export async function login(data: ILogin, tips: boolean | string = false) {
