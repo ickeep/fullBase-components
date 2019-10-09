@@ -17,14 +17,14 @@ export default class RenderRoute extends Component<IProps> {
     const { rootPath, routers, p404 = P404 } = this.props
     const arr: any[] = []
     routers.forEach((item: any) => {
-      item.path = rootPath + (item.path ? '/' + item.path : '')
+      const path = rootPath + (item.path ? '/' + item.path : '')
       if (item.store && item.pages) {
-        arr.push({ path: item.path, component: () => <StoreRoute p404={p404} {...item}/> })
+        arr.push({ path, component: () => <StoreRoute p404={p404} {...item} path={path}/> })
       } else {
-        arr.push(item)
+        arr.push({ ...item, path })
       }
     })
-    arr.push({ path: '*', component: p404 })
+    arr.push({ path: rootPath + '*', component: p404 })
     this.router = (
       <Switch>
         {arr.map(route => (
