@@ -38,7 +38,6 @@ class P404 extends Component<any> {
   }
 
   render() {
-    console.log('404', this.props.location.pathname);
     const { loading, type, store } = this.state
     if (loading) {
       return <Loading isCenter/>
