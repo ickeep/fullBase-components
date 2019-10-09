@@ -3,10 +3,11 @@ import { Link, Svg, Loading } from 'fullbase-components'
 import AutoPage from './autoPage'
 import { detail } from '../../../api/system/page'
 import { withRouter } from 'react-router-dom'
+import AutoStore from './autoStore'
 
 class P404 extends Component<any> {
 
-  state: { loading: boolean, conf: { [key: string]: any } } = { loading: false, conf: {} }
+  state: { loading: boolean, type: string, store: any } = { loading: false, type: '', store: '' }
 
   componentDidMount() {
     this.fetchData()
@@ -18,7 +19,7 @@ class P404 extends Component<any> {
     const confData = await detail({ url: pathname })
     const { code, data } = confData
     if (code === 0) {
-      this.setState({ conf: data })
+      this.setState({ store: new AutoStore(data), type: data.type })
     }
   }
 
@@ -28,37 +29,22 @@ class P404 extends Component<any> {
     this.setState({ loading: false })
   }
 
-  // shouldComponentUpdate(nextProps: any, nextState: any) {
-  //   const pathname = this.props.location.pathname
-  //   const nextPathname = this.props.location.pathname
-  //   if (nextPathname !== pathname) {
-  //     console.log('pathname');
-  //     return true
-  //   }
-  //   if (this.state.loading !== nextState.loading) {
-  //     console.log('loading');
-  //     return true
-  //   }
-  //   return false
-  //   // console.log(this.props);
-  //   // console.log(nextProps);
-  //   // return true;
-  // }
   componentDidUpdate(prevProps: any) {
     const pathname = this.props.location.pathname
-    const nextPathname = prevProps.location.pathname
-    if (nextPathname !== pathname) {
+    const prevPathname = prevProps.location.pathname
+    if (prevPathname !== pathname) {
       this.fetchData()
     }
   }
 
   render() {
-    const { loading, conf } = this.state
+    console.log('404', this.props.location.pathname);
+    const { loading, type, store } = this.state
     if (loading) {
       return <Loading isCenter/>
     }
-    if (conf && conf.type) {
-      return <AutoPage conf={conf}/>
+    if (type) {
+      return <AutoPage type={type} store={store}/>
     }
     return (
       <div id="p-404">
