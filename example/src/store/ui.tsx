@@ -1,11 +1,9 @@
 import { observable, action, computed } from 'mobx'
 import { getPrivilege } from '../api/admin'
 import Config from '../config'
-import { IResult } from 'fullbase-components/dist/unit/http';
-import Http from "../api/http";
+import { IResult } from 'fullbase-components/dist/unit/http'
 
-const { dfDataArr } = Http
-const { codeSuccess, apiFormat } = Config
+const { codeSuccess, apiFormat: { code, data } } = Config
 
 export interface IUI {
   pageTitle: string,
@@ -20,8 +18,7 @@ export interface IUI {
     description: string
   }
   layout: { clientHeight: number, clientWidth: number, header: number },
-  menuData: IResult
-  myMenu: { [key: string]: any },
+  myMenu: any[],
   // selectedKeys: { [key: string]: any },
   leftMenuMap: { [key: string]: any },
   initDataLoading: boolean,
@@ -53,30 +50,66 @@ class UI implements IUI {
   @action setLayout = (obj: any): void => {
     this.layout = { ...this.layout, ...obj }
   }
-  @observable menuData: IResult = { ...dfDataArr }
   @observable myMenu = []
   @observable initDataLoading = false
 
   @action
   initData = async (): Promise<IResult> => {
     this.initDataLoading = true
-    const menuData = this.myMenu.length < 1 ? await this.getMyMenu() : this.menuData
+    const menuData = await this.getMyMenu()
     this.initDataLoading = false
     return menuData
   }
-
+  @action
+  setMyMenu = (arr: any[]) => {
+    // @ts-ignore
+    this.myMenu = arr
+  }
   @action
   clearMyMenu = () => {
     this.myMenu = []
   }
-  //
+
   @action
   getMyMenu = async (): Promise<IResult> => {
-    this.menuData = await getPrivilege()
-    if (this.menuData[apiFormat.code] === codeSuccess) {
-      this.myMenu = this.menuData[apiFormat.data] || []
+    if (this.myMenu.length > 0) {
+      return { code: 0, data: '', msg: '' }
     }
-    return this.menuData
+    const menuData = await getPrivilege()
+    if (menuData[code] === codeSuccess) {
+      const privilegeMap = {}
+      const handlePrivilege = (priv: any): any => {
+        const { apiUrl, child, icon, id, name, pageUrl, path, type } = priv
+        if (type === 'api') {
+          privilegeMap[apiUrl] === true
+          return null
+        }
+        if (type === 'menu') {
+          const menuChild: any[] = []
+          let isMenu: boolean = false
+          for (let i = 0; child && i < child.length; i += 1) {
+            const item = child[i]
+            if (item.type === 'menu') {
+              isMenu = true
+              const itemChild = handlePrivilege(item)
+              itemChild && menuChild.push(itemChild)
+            } else if (item.type === 'api') {
+              privilegeMap[item.apiUrl] === true
+            } else if (item.type === 'page' && item.pageUrl && path === item.pageUrl) {
+              isMenu = true
+            }
+          }
+          return { id, icon, name, path: path || pageUrl, child: menuChild.length > 0 ? menuChild : '' }
+        }
+      };
+      const menu: any[] = []
+      menuData[data].forEach((priv: any) => {
+        const menuItem = handlePrivilege(priv)
+        menuItem && menu.push(menuItem)
+      })
+      this.setMyMenu(menu)
+    }
+    return menuData
   }
 
   @computed
