@@ -264,7 +264,7 @@ export default class Table implements IStore {
     this.setDataFn(type, conf)
     let dfForm = {}
     const blocks: any[] = []
-    formConf.forEach && formConf.forEach((formConf: any) => {
+    formConf && formConf.forEach && formConf.forEach((formConf: any) => {
       const { form, fields } = this.getFormConf(formConf.fields)
       dfForm = { ...dfForm, ...form }
       blocks.push({ title: formConf.title, fields: [...fields] })
