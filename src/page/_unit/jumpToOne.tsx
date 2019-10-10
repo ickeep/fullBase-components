@@ -13,10 +13,12 @@ class JumpToOne extends Component<IProps & RouteComponentProps> {
   getUrl = (arr: any): string => {
     const item = (arr && arr[0]) ? arr[0] : ''
     if (item) {
-      if (item.webUrl) {
-        return item.webUrl
+      if (item.child && item.child.length > 0) {
+        return this.getUrl(item.child)
       }
-      return this.getUrl(item.children)
+      if (item.path) {
+        return item.path
+      }
     }
     return ''
   }
