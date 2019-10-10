@@ -152,5 +152,6 @@ export const typeProps = {
     multiple: 'boolean',
     showIcon: 'boolean',
     showLine: 'boolean',
+    showOnlySelected: 'boolean',
   }
 }

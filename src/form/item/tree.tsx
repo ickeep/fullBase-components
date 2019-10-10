@@ -13,6 +13,7 @@ interface IProps extends TreeProps {
   labelKey?: string,
   childKey?: string,
   isRemoveParentKey?: boolean,
+  showOnlySelected?: boolean,
   onChange?: Function,
 }
 
@@ -21,20 +22,89 @@ export default class extends Component<IProps> {
   haveChild: Function
   check: any
 
+  state: { selectedData: any[], newValue: any[] } = { selectedData: [], newValue: [] }
+
   constructor(props: IProps) {
     super(props)
     const { valKey = 'id', childKey = 'child' } = props
 
     this.haveChild = (treeData: any[], map?: any) => {
       const tmpMap = map || {}
-      for (let i = 0; i < treeData.length; i += 1) {
-        const item = treeData[i]
-        if (item[childKey] && item[childKey].length > 0) {
-          tmpMap[item[valKey]] = 1
-          this.haveChild(item[childKey], tmpMap)
+      if (treeData) {
+        for (let i = 0; i < treeData.length; i += 1) {
+          const item = treeData[i]
+          if (item[childKey] && item[childKey].length > 0) {
+            tmpMap[item[valKey]] = 1
+            this.haveChild(item[childKey], tmpMap)
+          }
         }
       }
       return tmpMap
+    }
+  }
+
+  componentDidMount(): void {
+    this.setNewValue()
+    this.props.showOnlySelected && this.setSelectedData()
+  }
+
+  setNewValue() {
+    const { data, value, splitKey = ',', isRemoveParentKey = false } = this.props
+    let newValue: any[]
+    const valueArr = value === '' ? [] : (typeof value === 'string' ? value.split(splitKey) : value || [])
+    if (isRemoveParentKey) {
+      const haveChildIdMap = this.haveChild(data)
+      newValue = []
+      for (let i = 0; valueArr && i < valueArr.length; i += 1) {
+        const item = valueArr[i]
+        if (!haveChildIdMap[item]) {
+          newValue.push(item)
+        }
+      }
+    } else {
+      newValue = valueArr
+    }
+    this.setState({ newValue })
+  }
+
+  setSelectedData() {
+    const { data, valKey = 'id', childKey = 'child' } = this.props
+    const isAddData = (item: any): null | { [key: string]: any } => {
+      const childData = item[childKey] || []
+      const newChildData: any[] = []
+      childData.forEach && childData.forEach((childItem: any) => {
+        const addItemData = isAddData(childItem)
+        addItemData && newChildData.push(addItemData)
+      })
+      if (newChildData.length > 0) {
+        const newData = { ...item }
+        newData[childKey] = newChildData
+        return newData
+      }
+      const val: string = item[valKey]
+
+      if (this.state.newValue.indexOf(val + '') >= 0) {
+        return item
+      }
+      return null
+    }
+    const selectedData: any[] = []
+    data && data.forEach && data.forEach((item: any) => {
+      const addData = isAddData(item)
+      addData && selectedData.push(addData)
+    })
+    this.setState({ selectedData })
+  }
+
+  componentDidUpdate(prevProps: Readonly<IProps>): void {
+
+    const { data, showOnlySelected, valKey = 'id', childKey = 'child', value, splitKey = ',', isRemoveParentKey = false } = this.props
+    const { data: prevData, valKey: prevValKey = 'id', childKey: prevChildKey = 'child', value: prveValue, splitKey: prveSplitKey = ',', isRemoveParentKey: prveIsRemoveParentKey = false } = prevProps
+    if (data && data !== prevData && showOnlySelected) {
+      this.setSelectedData()
+    }
+    if (value !== prveValue || valKey !== prevValKey || childKey !== prevChildKey || splitKey !== prveSplitKey || isRemoveParentKey !== prveIsRemoveParentKey) {
+      this.setNewValue()
     }
   }
 
@@ -60,27 +130,14 @@ export default class extends Component<IProps> {
   }
 
   render() {
-    const { data = [], valKey = 'id', isRemoveParentKey = false, labelKey = 'name', childKey = 'child', value = [], splitKey = ',', ...args } = this.props
-    let newValue: any[]
-    const valueArr = value === '' ? [] : (typeof value === 'string' ? value.split(splitKey) : value || [])
-    if (isRemoveParentKey) {
-      const haveChildIdMap = this.haveChild(data)
-      newValue = []
-      for (let i = 0; valueArr && i < valueArr.length; i += 1) {
-        const item = valueArr[i]
-        if (!haveChildIdMap[item]) {
-          newValue.push(item)
-        }
-      }
-    } else {
-      newValue = valueArr
-    }
+    const { data = [], valKey = 'id', isRemoveParentKey = false, labelKey = 'name', childKey = 'child', value = [], splitKey = ',', showOnlySelected = false, ...args } = this.props
+    const { newValue, selectedData } = this.state
     if (!data || data.length < 1) {
       return <Tree/>
     }
     return (
       <Tree checkable {...args} checkedKeys={newValue} onCheck={this.check}>
-        {childTree({ data, valKey, labelKey, childKey })}
+        {childTree({ data: showOnlySelected ? selectedData : data, valKey, labelKey, childKey })}
       </Tree>
     )
   }
