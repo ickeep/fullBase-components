@@ -11,14 +11,16 @@ export default class Svg extends Component<HTMLAttributes<HTMLAnchorElement> & {
     const { Http, config: { svgUrl = '', apiFormat: { code = '' }, codeSuccess } } = this.context
     const { src = '' } = this.props
     if (svgUrl && src) {
-      const data = await Http.httpGet(svgUrl + src + '.svg?xxx', {}, false, {
-        responseType: 'text',
-        // header: { 'content-type': 'image/svg+xml' }
-      })
-      console.log('data:===>', data);
+      const data = await Http.httpGet(svgUrl + src + '.svg', {}, false, { responseType: 'text', })
       if (data[code] === codeSuccess) {
-        svgDataMap[src] = data.data
-        return data.data
+        let xml = data.data || ''
+        if (typeof xml === 'string') {
+          xml = xml.replace(/(<\?xml.*?\?>|<\!--.*?-->[\n\r]*|<!DOCTYPE.*?>)*([\n\r])*/g, '')
+          if (xml.indexOf('<svg') === 0) {
+            svgDataMap[src] = xml
+            return xml
+          }
+        }
       }
     }
     return ''
