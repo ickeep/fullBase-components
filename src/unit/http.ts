@@ -105,7 +105,11 @@ export default function HTTP(opt?: IHttp) {
     if (typeof afterFn === "function") {
       result = await afterFn(ajaxResult)
     } else {
-      result = { ...result, ...ajaxResult.data }
+      if (['text', 'arraybuffer'].indexOf(conf.responseType) >= 0) {
+        result = { code: 0, msg: '', data: ajaxResult.data }
+      } else {
+        result = { ...result, ...ajaxResult.data }
+      }
       result.headers = ajaxResult.headers
       result.status = ajaxResult.status
     }

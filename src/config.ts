@@ -16,7 +16,8 @@ export interface IConfig {
     count: string,
     totalPages: string
   },
-  hosts?: { [key: string]: string }
+  hosts?: { [key: string]: string },
+  svgUrl?: string,
 }
 
 const Config: IConfig = {
@@ -33,7 +34,8 @@ const Config: IConfig = {
     currentPage: 'currentPage',
     count: 'count',
     totalPages: 'totalPages'
-  }
+  },
+  svgUrl: '',
 }
 
 export default Config

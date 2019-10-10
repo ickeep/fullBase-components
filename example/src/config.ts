@@ -3,6 +3,7 @@ import { IConfig } from 'fullbase-components/dist/config'
 
 const config: IConfig = {
   ...Config,
+  svgUrl: 'https://ishuhui.oss-cn-hangzhou.aliyuncs.com/svg/',
   hosts: { api: '' },
 }
 
