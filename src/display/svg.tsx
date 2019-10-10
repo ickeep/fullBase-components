@@ -1,7 +1,8 @@
 import React, { Component, HTMLAttributes } from 'react'
 import svgXmlObj from '../assets/svgIcon'
 import { ConfigContext } from '../config'
-
+// TODO 请求单例
+// TODO map 长度限制
 const svgDataMap = {}
 export default class Svg extends Component<HTMLAttributes<HTMLAnchorElement> & { src: string }> {
   static contextType = ConfigContext
