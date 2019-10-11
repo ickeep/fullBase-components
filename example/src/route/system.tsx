@@ -4,7 +4,7 @@ import Table from '../store/system/table'
 import Dict from '../store/system/dict'
 import Api from '../store/system/api'
 import Page from '../store/system/page'
-import P404 from '../store/system/_page/p404'
+import P404 from '../page/p404'
 
 const routerConf = {
   rootPath: '/system',

@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, InputNumber, Row, Checkbox } from "antd";
-import { Input, Select } from 'fullbase-components'
+import { Input, Select, displayTypeProps } from 'fullbase-components'
 import PropsEdit from './propsEdit'
-import { typeProps } from './displayMap'
 import { typeProps as formTypeProps } from './formMap'
 
-const typeData = Object.keys(typeProps)
+const typeData = Object.keys(displayTypeProps)
 @observer
 export default class TableConf extends Component<any> {
   change = (v: any, type: string) => {
@@ -62,7 +61,7 @@ export default class TableConf extends Component<any> {
           }
           <Col span={24}>
             <FormC.Item label="操作列配置">
-              <PropsEdit value={value.actionProps} data={typeProps.tableColumn}
+              <PropsEdit value={value.actionProps} data={displayTypeProps.tableColumn}
                          onChange={(v: any) => this.change(v, 'actionProps')}/>
             </FormC.Item>
           </Col>
@@ -191,7 +190,7 @@ class TableColumns extends Component<any> {
           {item.type &&
           <Col span={24}>
               <FormC.Item label="props">
-                  <PropsEdit value={item.props} data={typeProps[item.type]}
+                  <PropsEdit value={item.props} data={displayTypeProps[item.type]}
                              onChange={(v: any[]) => this.change(v, index, 'props')}/>
               </FormC.Item>
           </Col>}

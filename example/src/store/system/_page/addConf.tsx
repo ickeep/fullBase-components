@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Col, Form as FormC, Row } from "antd";
-import { Input } from 'fullbase-components'
+import { Input, displayTypeProps as typeProps } from 'fullbase-components'
 import PropsEdit from './propsEdit'
-import { typeProps } from './displayMap'
 
 @observer
 export default class TableConf extends Component<any> {

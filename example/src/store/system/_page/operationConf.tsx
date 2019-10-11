@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, Row, Checkbox } from 'antd'
-import { Input, Select } from 'fullbase-components'
+import { Input, Select, displayTypeProps as typeProps } from 'fullbase-components'
 import PropsEdit from './propsEdit'
-import { typeProps } from './displayMap'
 
 @observer
 export default class OperationConf extends Component<any> {

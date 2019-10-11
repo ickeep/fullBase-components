@@ -1,9 +1,8 @@
-import { observer } from "mobx-react";
-import React, { Component } from "react";
-import { Button, Col, Form as FormC, InputNumber, Radio, Row } from "antd";
-import { Input, Select } from 'fullbase-components'
-import Analyze from "./analyzeVal";
-import { typeProps as disTypeProps } from "./displayMap";
+import { observer } from 'mobx-react'
+import React, { Component } from 'react'
+import { Button, Col, Form as FormC, InputNumber, Radio, Row } from 'antd'
+import { Input, Select, displayTypeProps } from 'fullbase-components'
+import Analyze from './analyzeVal'
 import { typeProps as formTypeProps } from './formMap'
 
 // import
@@ -103,7 +102,7 @@ class PropVal extends Component<any> {
 
 export function handleProps(props: any[], data: { [key: string]: any } = {}, name: string) {
   const obj = {}
-  const propsMap = disTypeProps[name] || formTypeProps[name] || {}
+  const propsMap = displayTypeProps[name] || formTypeProps[name] || {}
   props.forEach((propCnf: any) => {
     const { key, val, rule, expression } = propCnf
     const keyType = propsMap[key]

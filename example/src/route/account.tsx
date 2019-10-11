@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { LeftSider, JumpToOne, RenderRoute, Detail } from 'fullbase-components'
 import Privilege from '../store/account/admin/privilege'
-import P404 from '../store/system/_page/p404'
+import P404 from '../page/p404'
 
 const routerConf = {
   rootPath: '/account',

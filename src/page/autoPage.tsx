@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import { List, Add, Edit, Detail } from 'fullbase-components'
+import List from './list'
+import Add from './add'
+import Edit from './edit'
+import Detail from './detail'
 import { withRouter } from 'react-router-dom'
 
 const pageMap = { list: List, add: Add, edit: Edit, detail: Detail }

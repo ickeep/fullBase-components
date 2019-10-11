@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import { Link, Svg, Loading } from 'fullbase-components'
-import AutoPage from './autoPage'
-import { detail } from '../../../api/system/page'
+import { Link, Svg, Loading, AutoPage } from 'fullbase-components'
+import { detail } from '../api/system/page'
 import { withRouter } from 'react-router-dom'
-import AutoStore from './autoStore'
+import AutoStore from '../store/system/_page/autoStore'
 
 class P404 extends Component<any> {
 

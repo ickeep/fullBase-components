@@ -2,7 +2,7 @@ import React, { ComponentClass, FunctionComponent } from 'react'
 import { Loading } from 'fullbase-components'
 import Loadable from 'react-loadable'
 import IndexPage from '../page/index'
-import P404 from '../store/system/_page/p404'
+import P404 from '../page/p404'
 
 const loading = () => <Loading isCenter={true}/>
 
