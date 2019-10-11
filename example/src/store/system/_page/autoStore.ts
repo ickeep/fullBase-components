@@ -1,4 +1,4 @@
-import { Curd, Form, } from 'fullbase-components'
+import { Curd, Form, formTypeProps } from 'fullbase-components'
 import IStore, {
   IAddFormConf, IDetailShowConf,
   IFormStatus,
@@ -10,7 +10,6 @@ import Http, { HttpMap } from '../../../api/http'
 import { getMap as getApiMap } from '../../../api/system/dict'
 import { rows as apiRows } from '../../../api/system/api'
 import Column from './column'
-import { typeProps } from './formMap'
 import { handleProps } from './propsEdit'
 import Analyze from "./analyzeVal";
 
@@ -71,7 +70,7 @@ export default class Table implements IStore {
         const { dfVal, field, props = [], data, span = 8, title, type } = where
         form[field] = dfVal === '_[]' ? [] : dfVal
         const propsObj: { [key: string]: any } = {}
-        const propsMap = typeProps[type]
+        const propsMap = formTypeProps[type]
         props.forEach && props.forEach((prop: any) => {
           if (prop.key && propsMap[prop.key]) {
             propsObj[prop.key] = prop.val

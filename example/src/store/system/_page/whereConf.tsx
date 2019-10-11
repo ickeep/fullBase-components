@@ -1,12 +1,10 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, Row, Radio, InputNumber } from 'antd'
-import { Input, Select } from 'fullbase-components'
+import { Input, Select, formTypeProps } from 'fullbase-components'
 import PropsEdit from './propsEdit'
 
-import { typeProps } from './formMap'
-
-const typeData: string[] = Object.keys(typeProps)
+const typeData: string[] = Object.keys(formTypeProps)
 
 // window.xxx = [].rows
 // window.tmpStr = ''
@@ -111,7 +109,7 @@ export default class WhereConf extends Component<any> {
           </Col>
           <Col span={16}>
             <FormC.Item label="默认值">
-              <DfVal value={item.dfVal} type={typeProps[item.type] && typeProps[item.type].value || ''}
+              <DfVal value={item.dfVal} type={formTypeProps[item.type] && formTypeProps[item.type].value || ''}
                      onChange={(v: any) => this.change(v, index, 'dfVal')}/>
             </FormC.Item>
           </Col>
@@ -133,7 +131,7 @@ export default class WhereConf extends Component<any> {
           {item.type &&
           <Col span={24}>
               <FormC.Item label="props">
-                  <PropsEdit value={item.props} data={typeProps[item.type]}
+                  <PropsEdit value={item.props} data={formTypeProps[item.type]}
                              onChange={(v: any[]) => this.change(v, index, 'props')}/>
               </FormC.Item>
           </Col>}

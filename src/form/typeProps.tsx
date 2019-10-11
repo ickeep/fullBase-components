@@ -1,4 +1,4 @@
-export const typeProps = {
+export default {
   input: {
     icon: 'string',
     addonAfter: 'string',

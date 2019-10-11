@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
 import { Button, Col, Form as FormC, InputNumber, Row, Checkbox } from "antd";
-import { Input, Select, displayTypeProps } from 'fullbase-components'
+import { Input, Select, displayTypeProps, formTypeProps } from 'fullbase-components'
 import PropsEdit from './propsEdit'
-import { typeProps as formTypeProps } from './formMap'
 
 const typeData = Object.keys(displayTypeProps)
 @observer
