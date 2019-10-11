@@ -1,7 +1,6 @@
 import { action } from 'mobx'
 import Conf from '../config'
 
-// 添加
 export interface ICURDOpt {
   formName?: string,
   dataFn?: Function
@@ -16,11 +15,7 @@ export interface ICURD<T> {
 }
 
 const { apiFormat, codeNotConf } = Conf
-
 const OrderMap = { ascend: 'ASC', descend: 'DESC', ASC: 'ascend', DESC: 'descend' }
-// export default function ({ successErrno = 0, format = { errno: 'errno', errmsg: 'errmsg', data: 'data' } } = {}) {
-//   const dfFormat = format
-//   const dfSuccessErrno = successErrno
 
 export default function <T extends { new(...args: any[]): { dataFn: { [key: string]: Function } } }>(target: T, { codeSuccess = Conf.codeSuccess, format = apiFormat } = {}) {
 

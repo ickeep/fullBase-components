@@ -1,7 +1,7 @@
 import { TableProps, ColumnProps } from 'antd/lib/table/interface'
 import { ButtonProps } from 'antd/lib/button'
-import { ReactNode } from "react";
-import { IResult } from "../unit/http";
+import { ReactNode } from 'react'
+import { IResult } from '../unit/http'
 
 export interface IDict {
   [key: string]: any

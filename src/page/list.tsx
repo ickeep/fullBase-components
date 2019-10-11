@@ -1,4 +1,3 @@
-/* eslint-disable no-script-url */
 import React, { Component } from 'react'
 import { inject, observer } from 'mobx-react'
 import { RouteComponentProps, withRouter } from 'react-router-dom'
@@ -12,7 +11,8 @@ import Breadcrumb from './_unit/breadcrumb'
 import UI, { IUI } from "../store/ui";
 import { IAuth } from "../store/auth";
 import ListOperateC from './_unit/listOperate'
-import Conf from "../config";
+import { ConfigContext } from '../config'
+
 
 interface IProps extends RouteComponentProps {
   UI?: IUI
@@ -22,22 +22,16 @@ interface IProps extends RouteComponentProps {
   itemMap?: any
 }
 
-const { codeSuccess, apiFormat } = Conf
-
 @inject('UI', 'Auth') @observer
 class List extends Component<IProps> {
+  static contextType = ConfigContext;
+
   state = { isPushListOperate: false }
 
   setTitle() {
     const { UI, Store, name = 'list' } = this.props
     const listFormConf = Store[`${name}FormConf`] || {}
     UI && UI.setPageTitle(listFormConf.pageTitle || '列表页')
-  }
-
-  constructor(props: IProps) {
-    super(props)
-    this.fetchData()
-    this.setTitle()
   }
 
   async fetchData() {
@@ -48,14 +42,19 @@ class List extends Component<IProps> {
     Store.getList({ formName: name })
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: IProps) {
-    const { location } = this.props
-    const newLocation = nextProps.location
-    if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
-      setTimeout(() => this.fetchData())
-      this.setTitle()
-    }
+  componentDidMount(): void {
+    this.fetchData()
+    this.setTitle()
   }
+
+  // UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+  //   const { location } = this.props
+  //   const newLocation = nextProps.location
+  //   if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+  //     setTimeout(() => this.fetchData())
+  //     this.setTitle()
+  //   }
+  // }
 
   routePush = (queryStr: string) => {
     if (queryStr !== this.props.location.search) {
@@ -75,6 +74,7 @@ class List extends Component<IProps> {
     Store.exportList({ formName: name })
   }
   pageSizeChange = (_cur: number, size: number) => {
+    const { config: { apiFormat } } = this.context
     const { Store, name = 'list', location } = this.props
     Store.urlSetForm({ name, url: location.search })
     const valObj = {}
@@ -86,6 +86,7 @@ class List extends Component<IProps> {
     this.routePush(queryStr)
   }
   pageChange = (page: number) => {
+    const { config: { apiFormat } } = this.context
     const { Store, name = 'list', location } = this.props
     Store.urlSetForm({ name, url: location.search })
     const valObj = {}
@@ -137,13 +138,19 @@ class List extends Component<IProps> {
   //   });
   // };
 
-  componentDidUpdate() {
-    const { Store, name = 'list', } = this.props;
+  componentDidUpdate(prevProps: Readonly<IProps>) {
+    const { Store, name = 'list', location } = this.props;
+    const prevLocation = prevProps.location
+    if (prevLocation.pathname !== location.pathname || prevLocation.search !== location.search) {
+      setTimeout(() => this.fetchData())
+      this.setTitle()
+    }
     const listDidUpdate = Store[`${name}DidUpdate`];
     listDidUpdate instanceof Function && listDidUpdate.call(Store);
   }
 
   render() {
+    const { config: { codeSuccess, apiFormat } } = this.context
     const { Store, name = 'list', Auth, itemMap, UI: { layout: { clientWidth }, mobileWidth } = UI, location } = this.props
     const { isPushListOperate } = this.state
     const listAddConf = Store[`${name}AddConf`] || []

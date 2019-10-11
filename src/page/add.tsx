@@ -9,7 +9,7 @@ import PageTips from './_unit/pageTips'
 import ActionBtn from './_unit/actionsBtn'
 import { IUI } from '../store/ui'
 import UI from '../store/ui'
-import Conf from '../config'
+import { ConfigContext } from '../config'
 
 export interface IProps extends RouteComponentProps {
   UI?: IUI,
@@ -18,20 +18,14 @@ export interface IProps extends RouteComponentProps {
   itemMap?: any
 }
 
-const { codeSuccess, codeValidated, apiFormat, codeNotConf } = Conf
-
 @inject('UI') @observer
 class Add extends Component<IProps> {
+  static contextType = ConfigContext;
+
   setTitle() {
     const { UI, Store, name = 'add' } = this.props
     const addFormConf = Store[`${name}FormConf`] || {}
     UI && UI.setPageTitle(addFormConf.pageTitle || '添加页')
-  }
-
-  constructor(props: IProps) {
-    super(props)
-    this.fetchData()
-    this.setTitle()
   }
 
   async fetchData() {
@@ -41,14 +35,29 @@ class Add extends Component<IProps> {
     location.search && Store.urlSetForm({ name, url: location.search, isVerify: false })
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+  componentDidMount(): void {
+    this.fetchData()
+    this.setTitle()
+  }
+
+  componentDidUpdate(prevProps: Readonly<IProps>): void {
     const { location } = this.props
-    const newLocation = nextProps.location
-    if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+    const prevLocation = prevProps.location
+    if (prevLocation.pathname !== location.pathname || prevLocation.search !== location.search) {
       setTimeout(() => this.fetchData())
       this.setTitle()
     }
   }
+
+  //
+  // UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+  //   const { location } = this.props
+  //   const newLocation = nextProps.location
+  //   if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+  //     setTimeout(() => this.fetchData())
+  //     this.setTitle()
+  //   }
+  // }
 
   componentWillUnmount() {
     const { Store, name = 'detail', location } = this.props;
@@ -61,6 +70,7 @@ class Add extends Component<IProps> {
     Store.setForm({ name, valObj: obj })
   }
   submit = async () => {
+    const { config: { codeSuccess, codeValidated, apiFormat } } = this.context
     const { Store, name = 'add', location, history } = this.props
     const addBeforeFn = Store[`${name}BeforeFn`]
     if (typeof addBeforeFn === 'function') {
@@ -109,6 +119,7 @@ class Add extends Component<IProps> {
   }
 
   render() {
+    const { config: { codeNotConf } } = this.context
     const { Store, name = 'add', UI: { layout: { clientWidth }, mobileWidth } = UI, itemMap } = this.props
     // const { dict = {} } = Store
     const addFormConf = Store[`${name}FormConf`]
@@ -155,11 +166,11 @@ class Add extends Component<IProps> {
         {addPageFormBeforeNode}
         {type === 'grid' &&
         <EditForm
-          conf={{ layout: isMobile ? 'vertical' : 'inline', ...addFormConf.props }}
-          loading={loading}
-          itemMap={itemMap}
-          Store={Store} name={name}
-          onSubmit={this.submit}
+            conf={{ layout: isMobile ? 'vertical' : 'inline', ...addFormConf.props }}
+            loading={loading}
+            itemMap={itemMap}
+            Store={Store} name={name}
+            onSubmit={this.submit}
         />}
         {addPageFormAfterNode}
         {type === 'blocks' &&

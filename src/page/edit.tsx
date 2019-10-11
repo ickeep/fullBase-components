@@ -4,10 +4,10 @@ import { RouteComponentProps, withRouter } from 'react-router-dom'
 import { Divider, Spin } from 'antd'
 import EditForm from '../form/editForm'
 import Content from '../display/content'
-import ActionBtn from "./_unit/actionsBtn";
+import ActionBtn from './_unit/actionsBtn'
 import Breadcrumb from './_unit/breadcrumb'
 import UI, { IUI } from "../store/ui";
-import Conf from "../config";
+import { ConfigContext } from '../config'
 
 interface IProps extends RouteComponentProps {
   Store: any,
@@ -16,43 +16,15 @@ interface IProps extends RouteComponentProps {
   itemMap?: any
 }
 
-// export default function ({
-//                            successErrno = 0,
-//                            validatedErrno = 403001,
-//                            mobileWidth = 768,
-//                            format = {
-//                              errno: 'errno',
-//                              errmsg: 'errmsg',
-//                              data: 'data',
-//                              page: 'page',
-//                              pageSize: 'pageSize',
-//                              currentPage: 'currentPage',
-//                              count: 'count',
-//                              totalPages: 'totalPages'
-//                            },
-//                            authErrno = 401100,
-//                            itemMap
-//                          }: { [key: string]: any } = {}) {
-//   const dfSuccessErrno = successErrno
-//   const dfValidatedErrno = validatedErrno
-//   const dfAuthErrno = authErrno
-//   const dfMobileWidth = mobileWidth
-//   const dfFormat = format
-//   const dfIemMap = itemMap
-const { codeSuccess, codeValidated, codeNotConf, apiFormat } = Conf
 
 @inject('UI') @observer
 class Edit extends Component<IProps> {
+  static contextType = ConfigContext;
+
   setTitle() {
     const { UI, Store, name = 'edit' } = this.props
     const editFormConf = Store[`${name}FormConf`] || {}
     UI && UI.setPageTitle(editFormConf.pageTitle || '编辑页')
-  }
-
-  constructor(props: IProps) {
-    super(props)
-    this.fetchData()
-    this.setTitle()
   }
 
   getDetailName = () => {
@@ -68,7 +40,8 @@ class Edit extends Component<IProps> {
     return detailName
   }
 
-  async fetchData() {
+  fetchData = async () => {
+    const { config: { codeSuccess, apiFormat } } = this.context
     const { Store, name = 'edit', location, history } = this.props
     const detailName = this.getDetailName()
     Store.urlSetForm({ name: detailName, url: location.search })
@@ -93,20 +66,35 @@ class Edit extends Component<IProps> {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+  componentDidMount(): void {
+    this.setTitle()
+    this.fetchData()
+  }
+
+  componentDidUpdate(prevProps: Readonly<IProps>): void {
     const { location } = this.props
-    const newLocation = nextProps.location
-    if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+    const prevLocation = prevProps.location
+    if (prevLocation.pathname !== location.pathname || prevLocation.search !== location.search) {
       setTimeout(() => this.fetchData())
       this.setTitle()
     }
   }
+
+  // UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+  //   const { location } = this.props
+  //   const newLocation = nextProps.location
+  //   if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+  //     setTimeout(() => this.fetchData())
+  //     this.setTitle()
+  //   }
+  // }
 
   change = (obj: object) => {
     const { Store, name = 'edit' } = this.props
     Store.setForm({ name, valObj: obj })
   }
   submit = async () => {
+    const { config: { codeSuccess, codeValidated, apiFormat } } = this.context
     const { Store, name = 'edit', location, history } = this.props
     const editBeforeFn = Store[`${name}BeforeFn`]
     if (typeof editBeforeFn === 'function') {
@@ -153,6 +141,7 @@ class Edit extends Component<IProps> {
   }
 
   render() {
+    const { config: { codeSuccess, codeNotConf, apiFormat } } = this.context
     const { Store, name = 'edit', UI: { layout: { clientWidth }, mobileWidth } = UI, itemMap } = this.props
     // const { dict } = Store
     const editFormConf = Store[`${name}FormConf`]
@@ -207,11 +196,11 @@ class Edit extends Component<IProps> {
           <Spin spinning={detailLoading} delay={400} tip="loading……">
             {type === 'grid' &&
             <EditForm
-              conf={{ layout: isMobile ? 'vertical' : 'inline', ...editFormConf.props }}
-              loading={loading}
-              itemMap={itemMap}
-              Store={Store} name={name}
-              onSubmit={this.submit}
+                conf={{ layout: isMobile ? 'vertical' : 'inline', ...editFormConf.props }}
+                loading={loading}
+                itemMap={itemMap}
+                Store={Store} name={name}
+                onSubmit={this.submit}
             />}
             {type === 'blocks' &&
             <div className="m-blocks-wp">

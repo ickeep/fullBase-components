@@ -18,7 +18,6 @@ interface ISetFormOpt {
 }
 
 export interface IForm {
-  // isSubmit(name?: string): void,
 
   setForm(opt: ISetFormOpt): void,
 
@@ -35,69 +34,12 @@ export interface IForm {
   urlSetForm(opt: { name?: string, url?: string, isVerify?: boolean }): void
 }
 
-// export default function ({
-//                            whiteList = dfWhiteList,
-//                            format = {
-//                              page: 'page',
-//                              pageSize: 'pageSize',
-//                              currentPage: 'currentPage',
-//                              count: 'count',
-//                              totalPages: 'totalPages'
-//                            }
-//                          } = {}) {
-//   const fnDfWhiteList = whiteList
-//   const dfFormat = format
 const { apiFormat } = Conf
 export default function <T extends { new(...args: any[]): {} }>(target: T, { whiteList = dfWhiteList, format = apiFormat } = {}) {
   const xss = new XSS.FilterXSS({ whiteList })
   const validator = new Validator()
   return class Form extends target implements IForm {
     xss = xss
-
-    // isSubmit = (name: string) => {
-    //   let isSubmit = true
-    //   const form = this[`${name}Form`]
-    //   const status = this[`${name}Status`]
-    //   const errs = this[`${name}Errs`]
-    //   const rules = {}
-    //   const formConf = this[`${name}FormConf`] || {}
-    //   const { fields, blocks } = formConf
-    //   if (fields && typeof fields.forEach === 'function') {
-    //     fields.forEach((item: any) => {
-    //       if (item.rules) {
-    //         rules[item.field] = { rules: item.rules, aliasName: item.aliasName || item.title }
-    //       }
-    //     })
-    //   } else if (blocks) {
-    //     typeof blocks.forEach === 'function' && blocks.forEach((block: any) => {
-    //       block.fields && typeof block.fields.forEach === 'function' && block.fields.forEach((item: any) => {
-    //         if (item.rules && item.field) {
-    //           rules[item.field] = { rules: item.rules, aliasName: item.aliasName || item.title }
-    //         }
-    //       })
-    //     })
-    //   }
-    //   if (typeof status === 'object' && typeof form === 'object') {
-    //     const errKeys = typeof errs === 'object' ? Object.keys(errs) : []
-    //     for (let i = 0; i < errKeys.length; i += 1) {
-    //       if (errs[errKeys[i]]) {
-    //         isSubmit = false
-    //         break
-    //       }
-    //     }
-    //     const ruleKeys = typeof rules === 'object' ? Object.keys(rules) : []
-    //     for (let i = 0; i < ruleKeys.length; i += 1) {
-    //       const tmpKey = ruleKeys[i]
-    //       const tmpRules = rules[tmpKey] ? rules[tmpKey].rules || '' : ''
-    //       if ((typeof tmpRules === 'string' && tmpRules.indexOf('required') >= 0 || typeof tmpRules === 'object' && tmpRules.hasOwnProperty('required')) && (typeof form[tmpKey] === undefined || form[tmpKey] === '')) {
-    //         isSubmit = false
-    //         break
-    //       }
-    //     }
-    //     status.submit = isSubmit
-    //   }
-    // }
-
     setForm = action(({ name = '', valObj = {}, isXss = true, trimType, isVerify = true }: ISetFormOpt = {}) => {
       const form = this[`${name}Form`]
       const rules = {} // 校验规则
@@ -265,4 +207,3 @@ export default function <T extends { new(...args: any[]): {} }>(target: T, { whi
     }
   }
 }
-// }

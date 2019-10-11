@@ -19,29 +19,6 @@ export interface IProps extends RouteComponentProps {
   UI?: IUI
 }
 
-// export default function ({
-//                            successErrno = 0,
-//                            validatedErrno = 403001,
-//                            mobileWidth = 768,
-//                            format = {
-//                              errno: 'errno',
-//                              errmsg: 'errmsg',
-//                              data: 'data',
-//                              page: 'page',
-//                              pageSize: 'pageSize',
-//                              currentPage: 'currentPage',
-//                              count: 'count',
-//                              totalPages: 'totalPages'
-//                            },
-//                            authErrno = 401100,
-//                            itemMap
-//                          }: { [key: string]: any } = {}) {
-//   const dfSuccessErrno = successErrno
-//   const dfValidatedErrno = validatedErrno
-//   const dfAuthErrno = authErrno
-//   const dfMobileWidth = mobileWidth
-//   const dfFormat = format
-//   const dfIemMap = itemMap
 const { codeSuccess, apiFormat, codeNotConf } = Conf
 
 @inject('UI', 'Auth') @observer
@@ -52,12 +29,6 @@ class Detail extends Component<IProps> {
     UI && UI.setPageTitle(ShowConf.pageTitle || '详情页')
   }
 
-  constructor(props: IProps) {
-    super(props)
-    this.fetchData()
-    this.setTitle()
-  }
-
   async fetchData() {
     const { Store, name = 'detail', location, Auth } = this.props
     location.search && Store.urlSetForm({ name, url: location.search })
@@ -66,14 +37,28 @@ class Detail extends Component<IProps> {
     Store.getDetail({ formName: name })
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+  componentDidMount(): void {
+    this.fetchData()
+    this.setTitle()
+  }
+
+  componentDidUpdate(prevProps: Readonly<IProps>): void {
     const { location } = this.props
-    const newLocation = nextProps.location
-    if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+    const prevLocation = prevProps.location
+    if (prevLocation.pathname !== location.pathname || prevLocation.search !== location.search) {
       setTimeout(() => this.fetchData())
       this.setTitle()
     }
   }
+
+  // UNSAFE_componentWillReceiveProps(nextProps: IProps) {
+  //   const { location } = this.props
+  //   const newLocation = nextProps.location
+  //   if (newLocation.pathname !== location.pathname || newLocation.search !== location.search) {
+  //     setTimeout(() => this.fetchData())
+  //     this.setTitle()
+  //   }
+  // }
 
   componentWillUnmount() {
     const { Store, name = 'detail', location } = this.props;
